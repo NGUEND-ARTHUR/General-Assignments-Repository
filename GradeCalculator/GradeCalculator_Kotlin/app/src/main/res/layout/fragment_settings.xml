@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Language Settings"
+        android:text="@string/language_settings"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp"/>
@@ -36,7 +36,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Data Management"
+        android:text="@string/data_management"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp"/>
@@ -45,7 +45,7 @@
         android:id="@+id/btnClearData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Clear All Records"
+        android:text="@string/clear_data"
         android:textColor="@android:color/white"
         android:backgroundTint="@android:color/holo_red_dark"
         style="@style/Widget.MaterialComponents.Button"/>
