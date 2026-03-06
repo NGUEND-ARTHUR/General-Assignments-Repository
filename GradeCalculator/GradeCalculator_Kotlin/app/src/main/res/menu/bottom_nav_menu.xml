@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_statistics"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Stats" />
+    <item
+        android:id="@+id/navigation_manual_entry"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="Entry" />
+    <item
+        android:id="@+id/navigation_results"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="Results" />
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="Settings" />
+</menu>
