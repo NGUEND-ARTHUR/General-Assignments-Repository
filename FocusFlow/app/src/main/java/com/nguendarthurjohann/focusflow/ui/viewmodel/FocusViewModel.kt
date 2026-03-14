@@ -2,6 +2,7 @@ package com.nguendarthurjohann.focusflow.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nguendarthurjohann.focusflow.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,8 +11,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FocusViewModel @Inject constructor() : ViewModel() {
-    private val _timerValue = MutableStateFlow("25:00")
-    val timerValue = _timerValue.asStateFlow()
+    // State Hoisting: Exposing state via Flow
+    private val _timerState = MutableStateFlow<Resource<String>>(Resource.Success("25:00"))
+    val timerState = _timerState.asStateFlow()
 
     private val _isTimerRunning = MutableStateFlow(false)
     val isTimerRunning = _isTimerRunning.asStateFlow()
@@ -25,14 +27,16 @@ class FocusViewModel @Inject constructor() : ViewModel() {
     fun startTimer() {
         if (_isTimerRunning.value) return
         _isTimerRunning.value = true
+        _timerState.value = Resource.Loading()
+        
         timerJob = viewModelScope.launch {
             while (secondsLeft > 0) {
                 delay(1000L)
                 secondsLeft--
-                _timerValue.value = formatTime(secondsLeft)
+                _timerState.value = Resource.Success(formatTime(secondsLeft))
             }
             _isTimerRunning.value = false
-            _seeds.value += 10 // Earn seeds after session
+            _seeds.value += 10
         }
     }
 

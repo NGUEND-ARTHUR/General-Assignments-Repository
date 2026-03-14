@@ -5,15 +5,18 @@ A comprehensive collection of Kotlin and Android development projects, ranging f
 ## Featured Applications
 
 ### 🚀 FocusFlow
-A digital wellbeing and productivity application tailored for students. FocusFlow enhances students' digital wellbeing and productivity during study sessions. It uses the ambient light sensor to monitor lighting, the front camera to detect posture and screen distance, the microphone to assess noise levels and suggest focus sounds, and the accelerometer to encourage healthy breaks after long inactivity.
+A modern Android productivity application designed to help users manage their focus time and tasks effectively.
 - **Path:** `/FocusFlow`
-- **Tech:** Kotlin, Jetpack Compose, MVVM Architecture, Google ML Kit, Room Persistence.
+- **Milestone 1:** Data Modeling for environmental and behavioral monitoring.
+- **Tech:** Jetpack Compose, State Management, Custom UI.
 
-### 📊 GradeCalculator
-GradeCalculator is an academic app that calculates student averages and automatically assigns grades using a defined grading scale. It allows manual entry and Excel file import, extracting student data to generate fast and accurate results. The app saves time, reduces errors, and simplifies academic performance management for schools.
+### 📊 GradeCalculator (Mobile & Console)
+A robust utility for academic management, implemented in both Kotlin and Dart.
 - **Path:** `/GradeCalculator`
-- **Features:** Manual entry and Excel file import, automated grade calculation, PDF & Excel export, statistics dashboard, local data storage, and multi-language support.
+- **Milestone 1:** Functional Programming concepts (Lambdas, HOFs).
+- **Milestone 3:** Object-Oriented Domain Model (Inheritance, Polymorphism, Interfaces).
 - **Kotlin Layers:** Data, Model, ViewModel, and Utils.
+- **Dart Features:** Cross-platform implementation with equivalent OOP structures.
 
 ---
 
@@ -31,17 +34,37 @@ GradeCalculator is an academic app that calculates student averages and automati
 - **Task:** Chained object processing (Filter -> Map -> Average).
 - **Location:** `exercise 3 Complex Data Processing/`
 
-### 4. Lambda Logic
+### 4. Model a Zoo (Exercise 4)
+- **Task:** Practice inheritance, abstract classes, and polymorphism with an Animal hierarchy.
+- **Location:** `exercise 4 Model a Zoo/`
+
+### 5. Network State Handler (Exercise 5)
+- **Task:** Using Sealed Classes for exhaustive and safe state handling (Loading, Success, Error).
+- **Location:** `exercise 5 Network State/`
+
+### 6. Drawable Shapes (Exercise 6)
+- **Task:** Interface implementation and ASCII representation of shapes.
+- **Location:** `exercise 6 Drawable Shapes/`
+
+### 7. Generic Function with Constraints (Exercise 7)
+- **Task:** Implementing a generic `maxOf` function for `Comparable` types.
+- **Location:** `exercise 7 Generic Function with Constraints/`
+
+### 8. Logger Using Delegation (Exercise 8)
+- **Task:** Demonstrating Kotlin Class Delegation (`by` keyword) to swap logging implementations.
+- **Location:** `exercise 8 Logger Delegation/`
+
+### 9. Lambda Logic
 - **Task:** Basic filtering and squaring of numeric sequences.
 - **Location:** `filtering and transforming with lambdas/`
 
 ---
 
 ## Getting Started
-Each project folder contains its own Gradle wrapper. You can open specific projects (like FocusFlow) directly in Android Studio or run the master `app` module to see the integrated exercises.
+Each project folder contains its own Gradle wrapper. You can open specific projects (like FocusFlow) directly in Android Studio or run the master `app` module to see the integrated exercises via the interactive menu.
 
 ## Technologies Used
 - **Kotlin & Dart:** Core programming languages.
 - **Jetpack Compose:** Declarative UI for Android.
-- **MVVM Architecture:** Clean code standards in GradeCalculator and FocusFlow.
+- **MVVM Architecture:** Clean code standards in GradeCalculator.
 - **Material Design 3:** Modern UI/UX components.

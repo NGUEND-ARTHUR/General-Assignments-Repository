@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "General-Assignments-Repository"
 include(":app")
+include(":FocusFlow:app")
+project(":FocusFlow:app").name = "focusflow"

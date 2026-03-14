@@ -13,6 +13,11 @@ import androidx.compose.ui.unit.dp
 import exercise_1_higher_order_function.HigherOrderFunctionScreen
 import exercise_2_transforming_between_collection_types.TransformingCollectionsScreen
 import exercise_3_complex_data_processing.ComplexDataProcessingScreen
+import exercise_4_model_a_zoo.ZooExerciseScreen
+import exercise_5_network_state.NetworkStateScreen
+import exercise_6_drawable_shapes.DrawableShapesScreen
+import exercise_7_generic_function.GenericFunctionScreen
+import exercise_8_logger_delegation.LoggerDelegationScreen
 import filtering_and_transforming_with_lambdas.FilteringExerciseScreen
 
 class MainActivity : ComponentActivity() {
@@ -31,6 +36,11 @@ class MainActivity : ComponentActivity() {
                             2 -> HigherOrderFunctionScreen()
                             3 -> TransformingCollectionsScreen()
                             4 -> ComplexDataProcessingScreen()
+                            5 -> ZooExerciseScreen()
+                            6 -> NetworkStateScreen()
+                            7 -> DrawableShapesScreen()
+                            8 -> GenericFunctionScreen()
+                            9 -> LoggerDelegationScreen()
                         }
                         
                         Button(
@@ -59,12 +69,17 @@ fun MenuScreen(onNavigate: (Int) -> Unit) {
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             
             ExerciseButton("Filtering & Transforming", 1, onNavigate)
             ExerciseButton("Exercise 1: Higher Order", 2, onNavigate)
             ExerciseButton("Exercise 2: Transforming Map", 3, onNavigate)
             ExerciseButton("Exercise 3: Complex Processing", 4, onNavigate)
+            ExerciseButton("Exercise 4: Model a Zoo", 5, onNavigate)
+            ExerciseButton("Exercise 5: Network State", 6, onNavigate)
+            ExerciseButton("Exercise 6: Drawable Shapes", 7, onNavigate)
+            ExerciseButton("Exercise 7: Generic maxOf", 8, onNavigate)
+            ExerciseButton("Exercise 8: Logger Delegation", 9, onNavigate)
         }
     }
 }
@@ -73,7 +88,7 @@ fun MenuScreen(onNavigate: (Int) -> Unit) {
 fun ExerciseButton(text: String, id: Int, onClick: (Int) -> Unit) {
     Button(
         onClick = { onClick(id) },
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
     ) {
         Text(text)
     }
