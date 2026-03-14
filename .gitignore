@@ -1,0 +1,33 @@
+# Built artifacts
+bin/
+gen/
+out/
+build/
+.gradle/
+app/build/
+FocusFlow/app/build/
+GradeCalculator/build/
+GradeCalculator/GradeCalculator_Kotlin/app/build/
+GradeCalculator/GradeCalculator_Dart/build/
+
+# IDE files
+.idea/
+*.iml
+.DS_Store
+
+# Local configuration
+local.properties
+.externalNativeBuild
+.cxx
+
+# Secrets and Keys
+*.keystore
+*.jks
+google-services.json
+
+# Dart/Flutter specific (if any)
+.dart_tool/
+.packages
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
