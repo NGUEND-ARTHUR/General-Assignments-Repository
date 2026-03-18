@@ -5,10 +5,5 @@
 
 package com.nguendarthurjohann.focusflow
 
-data class FocusState(
-    val lightLevelLux: Double?, 
-    val faceDistanceCm: Double?, 
-    val noiseDb: Double, 
-    val isSedentary: Boolean,
-    val sessionID: String
-)
+// The FocusState definition has been moved to Milestone1_2_ArthurJohann.kt to avoid redeclaration.
+// This file is now intentionally empty to prevent build errors.

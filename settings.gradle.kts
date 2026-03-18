@@ -14,6 +14,14 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "General-Assignments-Repository"
+
+// Main App for Technical Exercises
 include(":app")
-include(":FocusFlow:app")
-project(":FocusFlow:app").name = "focusflow"
+
+// FocusFlow Module
+include(":focusflow")
+project(":focusflow").projectDir = file("FocusFlow/app")
+
+// GradeCalculator Module
+include(":gradecalculator")
+project(":gradecalculator").projectDir = file("GradeCalculator/GradeCalculator_Kotlin/app")

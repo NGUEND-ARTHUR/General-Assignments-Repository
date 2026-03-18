@@ -1,2 +1,1 @@
-include ':GradeCalculator_Kotlin:app'
-project(':GradeCalculator_Kotlin:app').projectDir = new File('GradeCalculator_Kotlin/app')
+// Unified into Root settings

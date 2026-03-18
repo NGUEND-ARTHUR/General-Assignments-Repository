@@ -8,12 +8,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nguendarthurjohann.focusflow.ui.viewmodel.FocusViewModel
+import com.nguendarthurjohann.focusflow.utils.Resource
 
 @Composable
 fun FocusScreen(viewModel: FocusViewModel = hiltViewModel()) {
-    val timerValue by viewModel.timerValue.collectAsState()
+    val timerState by viewModel.timerState.collectAsState()
     val isRunning by viewModel.isTimerRunning.collectAsState()
     val seeds by viewModel.seeds.collectAsState()
+
+    val displayTime = when (val state = timerState) {
+        is Resource.Success -> state.data ?: "25:00"
+        is Resource.Loading -> state.data ?: "25:00"
+        else -> "25:00"
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -25,7 +32,7 @@ fun FocusScreen(viewModel: FocusViewModel = hiltViewModel()) {
         Text("Total Seeds: $seeds 🌱", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
         
         Spacer(modifier = Modifier.height(32.dp))
-        Text(timerValue, style = MaterialTheme.typography.displayLarge)
+        Text(text = displayTime, style = MaterialTheme.typography.displayLarge)
         
         Spacer(modifier = Modifier.height(32.dp))
         Button(
@@ -49,7 +56,7 @@ fun FocusScreen(viewModel: FocusViewModel = hiltViewModel()) {
         Text("Your Focus Garden", style = MaterialTheme.typography.titleMedium)
         Card(modifier = Modifier.size(200.dp).padding(16.dp)) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Text(if (seeds > 10) "🌳" else "🌱", style = MaterialTheme.typography.displayLarge)
+                Text(text = if (seeds > 10) "🌳" else "🌱", style = MaterialTheme.typography.displayLarge)
             }
         }
     }
