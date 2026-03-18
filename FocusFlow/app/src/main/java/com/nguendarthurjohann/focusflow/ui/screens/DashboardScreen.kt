@@ -9,14 +9,19 @@ import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.nguendarthurjohann.focusflow.ui.viewmodel.SensorViewModel
 
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(viewModel: SensorViewModel = hiltViewModel()) {
+    val lightLevel by viewModel.lightLevel.collectAsState()
+    val isSedentary by viewModel.isSedentary.collectAsState()
+
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -35,32 +40,34 @@ fun DashboardScreen() {
             item {
                 SensorCard(
                     title = "Eye Strain Prevention",
-                    value = "Distance: 45cm",
-                    status = "Optimal",
+                    value = "Camera Active",
+                    status = "Monitoring distance...",
                     icon = Icons.Default.Visibility
                 )
             }
             item {
+                val lightStatus = if (lightLevel < 50f) "Reading Mode Suggested" else "Optimal Lighting"
                 SensorCard(
                     title = "Adaptive Lighting",
-                    value = "Light: 300 Lux",
-                    status = "Reading Mode Suggested",
+                    value = "Light: ${"%.1f".format(lightLevel)} Lux",
+                    status = lightStatus,
                     icon = Icons.Default.WbSunny
                 )
             }
             item {
                 SensorCard(
                     title = "Noise Analysis",
-                    value = "Noise: 55dB",
-                    status = "Quiet Environment",
+                    value = "Mic Active",
+                    status = "Environment Analysis...",
                     icon = Icons.Default.VolumeUp
                 )
             }
             item {
+                val sedentaryStatus = if (isSedentary) "Take a break! 🏃" else "Movement detected"
                 SensorCard(
                     title = "Sedentary Alert",
-                    value = "Last Move: 20m ago",
-                    status = "Keep going",
+                    value = if (isSedentary) "Inactive for > 1 min" else "Active",
+                    status = sedentaryStatus,
                     icon = Icons.Default.DirectionsRun
                 )
             }
