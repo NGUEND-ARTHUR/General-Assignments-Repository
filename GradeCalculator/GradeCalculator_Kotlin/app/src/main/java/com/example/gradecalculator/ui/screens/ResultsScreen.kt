@@ -22,21 +22,53 @@ import com.example.gradecalculator.model.Student
 @Composable
 fun ResultsScreen(
     students: List<Student>,
-    onExport: (Uri) -> Unit,
+    onExportExcel: (Uri) -> Unit,
+    onExportPdf: (Uri) -> Unit,
+    onExportCsv: (Uri) -> Unit,
     onEdit: (Student, String, Double?) -> Unit,
     onDelete: (Student) -> Unit
 ) {
     var editingStudent by remember { mutableStateOf<Student?>(null) }
+    var showExportMenu by remember { mutableStateOf(false) }
     
-    val exportLauncher = rememberLauncherForActivityResult(
+    val excelLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
-        onResult = { uri -> uri?.let { onExport(it) } }
+        onResult = { uri -> uri?.let { onExportExcel(it) } }
+    )
+
+    val pdfLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/pdf"),
+        onResult = { uri -> uri?.let { onExportPdf(it) } }
+    )
+
+    val csvLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/csv"),
+        onResult = { uri -> uri?.let { onExportCsv(it) } }
     )
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { exportLauncher.launch("grade_results.xlsx") }) {
-                Icon(Icons.Default.Save, contentDescription = "Export")
+            Column(horizontalAlignment = Alignment.End) {
+                if (showExportMenu) {
+                    ExportOptionFab("PDF", Icons.Default.Save) { 
+                        showExportMenu = false
+                        pdfLauncher.launch("grade_report.pdf") 
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ExportOptionFab("CSV", Icons.Default.Save) { 
+                        showExportMenu = false
+                        csvLauncher.launch("grade_report.csv") 
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ExportOptionFab("Excel", Icons.Default.Save) { 
+                        showExportMenu = false
+                        excelLauncher.launch("grade_report.xlsx") 
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                FloatingActionButton(onClick = { showExportMenu = !showExportMenu }) {
+                    Icon(Icons.Default.Save, contentDescription = "Export Menu")
+                }
             }
         }
     ) { padding ->
@@ -68,6 +100,22 @@ fun ResultsScreen(
                     editingStudent = null
                 }
             )
+        }
+    }
+}
+
+@Composable
+fun ExportOptionFab(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Surface(
+            shape = MaterialTheme.shapes.small,
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier.padding(end = 8.dp)
+        ) {
+            Text(label, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelMedium)
+        }
+        SmallFloatingActionButton(onClick = onClick) {
+            Icon(icon, contentDescription = label)
         }
     }
 }

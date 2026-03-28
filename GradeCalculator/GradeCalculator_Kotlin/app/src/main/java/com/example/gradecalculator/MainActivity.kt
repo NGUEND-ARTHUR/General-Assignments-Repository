@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Input
 import androidx.compose.material.icons.filled.Settings
@@ -25,9 +26,13 @@ import com.example.gradecalculator.ui.screens.ManualEntryScreen
 import com.example.gradecalculator.ui.screens.ResultsScreen
 import com.example.gradecalculator.ui.screens.StatisticsScreen
 import com.example.gradecalculator.ui.screens.SettingsScreen
+import com.example.gradecalculator.ui.screens.ExportHistoryScreen
 import com.example.gradecalculator.ui.theme.GradeCalculatorTheme
 import com.example.gradecalculator.viewmodel.StudentViewModel
 import com.example.gradecalculator.utils.ExcelUtils
+import com.example.gradecalculator.utils.ShareUtils
+import com.example.gradecalculator.utils.PdfUtils
+import com.example.gradecalculator.utils.CsvUtils
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,8 +51,9 @@ class MainActivity : ComponentActivity() {
 
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
     object ManualEntry : Screen("manual_entry", "Input", Icons.Default.Input)
-    object Results : Screen("results", "Results", Icons.Default.History)
+    object Results : Screen("results", "List", Icons.Default.History)
     object Statistics : Screen("statistics", "Stats", Icons.Default.BarChart)
+    object ExportHistory : Screen("export_history", "Files", Icons.Default.Folder)
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)
 }
 
@@ -59,6 +65,7 @@ fun GradeCalculatorApp(viewModel: StudentViewModel = viewModel()) {
         Screen.ManualEntry,
         Screen.Results,
         Screen.Statistics,
+        Screen.ExportHistory,
         Screen.Settings
     )
 
@@ -109,14 +116,24 @@ fun GradeCalculatorApp(viewModel: StudentViewModel = viewModel()) {
                     },
                     onCreateTestFile = { uri ->
                         ExcelUtils.createTestExcelFile(context, uri)
+                        ShareUtils.shareFile(context, uri)
                     }
                 )
             }
             composable(Screen.Results.route) { 
                 ResultsScreen(
                     students = students,
-                    onExport = { uri ->
+                    onExportExcel = { uri ->
                         ExcelUtils.exportStudentsToExcel(context, uri, students)
+                        ShareUtils.shareFile(context, uri)
+                    },
+                    onExportPdf = { uri ->
+                        PdfUtils.exportStudentsToPdf(context, uri, students)
+                        ShareUtils.shareFile(context, uri)
+                    },
+                    onExportCsv = { uri ->
+                        CsvUtils.exportStudentsToCsv(context, uri, students)
+                        ShareUtils.shareFile(context, uri)
                     },
                     onEdit = { student, newName, newScore -> 
                         viewModel.updateStudent(student, newName, newScore)
@@ -130,6 +147,9 @@ fun GradeCalculatorApp(viewModel: StudentViewModel = viewModel()) {
                     highest = highest,
                     lowest = lowest
                 )
+            }
+            composable(Screen.ExportHistory.route) {
+                ExportHistoryScreen()
             }
             composable(Screen.Settings.route) { 
                 SettingsScreen(

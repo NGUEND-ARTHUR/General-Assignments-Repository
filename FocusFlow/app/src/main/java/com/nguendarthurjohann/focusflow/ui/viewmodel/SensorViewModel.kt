@@ -25,6 +25,14 @@ class SensorViewModel @Inject constructor(
     private val _isSedentary = MutableStateFlow(false)
     val isSedentary = _isSedentary.asStateFlow()
 
+    // Stub for face distance (camera-based)
+    private val _faceDistanceCm = MutableStateFlow<Double?>(null)
+    val faceDistanceCm = _faceDistanceCm.asStateFlow()
+
+    // Stub for noise level (microphone-based)
+    private val _noiseDb = MutableStateFlow<Float?>(null)
+    val noiseDb = _noiseDb.asStateFlow()
+
     private var lastMovementTime = System.currentTimeMillis()
 
     init {
@@ -37,6 +45,9 @@ class SensorViewModel @Inject constructor(
         accelerometer?.let {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_UI)
         }
+
+        // TODO: Implement camera-based face distance monitoring
+        // TODO: Implement microphone-based noise level monitoring
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
