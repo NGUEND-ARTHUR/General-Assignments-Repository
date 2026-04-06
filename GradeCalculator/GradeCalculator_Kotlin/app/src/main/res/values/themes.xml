@@ -1,5 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.GradeCalculator" parent="android:Theme.Material.Light.NoActionBar">
+    <!-- Base application theme using AppCompat to support AppCompatActivity features like language switching -->
+    <style name="Theme.GradeCalculator" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
         <item name="android:statusBarColor">@color/purple_700</item>
     </style>
 </resources>

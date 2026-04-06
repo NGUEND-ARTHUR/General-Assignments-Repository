@@ -1,16 +1,36 @@
-# grade_calculator
+# GradeCalculator Dart
 
-A new Flutter project.
+Flutter implementation of the Grade Calculator project.
 
-## Getting Started
+## Current Scope
 
-This project is a starting point for a Flutter application.
+- Student grade entry and calculation workflows
+- Functional-programming milestone logic (lambdas and collection processing)
+- Object-oriented milestone logic aligned with the Kotlin version
+- Local persistence support (sqflite and related packages)
+- Export/share stack via PDF and share integrations
 
-A few resources to get you started if this is your first Flutter project:
+## Project Metadata
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- App version: `1.0.0+1`
+- Dart SDK: `>=3.0.0 <4.0.0`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Run
+
+```bash
+flutter pub get
+flutter analyze
+flutter test
+flutter run
+```
+
+## Build APK
+
+```bash
+flutter build apk --release
+```
+
+## Related Docs
+
+- `Project_Description_Dart.md`
+- `Comparison_Report.md`

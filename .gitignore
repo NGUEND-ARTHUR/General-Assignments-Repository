@@ -1,19 +1,23 @@
+# Gradle
+.gradle/
+build/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+
+# OS
+.DS_Store
+
 # Built artifacts
 bin/
 gen/
 out/
-build/
-.gradle/
 app/build/
 FocusFlow/app/build/
 GradeCalculator/build/
 GradeCalculator/GradeCalculator_Kotlin/app/build/
 GradeCalculator/GradeCalculator_Dart/build/
-
-# IDE files
-.idea/
-*.iml
-.DS_Store
 
 # Local configuration
 local.properties

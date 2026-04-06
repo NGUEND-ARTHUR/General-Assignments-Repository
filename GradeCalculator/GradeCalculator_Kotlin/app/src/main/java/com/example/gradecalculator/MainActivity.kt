@@ -1,8 +1,9 @@
 package com.example.gradecalculator
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Folder
@@ -33,12 +34,8 @@ import com.example.gradecalculator.utils.ExcelUtils
 import com.example.gradecalculator.utils.ShareUtils
 import com.example.gradecalculator.utils.PdfUtils
 import com.example.gradecalculator.utils.CsvUtils
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.ui.unit.dp
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
