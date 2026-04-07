@@ -57,7 +57,7 @@ class OcrService {
 
     // Student name — look for "NOM ET PRÉNOM(S)" or "NOM COMPLET"
     final nameMatch = RegExp(
-        r'(?:nom\s+(?:et\s+pr[eé]nom[s]?|complet|de\s+l[\'']?[eé]tudiant(?:e)?)|name|student)\s*:?\s*([A-ZÀÂÄÉÈÊËÎÏÔÙÛÜ][A-Za-zàâäéèêëîïôùûü\s\-]{4,50})',
+        r'(?:nom\s+(?:et\s+pr[eé]nom[s]?|complet|de\s+l[\'']?[eé]tudiant(?:e)?)|name|student)s*:?s*([A-ZÀÂÄÉÈÊËÎÏÔÙÛÜ][A-Za-zàâäéèêëîïôùûüs-]{4,50})',
         caseSensitive: false).firstMatch(text);
     if (nameMatch != null) fields['student_name'] = nameMatch.group(1)!.trim();
 
@@ -271,7 +271,8 @@ class _RealOcrState extends ConsumerState<RealOcrScreen> {
 
   Widget _extractedFieldsCard() {
     final fields = _result!.fields;
-    if (fields.isEmpty) return Container(
+    if (fields.isEmpty) {
+      return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: _amberLight, borderRadius: BorderRadius.circular(12),
@@ -279,6 +280,7 @@ class _RealOcrState extends ConsumerState<RealOcrScreen> {
       child: Text('No academic fields detected. '
         'Try a clearer image with better lighting.',
         style: GoogleFonts.dmSans(fontSize: 13, color: _amber)));
+    }
 
     final labelMap = {
       'matricule':    'Matricule',
@@ -337,9 +339,9 @@ class _RealOcrState extends ConsumerState<RealOcrScreen> {
       Container(
         width: double.infinity,
         padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF1EFE8),
-          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12))),
+        decoration: const BoxDecoration(
+          color: Color(0xFFF1EFE8),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(12))),
         child: Text(_result!.fullText,
           style: GoogleFonts.dmSans(
             fontSize: 11, color: _textSec, height: 1.6))),

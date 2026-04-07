@@ -64,24 +64,26 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
       'admin_notes': notes,
     });
     await _load();
-    if (mounted)
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Request $status', style: GoogleFonts.dmSans()),
           backgroundColor: status == 'approved' ? _green : _red,
           behavior: SnackBarBehavior.floating,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))));
+    }
   }
 
   Future<void> _issueFromRequest(String requestId) async {
     await _api.dio.post('/requests/admin/$requestId/issue');
     await _load();
-    if (mounted)
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Document issued and sent to student vault',
               style: GoogleFonts.dmSans()),
           backgroundColor: _green,
           behavior: SnackBarBehavior.floating));
+    }
   }
 
   Future<void> _openPricingDialog() async {

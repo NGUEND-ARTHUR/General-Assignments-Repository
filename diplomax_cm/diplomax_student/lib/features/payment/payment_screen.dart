@@ -21,13 +21,13 @@ class _PaymentState extends State<PaymentScreen> {
   String _statusMessage = '';
 
   final _amounts = [
-    _Product('Certification numérique', 500, 'Attestation officielle Diplomax',
+    const _Product('Certification numérique', 500, 'Attestation officielle Diplomax',
         Icons.verified_rounded),
-    _Product('Relevé officiel', 1000, 'Relevé de notes certifié MINESUP',
+    const _Product('Relevé officiel', 1000, 'Relevé de notes certifié MINESUP',
         Icons.description_rounded),
-    _Product('Dossier complet', 2500, 'Tous vos documents certifiés',
+    const _Product('Dossier complet', 2500, 'Tous vos documents certifiés',
         Icons.folder_special_rounded),
-    _Product('Abonnement recruteur', 15000,
+    const _Product('Abonnement recruteur', 15000,
         'Accès vérification illimité / mois', Icons.business_rounded),
   ];
 
@@ -424,7 +424,7 @@ class _PaymentState extends State<PaymentScreen> {
             Container(
               width: 100,
               height: 100,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: AppColors.primaryLight, shape: BoxShape.circle),
               child: const Icon(Icons.check_rounded,
                   color: AppColors.primary, size: 56),

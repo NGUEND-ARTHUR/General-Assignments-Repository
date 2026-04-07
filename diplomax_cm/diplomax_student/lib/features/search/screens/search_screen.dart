@@ -402,7 +402,7 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
         context: context,
         builder: (_) => _PickerSheet(
           title: 'Mention',
-          items: ['Any', 'Très Bien', 'Bien', 'Assez Bien', 'Passable'],
+          items: const ['Any', 'Très Bien', 'Bien', 'Assez Bien', 'Passable'],
           onSelect: (v) {
             setState(() => _selectedMention = v == 'Any' ? null : v);
             _doSearch();

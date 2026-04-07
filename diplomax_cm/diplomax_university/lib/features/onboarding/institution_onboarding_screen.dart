@@ -88,8 +88,8 @@ const _instTypes = [
     labelFr: 'École professionnelle',
     description: 'Nursing, midwifery, allied health, law schools',
     icon: Icons.local_hospital_rounded,
-    color: const Color(0xFF993C1D),
-    bgColor: const Color(0xFFFAECE7),
+    color: Color(0xFF993C1D),
+    bgColor: Color(0xFFFAECE7),
     allowedDocs: ['diploma', 'certificate', 'attestation'],
   ),
   _InstType(
@@ -98,8 +98,8 @@ const _instTypes = [
     labelFr: 'Institut de langues',
     description: 'French, English, German, Chinese language schools',
     icon: Icons.translate_rounded,
-    color: const Color(0xFF534AB7),
-    bgColor: const Color(0xFFEEEDFE),
+    color: Color(0xFF534AB7),
+    bgColor: Color(0xFFEEEDFE),
     allowedDocs: ['certificate', 'attestation'],
   ),
   _InstType(
@@ -108,8 +108,8 @@ const _instTypes = [
     labelFr: 'Centre TVET',
     description: 'Technical and Vocational Education and Training',
     icon: Icons.construction_rounded,
-    color: const Color(0xFF185FA5),
-    bgColor: const Color(0xFFE6F1FB),
+    color: Color(0xFF185FA5),
+    bgColor: Color(0xFFE6F1FB),
     allowedDocs: ['certificate', 'attestation', 'diploma'],
   ),
   _InstType(
@@ -118,8 +118,8 @@ const _instTypes = [
     labelFr: 'Plateforme en ligne',
     description: 'E-learning, MOOCs, remote learning programmes',
     icon: Icons.computer_rounded,
-    color: const Color(0xFF0F6E56),
-    bgColor: const Color(0xFFE1F5EE),
+    color: Color(0xFF0F6E56),
+    bgColor: Color(0xFFE1F5EE),
     allowedDocs: ['certificate', 'attestation'],
   ),
   _InstType(
@@ -128,8 +128,8 @@ const _instTypes = [
     labelFr: 'Formation entreprise',
     description: 'In-house company training and upskilling programmes',
     icon: Icons.business_rounded,
-    color: const Color(0xFF6B6B6B),
-    bgColor: const Color(0xFFF1EFE8),
+    color: Color(0xFF6B6B6B),
+    bgColor: Color(0xFFF1EFE8),
     allowedDocs: ['certificate', 'attestation'],
   ),
 ];
@@ -757,7 +757,7 @@ class _Step3State extends State<_Step3Accreditation> {
                   ])),
               Switch(
                   value: widget.data.isGovernment,
-                  activeColor: _green,
+                  activeThumbColor: _green,
                   onChanged: (v) =>
                       setState(() => widget.data.isGovernment = v)),
             ])),
@@ -1084,10 +1084,10 @@ class _Step5Review extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 color: _greenLight,
                 borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12))),
+                    BorderRadius.vertical(top: Radius.circular(12))),
             child: Text(title,
                 style: GoogleFonts.dmSans(
                     fontSize: 12, fontWeight: FontWeight.w500, color: _green))),

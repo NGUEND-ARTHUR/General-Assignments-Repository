@@ -179,8 +179,10 @@ class _Completer<T> {
     _resolve?.call(value);
   }
   Future<T> get future => Future(() async {
-    while (_value == null) await Future.delayed(const Duration(milliseconds: 50));
-    return _value!;
+    while (_value == null) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+    return _value as T;
   });
 }
 

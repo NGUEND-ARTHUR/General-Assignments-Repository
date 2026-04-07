@@ -169,12 +169,13 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
       });
       _tabs.animateTo(1);
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Error: ${e.toString()}', style: GoogleFonts.dmSans()),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ));
+      }
     } finally {
       setState(() {
         _loading = false;
@@ -467,7 +468,7 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
 
   // ── Result View ────────────────────────────────────────────────────────────
   Widget _buildResultView() {
-    if (_result == null)
+    if (_result == null) {
       return Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Icon(Icons.flight_takeoff_rounded, size: 56, color: _textHint),
@@ -476,6 +477,7 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
               style: GoogleFonts.dmSans(color: _textHint, fontSize: 14)),
         ]),
       );
+    }
 
     final r = _result!;
     final expDate = r.expiresAt.substring(0, 10);
@@ -754,7 +756,7 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                       style: GoogleFonts.dmSans(
                           fontSize: 11, color: _textSec, height: 1.4)),
                 ])),
-            Switch(value: value, activeColor: _green, onChanged: onChanged),
+            Switch(value: value, activeThumbColor: _green, onChanged: onChanged),
           ]));
 
   Widget _textField(

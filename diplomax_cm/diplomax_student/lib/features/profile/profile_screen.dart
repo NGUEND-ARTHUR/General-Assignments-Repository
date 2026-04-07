@@ -128,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               width: 88,
               height: 88,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.primary,
                 shape: BoxShape.circle,
               ),
@@ -272,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(label, style: GoogleFonts.dmSans(fontSize: 13)),
           const Spacer(),
           Switch(
-              value: value, activeColor: AppColors.primary, onChanged: (_) {}),
+              value: value, activeThumbColor: AppColors.primary, onChanged: (_) {}),
         ],
       ),
     );

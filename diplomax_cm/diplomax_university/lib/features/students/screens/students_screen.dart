@@ -23,7 +23,7 @@ const _sto = FlutterSecureStorage(
 
 InputDecoration _id(String h, {IconData? ic}) => InputDecoration(
     hintText: h,
-    hintStyle: TextStyle(color: _TH, fontSize: 13),
+    hintStyle: const TextStyle(color: _TH, fontSize: 13),
     prefixIcon: ic != null ? Icon(ic, size: 18, color: _TH) : null,
     filled: true,
     fillColor: _SUR,
@@ -308,7 +308,7 @@ class _SDS extends ConsumerState<StudentDetailScreen> {
         backgroundColor: _BG,
         appBar: AppBar(
             backgroundColor: Colors.transparent,
-            leading: BackButton(color: _T1),
+            leading: const BackButton(color: _T1),
             title: Text(_s?['full_name'] ?? 'Student',
                 style: GoogleFonts.instrumentSerif(fontSize: 20, color: _T1))),
         body: _load

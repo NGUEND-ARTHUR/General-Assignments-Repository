@@ -319,7 +319,7 @@ class _SmartShareState extends State<SmartShareScreen> {
               const SizedBox(width: 8),
               Switch(
                   value: _zkpMode,
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                   onChanged: (v) => setState(() {
                         _zkpMode = v;
                         _generated = false;

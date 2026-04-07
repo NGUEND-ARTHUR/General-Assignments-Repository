@@ -83,8 +83,9 @@ class DocumentSigningService {
   /// and the hash has not changed since signing.
   Future<String> signHash(String documentHash) async {
     final stored = await _storage.read(key: _privKeyAlias);
-    if (stored == null)
+    if (stored == null) {
       throw Exception('No private key found. Run setup first.');
+    }
 
     final parts = stored.split('|');
     final priv = pc.RSAPrivateKey(
@@ -210,7 +211,7 @@ class _SignState extends State<SignDocumentScreen> {
       appBar: AppBar(
         title: Text('Sign document',
             style: GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
-        leading: BackButton(color: _textPri),
+        leading: const BackButton(color: _textPri),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -307,7 +308,7 @@ class _SignState extends State<SignDocumentScreen> {
                                 color: _green,
                               )),
                           Text(
-                            'Public key: ${_pubKeyPreview}...',
+                            'Public key: $_pubKeyPreview...',
                             style: GoogleFonts.dmSans(
                               fontSize: 10,
                               color: _green.withOpacity(0.7),

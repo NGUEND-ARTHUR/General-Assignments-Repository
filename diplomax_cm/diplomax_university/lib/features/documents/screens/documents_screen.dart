@@ -89,7 +89,7 @@ class _DS extends ConsumerState<UnivDocumentsScreen> {
                       onSubmitted: (_) => _fetch(),
                       decoration: InputDecoration(
                           hintText: 'Search documents',
-                          hintStyle: TextStyle(color: _TH, fontSize: 13),
+                          hintStyle: const TextStyle(color: _TH, fontSize: 13),
                           prefixIcon: const Icon(Icons.search_rounded,
                               size: 18, color: _TH),
                           filled: true,
@@ -336,11 +336,12 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
       await _dio(tok).post('/documents/${widget.id}/revoke',
           data: {'reason': 'Revoked by university registrar'});
       _fetch();
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Document revoked on blockchain'),
             backgroundColor: _R,
             behavior: SnackBarBehavior.floating));
+      }
     } catch (_) {}
   }
 
@@ -349,7 +350,7 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
         backgroundColor: _BG,
         appBar: AppBar(
             backgroundColor: Colors.transparent,
-            leading: BackButton(color: _T1),
+            leading: const BackButton(color: _T1),
             title: Text('Document detail',
                 style: GoogleFonts.instrumentSerif(fontSize: 20, color: _T1)),
             actions: [

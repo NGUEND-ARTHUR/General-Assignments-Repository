@@ -92,8 +92,8 @@ const _templates = [
     docType: 'certificate', degree: '',
     field: '', titleTemplate: 'Certificat de Réussite',
     preFilledCourses: [],
-    icon: Icons.verified_rounded, color: const Color(0xFF534AB7),
-    bgColor: const Color(0xFFEEEDFE),
+    icon: Icons.verified_rounded, color: Color(0xFF534AB7),
+    bgColor: Color(0xFFEEEDFE),
   ),
   DocumentTemplate(
     id: 'bsc_networks',
@@ -110,8 +110,8 @@ const _templates = [
       'NET305,VoIP Systems,S6',
       'NET306,Network Administration,S6',
     ],
-    icon: Icons.wifi_rounded, color: const Color(0xFF854F0B),
-    bgColor: const Color(0xFFFAEEDA),
+    icon: Icons.wifi_rounded, color: Color(0xFF854F0B),
+    bgColor: Color(0xFFFAEEDA),
   ),
   DocumentTemplate(
     id: 'bsc_data_science',
@@ -128,8 +128,8 @@ const _templates = [
       'DS305,Big Data Processing,S6',
       'DS306,Data Visualization,S6',
     ],
-    icon: Icons.analytics_rounded, color: const Color(0xFF185FA5),
-    bgColor: const Color(0xFFE6F1FB),
+    icon: Icons.analytics_rounded, color: Color(0xFF185FA5),
+    bgColor: Color(0xFFE6F1FB),
   ),
 ];
 
@@ -160,8 +160,12 @@ class _TemplateState extends ConsumerState<TemplateFillScreen> {
   @override void dispose() {
     _matCtrl.dispose(); _mentionCtrl.dispose(); _dateCtrl.dispose();
     _fieldCtrl.dispose(); _titleCtrl.dispose();
-    for (final c in _gradeCtrl) c.dispose();
-    for (final c in _creditCtrl) c.dispose();
+    for (final c in _gradeCtrl) {
+      c.dispose();
+    }
+    for (final c in _creditCtrl) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -187,8 +191,9 @@ class _TemplateState extends ConsumerState<TemplateFillScreen> {
         data: Theme.of(ctx).copyWith(
           colorScheme: const ColorScheme.light(primary: _green)),
         child: child!));
-    if (picked != null)
+    if (picked != null) {
       setState(() => _dateCtrl.text = DateFormat('yyyy-MM-dd').format(picked));
+    }
   }
 
   Future<void> _issue() async {
@@ -250,10 +255,11 @@ class _TemplateState extends ConsumerState<TemplateFillScreen> {
     appBar: AppBar(
       backgroundColor: Colors.transparent,
       leading: BackButton(color: _textPri, onPressed: () {
-        if (_phase == _TplPhase.fillFields)
+        if (_phase == _TplPhase.fillFields) {
           setState(() => _phase = _TplPhase.selectTemplate);
-        else
+        } else {
           context.go('/issue');
+        }
       }),
       title: Text(
         _phase == _TplPhase.selectTemplate ? 'Choose a template' : 'Fill template',
@@ -450,7 +456,7 @@ class _TemplateState extends ConsumerState<TemplateFillScreen> {
         fontSize:11,fontWeight:FontWeight.w500,color:_textSec)),
       const SizedBox(height:4),
       DropdownButtonFormField<String>(
-        value:_mentionCtrl.text,
+        initialValue:_mentionCtrl.text,
         decoration:InputDecoration(
           filled:true,fillColor:_surface,
           border:OutlineInputBorder(borderRadius:BorderRadius.circular(8),

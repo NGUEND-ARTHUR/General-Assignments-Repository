@@ -18,13 +18,13 @@ class _LivenessState extends State<LivenessScreen>
   bool _passed = false;
 
   final _challenges = [
-    _Challenge(Icons.face_rounded, 'Regardez droit devant vous',
+    const _Challenge(Icons.face_rounded, 'Regardez droit devant vous',
         'Positionnez votre visage dans le cercle'),
-    _Challenge(Icons.turn_slight_right, 'Tournez légèrement à droite',
+    const _Challenge(Icons.turn_slight_right, 'Tournez légèrement à droite',
         'Mouvement lent et naturel'),
-    _Challenge(Icons.turn_slight_left, 'Tournez légèrement à gauche',
+    const _Challenge(Icons.turn_slight_left, 'Tournez légèrement à gauche',
         'Revenez au centre doucement'),
-    _Challenge(Icons.airline_seat_flat_rounded, 'Clignez des yeux',
+    const _Challenge(Icons.airline_seat_flat_rounded, 'Clignez des yeux',
         'Clignement naturel détecté'),
   ];
 

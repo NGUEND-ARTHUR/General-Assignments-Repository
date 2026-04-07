@@ -296,7 +296,7 @@ class _QrScanState extends State<QrScanScreen>
                             right: 0,
                             child: Container(
                               height: 2,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 gradient: LinearGradient(colors: [
                                   Colors.transparent,
                                   AppColors.accent,

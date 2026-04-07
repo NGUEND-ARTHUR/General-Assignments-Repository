@@ -738,13 +738,15 @@ class _MyRequestsState extends ConsumerState<_MyRequestsTab> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading)
+    if (_loading) {
       return const Center(child: CircularProgressIndicator(color: _green));
-    if (_error != null)
+    }
+    if (_error != null) {
       return Center(
           child:
               Text('Error: $_error', style: GoogleFonts.dmSans(color: _red)));
-    if (_requests.isEmpty)
+    }
+    if (_requests.isEmpty) {
       return Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         const Icon(Icons.inbox_rounded, size: 56, color: Color(0xFFE0DDD5)),
@@ -755,6 +757,7 @@ class _MyRequestsState extends ConsumerState<_MyRequestsTab> {
         Text('Your submitted requests will appear here.',
             style: GoogleFonts.dmSans(fontSize: 12, color: _textHint)),
       ]));
+    }
 
     return RefreshIndicator(
         color: _green,
@@ -797,7 +800,7 @@ class _RequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cfg = _statusConfig[req.status] ??
-        (_textSec, Color(0xFFF1EFE8), Icons.help_outline_rounded, req.status);
+        (_textSec, const Color(0xFFF1EFE8), Icons.help_outline_rounded, req.status);
 
     return Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -842,7 +845,7 @@ class _RequestCard extends StatelessWidget {
             Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: Color(0xFFF1EFE8),
+                    color: const Color(0xFFF1EFE8),
                     borderRadius: BorderRadius.circular(6)),
                 child: Row(children: [
                   const Icon(Icons.comment_rounded, size: 13, color: _textSec),

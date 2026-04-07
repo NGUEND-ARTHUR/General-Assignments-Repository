@@ -180,7 +180,7 @@ class _PdfScanState extends ConsumerState<PdfScanScreen> {
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Container(width:100,height:100,
-        decoration:BoxDecoration(color:_blueLight,shape:BoxShape.circle),
+        decoration:const BoxDecoration(color:_blueLight,shape:BoxShape.circle),
         child:const Icon(Icons.picture_as_pdf_rounded,color:_blue,size:50)),
       const SizedBox(height:24),
       Text('Upload a PDF document',

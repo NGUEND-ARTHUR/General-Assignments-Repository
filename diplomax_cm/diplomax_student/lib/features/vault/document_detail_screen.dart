@@ -260,7 +260,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                   ),
                 ),
                 Text(
-                  '${value}/20',
+                  '$value/20',
                   style: GoogleFonts.dmSans(
                     fontSize: 12,
                     color: color,

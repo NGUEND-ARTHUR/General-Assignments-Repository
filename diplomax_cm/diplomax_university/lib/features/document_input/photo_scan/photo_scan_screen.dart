@@ -105,9 +105,9 @@ class _PhotoScanState extends ConsumerState<PhotoScanScreen> {
         .firstMatch(text);
     if (mention != null) result['mention'] = _capMention(mention.group(0)!);
     // Document type
-    if (text.toLowerCase().contains('diplôme') || text.toLowerCase().contains('diploma'))
+    if (text.toLowerCase().contains('diplôme') || text.toLowerCase().contains('diploma')) {
       result['document_type'] = 'diploma';
-    else if (text.toLowerCase().contains('relevé') || text.toLowerCase().contains('transcript'))
+    } else if (text.toLowerCase().contains('relevé') || text.toLowerCase().contains('transcript'))
       result['document_type'] = 'transcript';
     else if (text.toLowerCase().contains('attestation'))
       result['document_type'] = 'attestation';

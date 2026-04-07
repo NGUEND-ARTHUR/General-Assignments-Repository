@@ -95,8 +95,9 @@ class _NfcState extends State<NfcWriteScreen>
       onDiscovered: (tag) async {
         try {
           final ndef = Ndef.from(tag);
-          if (ndef == null)
+          if (ndef == null) {
             throw Exception('Tag not NDEF compatible. Use NTAG213/215.');
+          }
           if (!ndef.isWritable) throw Exception('Chip is read-only.');
           await ndef.write(msg);
           final id = tag.data['nfca']?['identifier'] as List<int>? ?? [];
@@ -234,7 +235,7 @@ class _NfcState extends State<NfcWriteScreen>
   }
 
   Widget _status() {
-    if (_state == _WState.success)
+    if (_state == _WState.success) {
       return Column(children: [
         _row(Icons.check_rounded, 'NDEF written to chip', _green),
         if (_chipUid != null)
@@ -255,7 +256,8 @@ class _NfcState extends State<NfcWriteScreen>
             child: Text('Verify URL: $_url',
                 style: GoogleFonts.dmSans(fontSize: 10, color: _green))),
       ]);
-    if (_state == _WState.writing)
+    }
+    if (_state == _WState.writing) {
       return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -273,6 +275,7 @@ class _NfcState extends State<NfcWriteScreen>
                 child: Text('Waiting for NFC tag...',
                     style: GoogleFonts.dmSans(fontSize: 12, color: _amber))),
           ]));
+    }
     return const SizedBox.shrink();
   }
 

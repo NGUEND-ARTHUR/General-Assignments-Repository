@@ -379,7 +379,7 @@ class _BS extends ConsumerState<BatchSignScreen> {
                 _resultRow(
                     'Docs per second',
                     duration > 0
-                        ? '${(_signed / duration).toStringAsFixed(0)}'
+                        ? (_signed / duration).toStringAsFixed(0)
                         : '—',
                     _T2),
               ])),

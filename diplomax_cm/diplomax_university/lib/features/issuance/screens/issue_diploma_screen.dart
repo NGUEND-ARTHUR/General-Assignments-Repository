@@ -119,7 +119,7 @@ class _IssueState extends ConsumerState<IssueDiplomaScreen> {
 
     if (result.success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Document issued & anchored on blockchain'),
           backgroundColor: _green,
           behavior: SnackBarBehavior.floating,
@@ -157,7 +157,7 @@ class _IssueState extends ConsumerState<IssueDiplomaScreen> {
               _label('Document type'),
               const SizedBox(height: 6),
               DropdownButtonFormField<String>(
-                value: _data.documentType,
+                initialValue: _data.documentType,
                 decoration: const InputDecoration(),
                 items: _types
                     .map((t) => DropdownMenuItem(value: t, child: Text(t)))
@@ -187,7 +187,7 @@ class _IssueState extends ConsumerState<IssueDiplomaScreen> {
               _label('Mention'),
               const SizedBox(height: 6),
               DropdownButtonFormField<String>(
-                value: _data.mention,
+                initialValue: _data.mention,
                 decoration: const InputDecoration(),
                 items: _mentions
                     .map((m) => DropdownMenuItem(value: m, child: Text(m)))

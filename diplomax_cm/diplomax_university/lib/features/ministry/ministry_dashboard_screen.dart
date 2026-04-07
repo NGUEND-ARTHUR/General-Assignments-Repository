@@ -188,10 +188,12 @@ class _MDS extends ConsumerState<MinistryDashboardScreen> {
   }
 
   Widget _institutionsList() {
-    if (_institutions.isEmpty) return Container(
+    if (_institutions.isEmpty) {
+      return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: _S, borderRadius: BorderRadius.circular(12), border: Border.all(color: _BD)),
       child: Text('No institutions connected yet.', style: GoogleFonts.dmSans(fontSize: 13, color: _T2)));
+    }
 
     return Column(children: _institutions.map((inst) => Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -218,10 +220,12 @@ class _MDS extends ConsumerState<MinistryDashboardScreen> {
   }
 
   Widget _recentDocsList() {
-    if (_recentDocs.isEmpty) return Container(
+    if (_recentDocs.isEmpty) {
+      return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: _S, borderRadius: BorderRadius.circular(12), border: Border.all(color: _BD)),
       child: Text('No recent documents.', style: GoogleFonts.dmSans(fontSize: 13, color: _T2)));
+    }
 
     return Column(children: _recentDocs.map((d) => Container(
       margin: const EdgeInsets.only(bottom: 6),

@@ -253,7 +253,7 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
               width: 90,
               height: 90,
               decoration:
-                  BoxDecoration(color: _amberLight, shape: BoxShape.circle),
+                  const BoxDecoration(color: _amberLight, shape: BoxShape.circle),
               child: const Icon(Icons.table_chart_rounded,
                   color: _amber, size: 46)),
           const SizedBox(height: 16),
@@ -291,11 +291,11 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
                   decoration: BoxDecoration(
                       color: Colors.black87,
                       borderRadius: BorderRadius.circular(6)),
-                  child: Text(
+                  child: const Text(
                       'matricule,doc_type,title,degree,field,mention,issue_date\n'
                       'ICTU20223180,diploma,Licence en GL,Licence,Génie Logiciel,Bien,2024-07-15\n'
                       'ICTU20224001,transcript,Relevé S5-S6,Licence,Informatique,Très Bien,2024-07-15',
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontFamily: 'Courier',
                           fontSize: 9,
                           color: Color(0xFF7DFFB3),

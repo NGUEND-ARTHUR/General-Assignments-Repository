@@ -480,7 +480,7 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
           )),
           Switch(
             value: _zkpMode,
-            activeColor: _green,
+            activeThumbColor: _green,
             onChanged: (v) => setState(() => _zkpMode = v),
           ),
         ]),
@@ -919,7 +919,7 @@ class _LivenessVerificationState
   }
 
   Widget _buildStatus() {
-    if (_errorMsg != null)
+    if (_errorMsg != null) {
       return Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -938,8 +938,9 @@ class _LivenessVerificationState
                       height: 1.5))),
         ]),
       );
+    }
 
-    if (_step == _LivenessStep.initial)
+    if (_step == _LivenessStep.initial) {
       return Text(
         'The QR code was scanned. Hand the phone to the student\n'
         'so they can confirm their identity.',
@@ -951,6 +952,7 @@ class _LivenessVerificationState
           height: 1.6,
         ),
       );
+    }
 
     return const SizedBox.shrink();
   }

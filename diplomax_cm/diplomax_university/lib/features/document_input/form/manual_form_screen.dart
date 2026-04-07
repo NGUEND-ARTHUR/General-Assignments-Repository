@@ -47,9 +47,9 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
 
   // ── Form values ─────────────────────────────────────────────────────────────
   String _docType = 'diploma';
-  String _matricule = '';
-  String _title = '';
-  String _degree = '';
+  final String _matricule = '';
+  final String _title = '';
+  final String _degree = '';
   String _mention = 'Bien';
   DateTime? _issueDate;
   final List<_GradeRow> _grades = [];
@@ -543,7 +543,7 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
                 fontSize: 12, fontWeight: FontWeight.w500, color: _textSec)),
         const SizedBox(height: 5),
         DropdownButtonFormField<String>(
-          value: items.contains(value) ? value : null,
+          initialValue: items.contains(value) ? value : null,
           hint: Text('Select...',
               style: GoogleFonts.dmSans(color: _textHint, fontSize: 13)),
           decoration: InputDecoration(
@@ -594,7 +594,7 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
             style: GoogleFonts.dmSans(
                 fontSize: 13, fontWeight: FontWeight.w700, color: _green)),
         const SizedBox(width: 8),
-        Text('(${totalCredits} credits)',
+        Text('($totalCredits credits)',
             style: GoogleFonts.dmSans(
                 fontSize: 11, color: _green.withOpacity(0.7))),
       ]),
@@ -711,7 +711,7 @@ class _GradeRowWidgetState extends State<_GradeRowWidget> {
             const SizedBox(width: 8),
             Expanded(
                 child: DropdownButtonFormField<String>(
-                    value: widget.semesters.contains(widget.row.semester)
+                    initialValue: widget.semesters.contains(widget.row.semester)
                         ? widget.row.semester
                         : 'S1',
                     style:

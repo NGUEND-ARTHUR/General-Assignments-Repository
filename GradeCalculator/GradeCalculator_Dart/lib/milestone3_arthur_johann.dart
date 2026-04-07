@@ -1,10 +1,9 @@
-/**
- * PROJECT: Student Grade Calculator Mobile Application (Dart Version)
- * MILESTONE 3: Object-Oriented Domain Model
- * SUBMITTED BY: Arthur Johann
- * 
- * Objective: Refine the app's data model using OOP principles in Dart.
- */
+/// PROJECT: Student Grade Calculator Mobile Application (Dart Version)
+/// MILESTONE 3: Object-Oriented Domain Model
+/// SUBMITTED BY: Arthur Johann
+/// 
+/// Objective: Refine the app's data model using OOP principles in Dart.
+library;
 
 // 1. Abstract class defining common behavior (Similar to Interface in Kotlin)
 abstract class GradeReportable {
@@ -76,7 +75,7 @@ class StudentEntity extends AcademicEntity {
 class Instructor extends AcademicEntity {
   final String department;
 
-  Instructor(String name, this.department) : super(name);
+  Instructor(super.name, this.department);
 
   @override
   String get identificationType => "FACULTY";
@@ -87,9 +86,7 @@ class Instructor extends AcademicEntity {
   }
 }
 
-/**
- * Main function showcasing the OOP hierarchy, inheritance, and polymorphism in Dart.
- */
+/// Main function showcasing the OOP hierarchy, inheritance, and polymorphism in Dart.
 void main() {
   print("--- Milestone 3: Object-Oriented Domain Model Showcase (Dart) ---\n");
 

@@ -233,7 +233,7 @@ class _QrGenerateState extends State<QrGenerateScreen> {
               const Spacer(),
               Switch(
                 value: _zkpMode,
-                activeColor: AppColors.primary,
+                activeThumbColor: AppColors.primary,
                 onChanged: (v) => setState(() => _zkpMode = v),
               ),
             ],

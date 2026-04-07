@@ -67,7 +67,7 @@ class BiometricService {
         localizedReason: reason,
         authMessages: [
           // Android prompt customisation
-          AndroidAuthMessages(
+          const AndroidAuthMessages(
             signInTitle: 'Diplomax — Biometric login',
             cancelButton: 'Use password instead',
             biometricHint: 'Touch the fingerprint sensor',
@@ -79,7 +79,7 @@ class BiometricService {
             deviceCredentialsRequiredTitle: 'Device PIN required',
           ),
           // iOS prompt customisation
-          IOSAuthMessages(
+          const IOSAuthMessages(
             cancelButton: 'Cancel',
             goToSettingsButton: 'Settings',
             goToSettingsDescription:

@@ -375,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
       (
         Icons.account_circle_rounded,
         'Mon\nProfil',
-        Color(0xFF7F77DD),
+        const Color(0xFF7F77DD),
         '/home/profile'
       ),
     ];
@@ -625,7 +625,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surface,
         border: Border(top: BorderSide(color: AppColors.border)),
       ),

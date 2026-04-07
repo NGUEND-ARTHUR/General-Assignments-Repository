@@ -247,7 +247,7 @@ class _LS extends State<LoginScreen> {
                           ]))))));
   InputDecoration _d(String h, IconData i) => InputDecoration(
       hintText: h,
-      hintStyle: TextStyle(color: _TH, fontSize: 13),
+      hintStyle: const TextStyle(color: _TH, fontSize: 13),
       prefixIcon: Icon(i, size: 18, color: _TH),
       filled: true,
       fillColor: _SUR,
@@ -355,7 +355,7 @@ class _RS extends State<RegisterScreen> {
 
   InputDecoration _d(String h, IconData i) => InputDecoration(
       hintText: h,
-      hintStyle: TextStyle(color: _TH, fontSize: 13),
+      hintStyle: const TextStyle(color: _TH, fontSize: 13),
       prefixIcon: Icon(i, size: 18, color: _TH),
       filled: true,
       fillColor: _SUR,
@@ -1009,9 +1009,10 @@ class _VS extends State<VerifyScreen> {
                     final docId = _res!["document_id"] as String? ?? "";
                     if (docId.isEmpty) return;
                     final url = "$_API/documents/$docId/certified-pdf";
-                    if (await canLaunchUrl(Uri.parse(url)))
+                    if (await canLaunchUrl(Uri.parse(url))) {
                       await launchUrl(Uri.parse(url),
                           mode: LaunchMode.externalApplication);
+                    }
                   }),
             if (st == VStatus.green && (_dash?["can_export_pdf"] == true))
               const SizedBox(height: 10),
