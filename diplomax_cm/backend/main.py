@@ -94,7 +94,13 @@ app.add_middleware(
 
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["api.diplomax.cm", "localhost", "127.0.0.1"],
+    allowed_hosts=[
+        "api.diplomax.cm",
+        "diplomax-backend.onrender.com",
+        "*.onrender.com",
+        "localhost",
+        "127.0.0.1",
+    ],
 )
 
 
