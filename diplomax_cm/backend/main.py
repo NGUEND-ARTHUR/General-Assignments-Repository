@@ -2,6 +2,7 @@
 Diplomax CM Backend — FastAPI Application Entry Point
 """
 from contextlib import asynccontextmanager
+import logging
 from typing import AsyncGenerator
 
 import redis.asyncio as redis
@@ -18,6 +19,7 @@ from app.models.models import Base
 from app.api.v1.endpoints.router import router as api_router
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 # ─── Database Engine ──────────────────────────────────────────────────────────
 engine = create_async_engine(
@@ -40,22 +42,34 @@ redis_pool: redis.Redis = None
 async def lifespan(app: FastAPI) -> AsyncGenerator:
     """Startup and shutdown events."""
     global redis_pool
-    # Create all tables (in production, use Alembic migrations)
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # Best-effort startup: keep the API bootable even if backing services are temporarily unreachable.
+    try:
+        # Create all tables when the database is reachable.
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as exc:
+        logger.warning("Database initialization skipped during startup: %s", exc)
 
-    # Connect Redis
-    redis_pool = redis.from_url(settings.REDIS_URL, decode_responses=True)
-    await redis_pool.ping()
+    try:
+        # Connect Redis only if the endpoint is reachable.
+        redis_pool = redis.from_url(settings.REDIS_URL, decode_responses=True)
+        await redis_pool.ping()
+    except Exception as exc:
+        logger.warning("Redis initialization skipped during startup: %s", exc)
+        redis_pool = None
 
-    # Seed ICT University if not exists
-    async with AsyncSessionLocal() as db:
-        await _seed_ict_university(db)
+    try:
+        # Seed ICT University only when the database is available.
+        async with AsyncSessionLocal() as db:
+            await _seed_ict_university(db)
+    except Exception as exc:
+        logger.warning("Database seeding skipped during startup: %s", exc)
 
     yield
 
     # Shutdown
-    await redis_pool.aclose()
+    if redis_pool is not None:
+        await redis_pool.aclose()
     await engine.dispose()
 
 
