@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/app_colors.dart';
 import '../../core/models.dart';
 import '../../core/api/student_documents_api.dart';
+import '../../l10n/app_strings.dart';
 
 class VaultScreen extends StatefulWidget {
   const VaultScreen({super.key});
@@ -36,7 +37,8 @@ class _VaultScreenState extends State<VaultScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = 'Impossible de charger les documents';
+        _error = AppStrings.of(context).tr(
+            'Impossible de charger les documents', 'Unable to load documents');
         _loading = false;
       });
     }
@@ -55,7 +57,7 @@ class _VaultScreenState extends State<VaultScreen> {
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/home')),
         title: Text(
-          'Coffre-fort',
+          AppStrings.of(context).tr('Coffre-fort', 'Vault'),
           style: GoogleFonts.instrumentSerif(
             fontSize: 22,
             fontWeight: FontWeight.w400,
@@ -66,7 +68,7 @@ class _VaultScreenState extends State<VaultScreen> {
           IconButton(
             icon: const Icon(Icons.sync_rounded, color: AppColors.primary),
             onPressed: () {},
-            tooltip: 'Synchroniser',
+            tooltip: AppStrings.of(context).tr('Synchroniser', 'Sync'),
           ),
         ],
       ),
@@ -95,13 +97,15 @@ class _VaultScreenState extends State<VaultScreen> {
   }
 
   Widget _buildFilterRow() {
+    final strings = AppStrings.of(context);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
       child: Row(
         children: [
-          _filterChip(null, 'Tous'),
-          ...DocumentType.values.map((t) => _filterChip(t, t.label)),
+          _filterChip(null, strings.tr('Tous', 'All')),
+          ...DocumentType.values
+              .map((t) => _filterChip(t, _localizedDocTypeLabel(t))),
         ],
       ),
     );
@@ -274,7 +278,22 @@ class _VaultScreenState extends State<VaultScreen> {
     }
   }
 
-  String _typeLabel(DocumentType? type) => type?.label ?? 'Document';
+  String _typeLabel(DocumentType? type) => _localizedDocTypeLabel(type);
+
+  String _localizedDocTypeLabel(DocumentType? type) {
+    if (type == null) return 'Document';
+    final strings = AppStrings.of(context);
+    switch (type) {
+      case DocumentType.diploma:
+        return strings.diplomaLabel;
+      case DocumentType.transcript:
+        return strings.transcriptLabel;
+      case DocumentType.certificate:
+        return strings.certificateLabel;
+      case DocumentType.attestation:
+        return strings.attestationLabel;
+    }
+  }
 
   Color _typeColor(DocumentType? type) => type?.color ?? AppColors.primary;
 
@@ -308,7 +327,7 @@ class _VaultScreenState extends State<VaultScreen> {
               size: 60, color: AppColors.border),
           const SizedBox(height: 16),
           Text(
-            'Aucun document',
+            AppStrings.of(context).tr('Aucun document', 'No documents'),
             style: GoogleFonts.dmSans(
               fontSize: 16,
               color: AppColors.textSecondary,

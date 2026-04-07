@@ -23,6 +23,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../l10n/app_strings.dart';
+import '../../../l10n/language_toggle.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -38,7 +40,7 @@ const _amber = Color(0xFFBA7517);
 const _amberLight = Color(0xFFFAEEDA);
 
 const _kApiBase = String.fromEnvironment('API_BASE_URL',
-    defaultValue: 'https://api.diplomax.cm/v1');
+    defaultValue: 'https://diplomax-backend.onrender.com/v1');
 
 const _sto = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
@@ -144,11 +146,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String get _lockoutMessage {
     if (_lockoutUntil == null) return '';
     final remaining = _lockoutUntil!.difference(DateTime.now()).inSeconds;
-    return 'Too many failed attempts. Try again in ${remaining}s.';
+    return AppStrings.of(context).tr(
+      'Trop de tentatives echouees. Reessayez dans ${remaining}s.',
+      'Too many failed attempts. Try again in ${remaining}s.',
+    );
   }
 
   // ── Submit login ───────────────────────────────────────────────────────────
   Future<void> _login() async {
+    final strings = AppStrings.of(context);
     if (_isLockedOut) {
       setState(() => _errorMsg = _lockoutMessage);
       return;
@@ -208,17 +214,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       String msg;
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout) {
-        msg = 'Connection timed out. Check your internet connection.';
+        msg = strings.connectionTimeout;
       } else if (e.response?.statusCode == 401) {
         msg = _failedAttempts >= 4
-            ? 'Incorrect matricule or password. ${5 - _failedAttempts} attempt(s) remaining before lockout.'
-            : 'Incorrect matricule or password.';
+            ? '${strings.invalidCredentials} ${5 - _failedAttempts} attempt(s) remaining before lockout.'
+            : strings.invalidCredentials;
       } else if (e.response?.statusCode == 403) {
-        msg = 'Your account has been deactivated. Contact your university.';
+        msg = strings.accountDeactivated;
       } else if (e.response?.statusCode == 429) {
-        msg = 'Too many attempts. Please wait before trying again.';
+        msg = strings.tooManyAttempts;
       } else {
-        msg = 'Could not connect to the server. Please try again.';
+        msg = strings.connectionFailed;
       }
       setState(() => _errorMsg = msg);
     } finally {
@@ -281,18 +287,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Text('Diplomax CM',
               style:
                   GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
-          Text('Student Portal',
+          Text(AppStrings.of(context).studentPortal,
               style: GoogleFonts.dmSans(
                   fontSize: 12, color: _textSec, fontWeight: FontWeight.w300)),
         ]),
+        const Spacer(),
+        const LanguageToggleButton(compact: true),
       ]);
 
   Widget _buildTitle() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Welcome back',
+        Text(AppStrings.of(context).welcomeBack,
             style: GoogleFonts.instrumentSerif(fontSize: 32, color: _textPri)),
         const SizedBox(height: 6),
-        Text('Enter your university matricule to access your vault.',
+        Text(AppStrings.of(context).loginIntro,
             style: GoogleFonts.dmSans(
                 fontSize: 13,
                 color: _textSec,
@@ -303,7 +311,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildMatriculeField() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _label('University matricule'),
+          _label(AppStrings.of(context).universityMatricule),
           TextFormField(
             controller: _matCtrl,
             textCapitalization: TextCapitalization.characters,
@@ -311,8 +319,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             enabled: !_loading && !_isLockedOut,
             style: GoogleFonts.dmSans(fontSize: 14),
             validator: (v) {
-              if (v == null || v.trim().isEmpty) return 'Enter your matricule';
-              if (v.trim().length < 6) return 'Matricule too short';
+              if (v == null || v.trim().isEmpty) {
+                return AppStrings.of(context).enterYourMatricule;
+              }
+              if (v.trim().length < 6) {
+                return AppStrings.of(context).matriculeTooShort;
+              }
               return null;
             },
             decoration: _fieldDec(
@@ -327,7 +339,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildPasswordField() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _label('Password'),
+          _label(AppStrings.of(context).password),
           TextFormField(
             controller: _passCtrl,
             obscureText: _obscure,
@@ -336,12 +348,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             enabled: !_loading && !_isLockedOut,
             style: GoogleFonts.dmSans(fontSize: 14),
             validator: (v) {
-              if (v == null || v.isEmpty) return 'Enter your password';
-              if (v.length < 6) return 'Password too short';
+              if (v == null || v.isEmpty) {
+                return AppStrings.of(context).enterYourPassword;
+              }
+              if (v.length < 6) {
+                return AppStrings.of(context).passwordTooShort;
+              }
               return null;
             },
             decoration: _fieldDec(
-              hint: 'Your password',
+              hint: AppStrings.of(context).yourPassword,
               icon: Icons.lock_outline_rounded,
               label: null,
             ).copyWith(
@@ -420,7 +436,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   height: 20,
                   child: CircularProgressIndicator(
                       color: Colors.white, strokeWidth: 2))
-              : Text('Sign in',
+              : Text(AppStrings.of(context).signIn,
                   style: GoogleFonts.dmSans(
                       fontSize: 15, fontWeight: FontWeight.w500)),
         ),
@@ -428,14 +444,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Widget _buildHelpText() => Center(
         child: Column(children: [
-          Text('Your credentials are provided by your university.',
+          Text(
+              AppStrings.of(context).tr(
+                  'Vos identifiants sont fournis par votre universite.',
+                  'Your credentials are provided by your university.'),
               textAlign: TextAlign.center,
               style: GoogleFonts.dmSans(
                   fontSize: 12, color: _textHint, fontWeight: FontWeight.w300)),
           const SizedBox(height: 6),
           TextButton(
               onPressed: () => _showForgotPassword(),
-              child: Text('Forgot password?',
+              child: Text(
+                  AppStrings.of(context)
+                      .tr('Mot de passe oublie ?', 'Forgot password?'),
                   style: GoogleFonts.dmSans(fontSize: 13, color: _green))),
         ]),
       );
@@ -443,7 +464,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildInstitutionBadges() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Connected institutions',
+          Text(
+              AppStrings.of(context)
+                  .tr('Institutions connectees', 'Connected institutions'),
               style: GoogleFonts.dmSans(
                   fontSize: 11, color: _textHint, fontWeight: FontWeight.w300)),
           const SizedBox(height: 10),
@@ -533,7 +556,9 @@ class _ForgotPasswordSheet extends StatelessWidget {
               Row(children: [
                 const Icon(Icons.lock_reset_rounded, color: _green, size: 22),
                 const SizedBox(width: 10),
-                Text('Forgot password?',
+                Text(
+                    AppStrings.of(context)
+                        .tr('Mot de passe oublie ?', 'Forgot password?'),
                     style: GoogleFonts.instrumentSerif(
                         fontSize: 20, color: _textPri)),
                 const Spacer(),
@@ -558,24 +583,36 @@ class _ForgotPasswordSheet extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                             child: Text(
-                                'Diplomax does not store passwords independently. '
-                                'Your account is managed by your university. '
-                                'To reset your password, contact your university registrar directly and ask '
-                                'them to reset your Diplomax account using the university app.',
+                                AppStrings.of(context).tr(
+                                    'Diplomax ne stocke pas les mots de passe de maniere independante. '
+                                        'Votre compte est gere par votre universite. '
+                                        'Pour reinitialiser votre mot de passe, contactez directement votre scolarite '
+                                        'et demandez la reinitialisation de votre compte Diplomax via l\'application universite.',
+                                    'Diplomax does not store passwords independently. '
+                                        'Your account is managed by your university. '
+                                        'To reset your password, contact your university registrar directly and ask '
+                                        'them to reset your Diplomax account using the university app.'),
                                 style: GoogleFonts.dmSans(
                                     fontSize: 12,
                                     color: const Color(0xFF185FA5),
                                     height: 1.6))),
                       ])),
               const SizedBox(height: 16),
-              Text('Who to contact:',
+              Text(
+                  AppStrings.of(context)
+                      .tr('Qui contacter :', 'Who to contact:'),
                   style: GoogleFonts.dmSans(
                       fontSize: 13, fontWeight: FontWeight.w500)),
               const SizedBox(height: 10),
               ...[
                 ('ICT University', 'registrar@ictuniversity.cm'),
                 ('ENSP', 'scolarite@ensp.cm'),
-                ('Other', 'Contact your university directly'),
+                (
+                  AppStrings.of(context).tr('Autre', 'Other'),
+                  AppStrings.of(context).tr(
+                      'Contactez directement votre universite',
+                      'Contact your university directly')
+                ),
               ].map((r) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Row(children: [

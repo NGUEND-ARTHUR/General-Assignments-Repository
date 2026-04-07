@@ -27,6 +27,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:math' show sqrt;
+import '../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -39,7 +40,7 @@ const _textSec = Color(0xFFCCCCCC);
 const _textHint = Color(0xFF888888);
 
 const _kApiBase = String.fromEnvironment('API_BASE_URL',
-    defaultValue: 'https://api.diplomax.cm/v1');
+    defaultValue: 'https://diplomax-backend.onrender.com/v1');
 const _sto = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true));
 
@@ -62,15 +63,6 @@ class _Challenge {
   final IconData icon;
   _Challenge(this.instruction, this.axis, this.threshold, this.icon);
 }
-
-final _challenges = [
-  _Challenge('Turn your head slowly to the right', 'y', 0.6,
-      Icons.arrow_forward_rounded),
-  _Challenge(
-      'Turn your head slowly to the left', 'y', 0.6, Icons.arrow_back_rounded),
-  _Challenge(
-      'Nod your head gently downward', 'x', 0.5, Icons.arrow_downward_rounded),
-];
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 class FaceLivenessScreen extends ConsumerStatefulWidget {
@@ -124,9 +116,37 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
   double _accelMag = 9.81;
   StreamSubscription<AccelerometerEvent>? _accelSub;
 
+  List<_Challenge> get _challenges {
+    final strings = AppStrings.of(context);
+    return [
+      _Challenge(
+        strings.tr('Tournez lentement la tete vers la droite',
+            'Turn your head slowly to the right'),
+        'y',
+        0.6,
+        Icons.arrow_forward_rounded,
+      ),
+      _Challenge(
+        strings.tr('Tournez lentement la tete vers la gauche',
+            'Turn your head slowly to the left'),
+        'y',
+        0.6,
+        Icons.arrow_back_rounded,
+      ),
+      _Challenge(
+        strings.tr('Hochez doucement la tete vers le bas',
+            'Nod your head gently downward'),
+        'x',
+        0.5,
+        Icons.arrow_downward_rounded,
+      ),
+    ];
+  }
+
   @override
   void initState() {
     super.initState();
+    _message = AppStrings.of(context).tr('Preparation…', 'Preparing…');
     WidgetsBinding.instance.addObserver(this);
     _pulseCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1500))
@@ -185,14 +205,17 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
         setState(() {
           _camReady = true;
           _phase = _Phase.face_detection;
-          _message = 'Position your face in the circle';
+          _message = AppStrings.of(context).tr(
+              'Placez votre visage dans le cercle',
+              'Position your face in the circle');
         });
         _startFaceDetection();
       }
     } catch (e) {
       setState(() {
         _phase = _Phase.failed;
-        _errorMsg = 'Camera not available: ${e.toString()}';
+        _errorMsg =
+            '${AppStrings.of(context).tr('Camera indisponible', 'Camera not available')}: ${e.toString()}';
       });
     }
   }
@@ -202,8 +225,10 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
     if (_camCtrl == null || !_camReady) return;
     setState(() {
       _phase = _Phase.face_detection;
-      _message = 'Look at the camera';
-      _subMessage = 'Detecting your face…';
+      _message =
+          AppStrings.of(context).tr('Regardez la camera', 'Look at the camera');
+      _subMessage = AppStrings.of(context)
+          .tr('Detection du visage…', 'Detecting your face…');
     });
 
     // Process frames continuously
@@ -223,8 +248,9 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
         if (!mounted) return;
 
         if (faces.isEmpty) {
-          setState(() => _subMessage =
-              'No face detected. Position your face in the circle.');
+          setState(() => _subMessage = AppStrings.of(context).tr(
+              'Aucun visage detecte. Placez votre visage dans le cercle.',
+              'No face detected. Position your face in the circle.'));
           _detectingFace = false;
           return;
         }
@@ -240,21 +266,25 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
 
         // Face must be large enough (close enough to camera)
         if (faceSize < 100) {
-          setState(() => _subMessage = 'Move closer to the camera.');
+          setState(() => _subMessage = AppStrings.of(context).tr(
+              'Rapprochez-vous de la camera.', 'Move closer to the camera.'));
           _detectingFace = false;
           return;
         }
 
         // At least one eye must be open
         if (!leftEyeOpen && !rightEyeOpen) {
-          setState(() => _subMessage = 'Please open your eyes.');
+          setState(() => _subMessage = AppStrings.of(context)
+              .tr('Veuillez ouvrir les yeux.', 'Please open your eyes.'));
           _detectingFace = false;
           return;
         }
 
         // Head must be roughly facing the camera
         if (headX.abs() > 30 || headY.abs() > 30) {
-          setState(() => _subMessage = 'Look straight at the camera.');
+          setState(() => _subMessage = AppStrings.of(context).tr(
+              'Regardez droit vers la camera.',
+              'Look straight at the camera.'));
           _detectingFace = false;
           return;
         }
@@ -263,7 +293,8 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
         await _camCtrl!.stopImageStream();
         setState(() {
           _step1Passed = true;
-          _subMessage = 'Face detected ✓';
+          _subMessage =
+              AppStrings.of(context).tr('Visage detecte ✓', 'Face detected ✓');
         });
 
         await Future.delayed(const Duration(milliseconds: 500));
@@ -304,7 +335,8 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
       _phase = _Phase.movement_challenge;
       _challengeIdx = 0;
       _message = _challenges[0].instruction;
-      _subMessage = 'Natural, relaxed movement';
+      _subMessage = AppStrings.of(context)
+          .tr('Mouvement naturel et detendu', 'Natural, relaxed movement');
     });
     _runNextChallenge();
   }
@@ -366,8 +398,9 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
     if (!passed) {
       setState(() {
         _phase = _Phase.failed;
-        _errorMsg =
-            'Movement not detected for: "${challenge.instruction}". Please try again.';
+        _errorMsg = AppStrings.of(context).tr(
+            'Mouvement non detecte pour : "${challenge.instruction}". Veuillez reessayer.',
+            'Movement not detected for: "${challenge.instruction}". Please try again.');
       });
       return;
     }
@@ -385,8 +418,9 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
     if (_camCtrl == null) return;
     setState(() {
       _phase = _Phase.capturing;
-      _message = 'Hold still…';
-      _subMessage = 'Taking your photo';
+      _message = AppStrings.of(context).tr('Ne bougez pas…', 'Hold still…');
+      _subMessage =
+          AppStrings.of(context).tr('Prise de photo', 'Taking your photo');
     });
 
     await Future.delayed(const Duration(milliseconds: 800));
@@ -398,8 +432,10 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
 
       setState(() {
         _phase = _Phase.matching;
-        _message = 'Verifying…';
-        _subMessage = 'Comparing with your profile photo';
+        _message = AppStrings.of(context).tr('Verification…', 'Verifying…');
+        _subMessage = AppStrings.of(context).tr(
+            'Comparaison avec votre photo de profil',
+            'Comparing with your profile photo');
       });
 
       // Send to server for face match
@@ -428,28 +464,33 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
           _step2Passed = true;
           _step3Passed = true;
           _phase = _Phase.passed;
-          _message = 'Identity confirmed!';
-          _subMessage = 'All checks passed';
+          _message = AppStrings.of(context)
+              .tr('Identite confirmee !', 'Identity confirmed!');
+          _subMessage = AppStrings.of(context).tr(
+              'Toutes les verifications sont validees', 'All checks passed');
         });
         await Future.delayed(const Duration(milliseconds: 1200));
         widget.onVerified();
       } else if (!real) {
         setState(() {
           _phase = _Phase.failed;
-          _errorMsg =
-              'Real face not detected. Ensure good lighting and look directly at the camera.';
+          _errorMsg = AppStrings.of(context).tr(
+              'Visage reel non detecte. Assurez un bon eclairage et regardez directement la camera.',
+              'Real face not detected. Ensure good lighting and look directly at the camera.');
         });
       } else {
         setState(() {
           _phase = _Phase.failed;
-          _errorMsg =
-              'Face does not match the diploma holder\'s profile. Verification denied.';
+          _errorMsg = AppStrings.of(context).tr(
+              'Le visage ne correspond pas au profil du titulaire du diplome. Verification refusee.',
+              'Face does not match the diploma holder\'s profile. Verification denied.');
         });
       }
     } catch (e) {
       setState(() {
         _phase = _Phase.failed;
-        _errorMsg = 'Verification failed: ${e.toString()}';
+        _errorMsg =
+            '${AppStrings.of(context).tr('Echec de verification', 'Verification failed')}: ${e.toString()}';
       });
     }
   }
@@ -486,7 +527,9 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
             child: const Icon(Icons.close_rounded,
                 color: Colors.white54, size: 22)),
         const SizedBox(width: 12),
-        Text('Identity verification',
+        Text(
+            AppStrings.of(context)
+                .tr('Verification d\'identite', 'Identity verification'),
             style: GoogleFonts.instrumentSerif(fontSize: 18, color: _textPri)),
       ]));
 
@@ -574,12 +617,17 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
 
   Widget _buildSteps() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        _stepDot(1, _step1Passed, _phase == _Phase.face_detection, 'Face'),
+        _stepDot(1, _step1Passed, _phase == _Phase.face_detection,
+            AppStrings.of(context).tr('Visage', 'Face')),
         _stepLine(_step1Passed),
-        _stepDot(2, _step2Passed, _phase == _Phase.movement_challenge, 'Move'),
+        _stepDot(2, _step2Passed, _phase == _Phase.movement_challenge,
+            AppStrings.of(context).tr('Mouvement', 'Move')),
         _stepLine(_step2Passed),
-        _stepDot(3, _step3Passed,
-            _phase == _Phase.capturing || _phase == _Phase.matching, 'Match'),
+        _stepDot(
+            3,
+            _step3Passed,
+            _phase == _Phase.capturing || _phase == _Phase.matching,
+            AppStrings.of(context).tr('Correspondance', 'Match')),
       ]);
 
   Widget _stepDot(int n, bool done, bool active, String label) {
@@ -659,7 +707,8 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
                   valueColor: const AlwaysStoppedAnimation<Color>(_amber),
                   minHeight: 6)),
           const SizedBox(height: 6),
-          Text('Movement detected: ${(_gyroMag * 10).toStringAsFixed(1)} / 10',
+          Text(
+              '${AppStrings.of(context).tr('Mouvement detecte', 'Movement detected')}: ${(_gyroMag * 10).toStringAsFixed(1)} / 10',
               style: GoogleFonts.dmSans(fontSize: 11, color: Colors.white38)),
         ],
         // Challenge dots
@@ -703,7 +752,8 @@ class _FLS extends ConsumerState<FaceLivenessScreen>
               width: double.infinity,
               child: ElevatedButton.icon(
                   icon: const Icon(Icons.refresh_rounded, size: 18),
-                  label: const Text('Try again'),
+                  label:
+                      Text(AppStrings.of(context).tr('Reessayer', 'Try again')),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: _green,
                       foregroundColor: Colors.white,

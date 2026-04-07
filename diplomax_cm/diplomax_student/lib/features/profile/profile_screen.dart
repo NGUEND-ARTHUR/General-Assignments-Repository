@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../core/app_colors.dart';
 import '../../core/api/student_documents_api.dart';
+import '../../l10n/app_strings.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -23,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _docsApi = StudentDocumentsApi.instance;
   int _docsCount = 0;
   bool _loading = true;
-  String _fullName = 'Étudiant';
+  String _fullName = 'Etudiant';
   String _matricule = '—';
   List<Map<String, dynamic>> _universities = const [];
 
@@ -68,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _fullName = (storedName != null && storedName.trim().isNotEmpty)
             ? storedName.trim()
-            : 'Étudiant';
+            : 'Etudiant';
         _matricule = (storedMat != null && storedMat.trim().isNotEmpty)
             ? storedMat.trim()
             : '—';
@@ -81,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _fullName = (storedName != null && storedName.trim().isNotEmpty)
             ? storedName.trim()
-            : 'Étudiant';
+            : 'Etudiant';
         _matricule = (storedMat != null && storedMat.trim().isNotEmpty)
             ? storedMat.trim()
             : '—';
@@ -105,16 +106,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/home')),
-        title: Text('Mon profil',
+        title: Text(strings.tr('Mon profil', 'My profile'),
             style: GoogleFonts.instrumentSerif(fontSize: 20)),
         actions: [
           TextButton(
             onPressed: () => context.go('/login'),
-            child: Text('Déconnexion',
+            child: Text(strings.logout,
                 style:
                     GoogleFonts.dmSans(color: AppColors.error, fontSize: 13)),
           ),
@@ -152,12 +154,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // Info card
             _card(
-              title: 'Informations personnelles',
+              title: strings.tr(
+                  'Informations personnelles', 'Personal information'),
               children: [
-                _row(Icons.badge_rounded, 'Matricule', _matricule),
-                _row(Icons.person_rounded, 'Nom complet', _fullName),
-                _row(Icons.info_outline_rounded, 'Statut',
-                    _loading ? 'Chargement...' : 'Compte actif'),
+                _row(Icons.badge_rounded, strings.tr('Matricule', 'Matricule'),
+                    _matricule),
+                _row(Icons.person_rounded,
+                    strings.tr('Nom complet', 'Full name'), _fullName),
+                _row(
+                    Icons.info_outline_rounded,
+                    strings.tr('Statut', 'Status'),
+                    _loading
+                        ? strings.tr('Chargement...', 'Loading...')
+                        : strings.tr('Compte actif', 'Active account')),
               ],
             ),
 
@@ -165,11 +174,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // Security
             _card(
-              title: 'Sécurité',
+              title: strings.tr('Securite', 'Security'),
               children: [
-                _toggle('Biométrie', Icons.fingerprint_rounded, true),
-                _toggle('Reconnaissance faciale', Icons.face_rounded, false),
-                _toggle('Notifications de partage', Icons.notifications_rounded,
+                _toggle(strings.tr('Biometrie', 'Biometrics'),
+                    Icons.fingerprint_rounded, true),
+                _toggle(
+                    strings.tr('Reconnaissance faciale', 'Face recognition'),
+                    Icons.face_rounded,
+                    false),
+                _toggle(
+                    strings.tr(
+                        'Notifications de partage', 'Share notifications'),
+                    Icons.notifications_rounded,
                     true),
               ],
             ),
@@ -178,13 +194,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // Universities
             _card(
-              title: 'Universités disponibles',
+              title: strings.tr(
+                  'Universites disponibles', 'Available universities'),
               children: _universities.isEmpty
                   ? [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
-                          'Aucune université détectée depuis vos documents.',
+                          strings.tr(
+                              'Aucune universite detectee depuis vos documents.',
+                              'No university detected from your documents.'),
                           style: GoogleFonts.dmSans(
                               fontSize: 12, color: AppColors.textHint),
                         ),
@@ -198,11 +217,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Stats
             Row(
               children: [
-                _statCard('$_docsCount', 'Documents', AppColors.primary),
+                _statCard('$_docsCount', strings.documents, AppColors.primary),
                 const SizedBox(width: 10),
-                _statCard('3', 'Partages', AppColors.info),
+                _statCard(
+                    '3', strings.tr('Partages', 'Shares'), AppColors.info),
                 const SizedBox(width: 10),
-                _statCard('0', 'Alertes', AppColors.error),
+                _statCard(
+                    '0', strings.tr('Alertes', 'Alerts'), AppColors.error),
               ],
             ),
 
@@ -272,7 +293,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(label, style: GoogleFonts.dmSans(fontSize: 13)),
           const Spacer(),
           Switch(
-              value: value, activeThumbColor: AppColors.primary, onChanged: (_) {}),
+              value: value,
+              activeThumbColor: AppColors.primary,
+              onChanged: (_) {}),
         ],
       ),
     );

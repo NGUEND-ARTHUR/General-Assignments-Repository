@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/app_colors.dart';
 import '../../core/api/api_client.dart';
+import '../../l10n/app_strings.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String? initialProduct;
@@ -21,8 +22,8 @@ class _PaymentState extends State<PaymentScreen> {
   String _statusMessage = '';
 
   final _amounts = [
-    const _Product('Certification numérique', 500, 'Attestation officielle Diplomax',
-        Icons.verified_rounded),
+    const _Product('Certification numérique', 500,
+        'Attestation officielle Diplomax', Icons.verified_rounded),
     const _Product('Relevé officiel', 1000, 'Relevé de notes certifié MINESUP',
         Icons.description_rounded),
     const _Product('Dossier complet', 2500, 'Tous vos documents certifiés',
@@ -58,7 +59,8 @@ class _PaymentState extends State<PaymentScreen> {
     setState(() {
       _processing = true;
       _paymentError = null;
-      _statusMessage = 'Initialisation du paiement...';
+      _statusMessage = AppStrings.of(context)
+          .tr('Initialisation du paiement...', 'Initializing payment...');
     });
 
     try {
@@ -89,15 +91,18 @@ class _PaymentState extends State<PaymentScreen> {
         if (paid) {
           _step = _PayStep.success;
         } else {
-          _paymentError =
-              'Paiement en attente ou échoué. Vérifiez votre téléphone puis réessayez.';
+          _paymentError = AppStrings.of(context).tr(
+              'Paiement en attente ou échoué. Vérifiez votre téléphone puis réessayez.',
+              'Payment pending or failed. Check your phone and try again.');
         }
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _processing = false;
-        _paymentError = 'Paiement impossible: ${e.toString()}';
+        _paymentError = AppStrings.of(context)
+                .tr('Paiement impossible: ', 'Payment failed: ') +
+            e.toString();
       });
     }
   }
@@ -109,7 +114,9 @@ class _PaymentState extends State<PaymentScreen> {
     for (int attempt = 1; attempt <= 12; attempt++) {
       if (!mounted) return false;
       setState(() {
-        _statusMessage = 'Vérification du statut ($attempt/12)...';
+        _statusMessage = AppStrings.of(context)
+                .tr('Vérification du statut', 'Checking status') +
+            ' ($attempt/12)...';
       });
 
       final response = await _api.dio.get(
@@ -154,7 +161,9 @@ class _PaymentState extends State<PaymentScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/home')),
-        title: Text('Paiement Mobile Money',
+        title: Text(
+            AppStrings.of(context)
+                .tr('Paiement Mobile Money', 'Mobile Money Payment'),
             style: GoogleFonts.instrumentSerif(fontSize: 22)),
       ),
       body: _step == _PayStep.success
@@ -164,11 +173,13 @@ class _PaymentState extends State<PaymentScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _sectionTitle('Choisir un service'),
+                  _sectionTitle(AppStrings.of(context)
+                      .tr('Choisir un service', 'Choose a service')),
                   const SizedBox(height: 10),
                   ..._amounts.map(_productTile),
                   const SizedBox(height: 20),
-                  _sectionTitle('Opérateur Mobile Money'),
+                  _sectionTitle(AppStrings.of(context)
+                      .tr('Opérateur Mobile Money', 'Mobile Money Operator')),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -178,7 +189,8 @@ class _PaymentState extends State<PaymentScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  _sectionTitle('Numéro de téléphone'),
+                  _sectionTitle(AppStrings.of(context)
+                      .tr('Numéro de téléphone', 'Phone number')),
                   const SizedBox(height: 8),
                   TextField(
                     keyboardType: TextInputType.phone,
@@ -226,7 +238,8 @@ class _PaymentState extends State<PaymentScreen> {
                               const Icon(Icons.lock_rounded, size: 16),
                               const SizedBox(width: 8),
                               Text(
-                                  'Payer ${_selectedProduct != null ? "${_selectedProduct!.price} FCFA" : ""}',
+                                  AppStrings.of(context).tr('Payer', 'Pay') +
+                                      ' ${_selectedProduct != null ? "${_selectedProduct!.price} FCFA" : ""}',
                                   style: GoogleFonts.dmSans(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 15)),
@@ -266,7 +279,9 @@ class _PaymentState extends State<PaymentScreen> {
                   const SizedBox(height: 12),
                   Center(
                     child: Text(
-                      'Paiement sécurisé · Reçu envoyé par SMS',
+                      AppStrings.of(context).tr(
+                          'Paiement sécurisé · Reçu envoyé par SMS',
+                          'Secure payment · Receipt sent by SMS'),
                       style: GoogleFonts.dmSans(
                           fontSize: 11, color: AppColors.textHint),
                     ),
@@ -368,7 +383,11 @@ class _PaymentState extends State<PaymentScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(isMtn ? 'MTN MoMo' : 'Orange Money',
+              Text(
+                  isMtn
+                      ? AppStrings.of(context).tr('MTN MoMo', 'MTN MoMo')
+                      : AppStrings.of(context)
+                          .tr('Orange Money', 'Orange Money'),
                   style: GoogleFonts.dmSans(
                       fontSize: 12, fontWeight: FontWeight.w500)),
             ],
@@ -392,18 +411,32 @@ class _PaymentState extends State<PaymentScreen> {
           _sumRow('Montant', '${_selectedProduct!.price} FCFA'),
           if (_phone.isNotEmpty) _sumRow('Numéro', '+237 $_phone'),
           if (_provider != null)
-            _sumRow('Opérateur',
-                _provider == _Provider.mtn ? 'MTN MoMo' : 'Orange Money'),
+            _sumRow(
+                'Opérateur',
+                _provider == _Provider.mtn
+                    ? AppStrings.of(context).tr('MTN MoMo', 'MTN MoMo')
+                    : AppStrings.of(context)
+                        .tr('Orange Money', 'Orange Money')),
         ],
       ),
     );
+  }
+
+  String _localizeLabel(String key) {
+    final labels = {
+      'Service': AppStrings.of(context).tr('Service', 'Service'),
+      'Montant': AppStrings.of(context).tr('Montant', 'Amount'),
+      'Numéro': AppStrings.of(context).tr('Numéro', 'Number'),
+      'Opérateur': AppStrings.of(context).tr('Opérateur', 'Operator'),
+    };
+    return labels[key] ?? key;
   }
 
   Widget _sumRow(String k, String v) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           children: [
-            Text(k,
+            Text(_localizeLabel(k),
                 style: GoogleFonts.dmSans(
                     fontSize: 12, color: AppColors.textSecondary)),
             const Spacer(),
@@ -430,11 +463,15 @@ class _PaymentState extends State<PaymentScreen> {
                   color: AppColors.primary, size: 56),
             ),
             const SizedBox(height: 28),
-            Text('Paiement réussi !',
+            Text(
+                AppStrings.of(context)
+                    .tr('Paiement réussi !', 'Payment successful!'),
                 style: GoogleFonts.instrumentSerif(fontSize: 32)),
             const SizedBox(height: 10),
             Text(
-              'Votre certificat numérique a été ajouté à votre coffre-fort.\nUn reçu a été envoyé par SMS.',
+              AppStrings.of(context).tr(
+                  'Votre certificat numérique a été ajouté à votre coffre-fort.\nUn reçu a été envoyé par SMS.',
+                  'Your digital certificate has been added to your vault.\nA receipt was sent by SMS.'),
               textAlign: TextAlign.center,
               style: GoogleFonts.dmSans(
                   fontSize: 14,
@@ -445,12 +482,15 @@ class _PaymentState extends State<PaymentScreen> {
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () => context.go('/home/vault'),
-              child: const Text('Voir mes documents'),
+              child: Text(AppStrings.of(context)
+                  .tr('Voir mes documents', 'View my documents')),
             ),
             const SizedBox(height: 10),
             TextButton(
               onPressed: () => context.go('/home'),
-              child: Text('Retour à l\'accueil',
+              child: Text(
+                  AppStrings.of(context)
+                      .tr('Retour à l\'accueil', 'Return home'),
                   style: GoogleFonts.dmSans(color: AppColors.textSecondary)),
             ),
           ],

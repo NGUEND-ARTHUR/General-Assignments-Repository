@@ -3,6 +3,7 @@
 // GREEN = Authentic & Valid | YELLOW = Revoked/Expired | RED = Fake/Tampered
 // ═══════════════════════════════════════════════════════════════════════════
 import "package:flutter/material.dart";
+import "package:flutter_localizations/flutter_localizations.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
 import "package:google_fonts/google_fonts.dart";
@@ -10,6 +11,10 @@ import "package:mobile_scanner/mobile_scanner.dart";
 import "package:dio/dio.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
 import "package:url_launcher/url_launcher.dart";
+
+import 'l10n/app_locale_controller.dart';
+import 'l10n/app_strings.dart';
+import 'l10n/language_toggle.dart';
 
 const _G = Color(0xFF0F6E56);
 const _GL = Color(0xFFE1F5EE);
@@ -27,7 +32,7 @@ const _T2 = Color(0xFF6B6B6B);
 const _TH = Color(0xFFAAAAAA);
 
 const _API = String.fromEnvironment("API_BASE_URL",
-    defaultValue: "https://api.diplomax.cm/v1");
+    defaultValue: "https://diplomax-backend.onrender.com/v1");
 const _sto = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true));
 
@@ -56,16 +61,24 @@ extension VSX on VStatus {
       : this == VStatus.yellow
           ? Icons.warning_amber_rounded
           : Icons.cancel_rounded;
-  String get label => this == VStatus.green
-      ? "AUTHENTIC & VALID"
+
+  String label(BuildContext context) => this == VStatus.green
+      ? AppStrings.of(context).tr('AUTHENTIQUE & VALIDE', 'AUTHENTIC & VALID')
       : this == VStatus.yellow
-          ? "REVOKED / EXPIRED"
-          : "FAKE OR TAMPERED";
-  String get desc => this == VStatus.green
-      ? "Hash matches blockchain. Document is authentic."
+          ? AppStrings.of(context).tr('REVOQUE / EXPIRE', 'REVOKED / EXPIRED')
+          : AppStrings.of(context).tr('FAUX OU ALTERE', 'FAKE OR TAMPERED');
+
+  String desc(BuildContext context) => this == VStatus.green
+      ? AppStrings.of(context).tr(
+          'Le hash correspond a la blockchain. Le document est authentique.',
+          'Hash matches blockchain. Document is authentic.')
       : this == VStatus.yellow
-          ? "This document has been revoked. Do not accept."
-          : "Hash mismatch. Possible forgery or tampering.";
+          ? AppStrings.of(context).tr(
+              'Ce document a ete revoque. Ne pas accepter.',
+              'This document has been revoked. Do not accept.')
+          : AppStrings.of(context).tr(
+              'Incoherence du hash. Possible falsification ou alteration.',
+              'Hash mismatch. Possible forgery or tampering.');
 }
 
 final _router = GoRouter(initialLocation: "/login", routes: [
@@ -80,27 +93,43 @@ final _router = GoRouter(initialLocation: "/login", routes: [
       path: "/subscription", builder: (_, __) => const SubscriptionScreen()),
 ]);
 
-void main() => runApp(const ProviderScope(child: RecruiterApp()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final localeController = AppLocaleController();
+  await localeController.load();
+  runApp(ProviderScope(
+    overrides: [
+      appLocaleControllerProvider.overrideWith((ref) => localeController)
+    ],
+    child: const RecruiterApp(),
+  ));
+}
 
-class RecruiterApp extends StatelessWidget {
+class RecruiterApp extends ConsumerWidget {
   const RecruiterApp({super.key});
   @override
-  Widget build(BuildContext ctx) => MaterialApp.router(
-      title: "Diplomax CM",
-      debugShowCheckedModeBanner: false,
-      routerConfig: _router,
-      theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: _G),
-          textTheme: GoogleFonts.dmSansTextTheme(),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: _G,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  elevation: 0))));
+  Widget build(BuildContext ctx, WidgetRef ref) {
+    final controller = ref.watch(appLocaleControllerProvider);
+    return MaterialApp.router(
+        onGenerateTitle: (context) => AppStrings.of(context).appName,
+        debugShowCheckedModeBanner: false,
+        routerConfig: _router,
+        locale: controller.locale,
+        supportedLocales: AppStrings.supportedLocales,
+        localizationsDelegates: AppStrings.localizationsDelegates,
+        theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(seedColor: _G),
+            textTheme: GoogleFonts.dmSansTextTheme(),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: _G,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    elevation: 0))));
+  }
 }
 
 // LOGIN
@@ -135,116 +164,129 @@ class _LS extends State<LoginScreen> {
       if (mounted) context.go("/dashboard");
     } on DioException catch (e) {
       setState(() => _err = e.response?.statusCode == 401
-          ? "Invalid credentials"
-          : "Connection failed");
+          ? "invalid_credentials"
+          : "connection_failed");
     } finally {
       setState(() => _load = false);
     }
   }
 
   @override
-  Widget build(BuildContext ctx) => Scaffold(
-      backgroundColor: _BG,
-      body: SafeArea(
-          child: Center(
-              child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 440),
-                  child: Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(children: [
-                              Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                      color: _G,
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: const Icon(
-                                      Icons.business_center_rounded,
-                                      color: Colors.white,
-                                      size: 24)),
-                              const SizedBox(width: 12),
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Diplomax CM",
-                                        style: GoogleFonts.instrumentSerif(
-                                            fontSize: 18)),
-                                    Text("Recruiter Portal",
+  Widget build(BuildContext ctx) {
+    final strings = AppStrings.of(ctx);
+    final errorText = _err == null
+        ? null
+        : _err == 'invalid_credentials'
+            ? strings.invalidCredentials
+            : strings.connectionFailed;
+    return Scaffold(
+        backgroundColor: _BG,
+        body: SafeArea(
+            child: Center(
+                child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 440),
+                    child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(children: [
+                                Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                        color: _G,
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    child: const Icon(
+                                        Icons.business_center_rounded,
+                                        color: Colors.white,
+                                        size: 24)),
+                                const SizedBox(width: 12),
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(AppStrings.of(ctx).appName,
+                                          style: GoogleFonts.instrumentSerif(
+                                              fontSize: 18)),
+                                      Text(strings.recruiterPortal,
+                                          style: GoogleFonts.dmSans(
+                                              fontSize: 11, color: _T2))
+                                    ]),
+                                const Spacer(),
+                                const LanguageToggleButton(compact: true)
+                              ]),
+                              const SizedBox(height: 40),
+                              Text(strings.signIn,
+                                  style: GoogleFonts.instrumentSerif(
+                                      fontSize: 30, color: _T1)),
+                              const SizedBox(height: 28),
+                              TextField(
+                                  controller: _em,
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: _d(strings.companyEmail,
+                                      Icons.email_outlined)),
+                              const SizedBox(height: 14),
+                              TextField(
+                                  controller: _pw,
+                                  obscureText: _obs,
+                                  onSubmitted: (_) => _login(),
+                                  decoration: _d(strings.password,
+                                          Icons.lock_outline_rounded)
+                                      .copyWith(
+                                          suffixIcon: IconButton(
+                                              icon: Icon(
+                                                  _obs
+                                                      ? Icons.visibility_rounded
+                                                      : Icons
+                                                          .visibility_off_rounded,
+                                                  size: 18,
+                                                  color: _TH),
+                                              onPressed: () => setState(
+                                                  () => _obs = !_obs)))),
+                              if (_err != null) ...[
+                                const SizedBox(height: 12),
+                                Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: _RL,
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: Text(errorText!,
                                         style: GoogleFonts.dmSans(
-                                            fontSize: 11, color: _T2))
-                                  ])
-                            ]),
-                            const SizedBox(height: 40),
-                            Text("Sign in",
-                                style: GoogleFonts.instrumentSerif(
-                                    fontSize: 30, color: _T1)),
-                            const SizedBox(height: 28),
-                            TextField(
-                                controller: _em,
-                                keyboardType: TextInputType.emailAddress,
-                                decoration:
-                                    _d("Company email", Icons.email_outlined)),
-                            const SizedBox(height: 14),
-                            TextField(
-                                controller: _pw,
-                                obscureText: _obs,
-                                onSubmitted: (_) => _login(),
-                                decoration: _d(
-                                        "Password", Icons.lock_outline_rounded)
-                                    .copyWith(
-                                        suffixIcon: IconButton(
-                                            icon: Icon(
-                                                _obs
-                                                    ? Icons.visibility_rounded
-                                                    : Icons
-                                                        .visibility_off_rounded,
-                                                size: 18,
-                                                color: _TH),
-                                            onPressed: () =>
-                                                setState(() => _obs = !_obs)))),
-                            if (_err != null) ...[
-                              const SizedBox(height: 12),
-                              Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: _RL,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Text(_err!,
-                                      style: GoogleFonts.dmSans(
-                                          color: _R, fontSize: 12)))
-                            ],
-                            const SizedBox(height: 20),
-                            ElevatedButton(
-                                onPressed: _load ? null : _login,
-                                child: _load
-                                    ? const SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2))
-                                    : const Text("Sign in")),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("New recruiter?",
-                                    style: GoogleFonts.dmSans(
-                                        fontSize: 12, color: _T2)),
-                                TextButton(
-                                    onPressed: () => context.go("/register"),
-                                    child: Text("Create account",
-                                        style: GoogleFonts.dmSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: _G))),
+                                            color: _R, fontSize: 12)))
                               ],
-                            )
-                          ]))))));
+                              const SizedBox(height: 20),
+                              ElevatedButton(
+                                  onPressed: _load ? null : _login,
+                                  child: _load
+                                      ? const SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2))
+                                      : Text(strings.signIn)),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(strings.newRecruiter,
+                                      style: GoogleFonts.dmSans(
+                                          fontSize: 12, color: _T2)),
+                                  TextButton(
+                                      onPressed: () => context.go("/register"),
+                                      child: Text(strings.createAccount,
+                                          style: GoogleFonts.dmSans(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: _G))),
+                                ],
+                              )
+                            ]))))));
+  }
+
   InputDecoration _d(String h, IconData i) => InputDecoration(
       hintText: h,
       hintStyle: const TextStyle(color: _TH, fontSize: 13),
@@ -376,7 +418,7 @@ class _RS extends State<RegisterScreen> {
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: BackButton(onPressed: () => context.go("/login")),
-          title: Text("Create recruiter account",
+          title: Text(AppStrings.of(context).createRecruiterAccount,
               style: GoogleFonts.instrumentSerif(fontSize: 20))),
       body: SafeArea(
           child: Center(
@@ -394,32 +436,35 @@ class _RS extends State<RegisterScreen> {
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
                                         color: _G.withOpacity(0.25))),
-                                child: Text(
-                                    "Self-registration is instant. Free tier includes 5 verifications/month.",
+                                child: Text(AppStrings.of(context).freeTierInfo,
                                     style: GoogleFonts.dmSans(
                                         fontSize: 12, color: _G, height: 1.4))),
                             const SizedBox(height: 18),
                             TextField(
                                 controller: _company,
-                                decoration:
-                                    _d("Company name", Icons.business_rounded)),
+                                decoration: _d(
+                                    AppStrings.of(context).companyName,
+                                    Icons.business_rounded)),
                             const SizedBox(height: 12),
                             TextField(
                                 controller: _email,
                                 keyboardType: TextInputType.emailAddress,
-                                decoration:
-                                    _d("Company email", Icons.email_outlined)),
+                                decoration: _d(
+                                    AppStrings.of(context).companyEmail,
+                                    Icons.email_outlined)),
                             const SizedBox(height: 12),
                             TextField(
                                 controller: _phone,
                                 keyboardType: TextInputType.phone,
                                 decoration: _d(
-                                    "Phone (optional)", Icons.phone_rounded)),
+                                    AppStrings.of(context).phoneOptional,
+                                    Icons.phone_rounded)),
                             const SizedBox(height: 12),
                             TextField(
                                 controller: _password,
                                 obscureText: _obs1,
-                                decoration: _d("Password", Icons.lock_rounded)
+                                decoration: _d(AppStrings.of(context).password,
+                                        Icons.lock_rounded)
                                     .copyWith(
                                         suffixIcon: IconButton(
                                             onPressed: () =>
@@ -435,7 +480,9 @@ class _RS extends State<RegisterScreen> {
                                 controller: _confirm,
                                 obscureText: _obs2,
                                 onSubmitted: (_) => _register(),
-                                decoration: _d("Confirm password", Icons.lock)
+                                decoration: _d(
+                                        AppStrings.of(context).confirmPassword,
+                                        Icons.lock)
                                     .copyWith(
                                         suffixIcon: IconButton(
                                             onPressed: () =>
@@ -469,7 +516,8 @@ class _RS extends State<RegisterScreen> {
                                         child: CircularProgressIndicator(
                                             color: Colors.white,
                                             strokeWidth: 2))
-                                    : const Text("Create account")),
+                                    : Text(
+                                        AppStrings.of(context).createAccount)),
                           ]))))));
 }
 
@@ -503,149 +551,187 @@ class _DS extends State<DashboardScreen> {
   }
 
   @override
-  Widget build(BuildContext ctx) => Scaffold(
-      backgroundColor: _BG,
-      appBar: AppBar(
-          backgroundColor: _SUR,
-          elevation: 0,
-          title: Row(children: [
-            Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                    color: _G, borderRadius: BorderRadius.circular(8)),
-                child: const Icon(Icons.school_rounded,
-                    color: Colors.white, size: 16)),
-            const SizedBox(width: 8),
-            Text("Diplomax CM",
-                style: GoogleFonts.dmSans(
-                    fontSize: 14, fontWeight: FontWeight.w500))
-          ]),
-          actions: [
-            TextButton.icon(
-                icon: const Icon(Icons.qr_code_scanner_rounded,
-                    size: 18, color: _G),
-                label: Text("Scan",
-                    style: GoogleFonts.dmSans(color: _G, fontSize: 13)),
-                onPressed: () => ctx.go("/scan")),
-            TextButton(
-                onPressed: () async {
-                  await _sto.deleteAll();
-                  if (mounted) ctx.go("/login");
-                },
-                child: Text("Logout",
-                    style: GoogleFonts.dmSans(color: _T2, fontSize: 13)))
-          ]),
-      body: _load
-          ? const Center(child: CircularProgressIndicator(color: _G))
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Dashboard",
-                        style: GoogleFonts.instrumentSerif(
-                            fontSize: 26, color: _T1)),
-                    const SizedBox(height: 20),
-                    Row(children: [
-                      _st("${_data?["total_verifications"] ?? 0}", "Total", _G,
-                          _GL),
-                      const SizedBox(width: 12),
-                      _st("${_data?["successful"] ?? 0}", "Authentic", _G, _GL),
-                      const SizedBox(width: 12),
-                      _st("${_data?["failed"] ?? 0}", "Failed", _R, _RL)
-                    ]),
-                    const SizedBox(height: 12),
-                    Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                            color: _SUR,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: _BD)),
-                        child: Row(children: [
-                          Icon(Icons.card_membership_rounded,
-                              color: (_data?["subscription_active"] == true)
-                                  ? _G
-                                  : _Y,
-                              size: 20),
-                          const SizedBox(width: 10),
-                          Expanded(
-                              child: Text(
-                                  (_data?["subscription_active"] == true)
-                                      ? "Paid plan active: unlimited verifications + PDF exports"
-                                      : "Free plan: ${_data?["free_remaining"] ?? 0}/${_data?["free_monthly_limit"] ?? 5} verifications left this month",
-                                  style: GoogleFonts.dmSans(
-                                      fontSize: 12, color: _T2, height: 1.4))),
-                        ])),
-                    const SizedBox(height: 24),
-                    GridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 1.8,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          _act(Icons.qr_code_scanner_rounded, "Scan QR Code",
-                              _G, () => ctx.go("/scan")),
-                          _act(Icons.nfc_rounded, "Read NFC chip",
-                              const Color(0xFF534AB7), () {}),
-                          _act(Icons.link_rounded, "Verify by link", _B, () {}),
-                          _act(Icons.card_membership_rounded, "Subscription",
-                              _Y, () => ctx.go("/subscription")),
-                        ]),
-                    const SizedBox(height: 24),
-                    Text("Recent verifications",
-                        style: GoogleFonts.dmSans(
-                            fontSize: 15, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 12),
-                    ...((_data?["recent_logs"] as List?) ?? [])
-                        .cast<Map>()
-                        .map((l) {
-                      final ok = l["result"] == true;
-                      return Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          padding: const EdgeInsets.all(14),
+  Widget build(BuildContext ctx) {
+    final strings = AppStrings.of(ctx);
+    return Scaffold(
+        backgroundColor: _BG,
+        appBar: AppBar(
+            backgroundColor: _SUR,
+            elevation: 0,
+            title: Row(children: [
+              Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                      color: _G, borderRadius: BorderRadius.circular(8)),
+                  child: const Icon(Icons.school_rounded,
+                      color: Colors.white, size: 16)),
+              const SizedBox(width: 8),
+              Text(AppStrings.of(ctx).appName,
+                  style: GoogleFonts.dmSans(
+                      fontSize: 14, fontWeight: FontWeight.w500))
+            ]),
+            actions: [
+              const Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: LanguageToggleButton(compact: true),
+              ),
+              TextButton.icon(
+                  icon: const Icon(Icons.qr_code_scanner_rounded,
+                      size: 18, color: _G),
+                  label: Text(AppStrings.of(ctx).scan,
+                      style: GoogleFonts.dmSans(color: _G, fontSize: 13)),
+                  onPressed: () => ctx.go("/scan")),
+              TextButton(
+                  onPressed: () async {
+                    await _sto.deleteAll();
+                    if (mounted) ctx.go("/login");
+                  },
+                  child: Text(AppStrings.of(ctx).logout,
+                      style: GoogleFonts.dmSans(color: _T2, fontSize: 13)))
+            ]),
+        body: _load
+            ? const Center(child: CircularProgressIndicator(color: _G))
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(AppStrings.of(ctx).dashboard,
+                          style: GoogleFonts.instrumentSerif(
+                              fontSize: 26, color: _T1)),
+                      const SizedBox(height: 20),
+                      Row(children: [
+                        _st("${_data?["total_verifications"] ?? 0}",
+                            AppStrings.of(ctx).total, _G, _GL),
+                        const SizedBox(width: 12),
+                        _st("${_data?["successful"] ?? 0}",
+                            AppStrings.of(ctx).authentic, _G, _GL),
+                        const SizedBox(width: 12),
+                        _st("${_data?["failed"] ?? 0}",
+                            AppStrings.of(ctx).failed, _R, _RL)
+                      ]),
+                      const SizedBox(height: 12),
+                      Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                               color: _SUR,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(color: _BD)),
                           child: Row(children: [
-                            Icon(
-                                ok
-                                    ? Icons.check_circle_rounded
-                                    : Icons.cancel_rounded,
-                                color: ok ? _G : _R,
+                            Icon(Icons.card_membership_rounded,
+                                color: (_data?["subscription_active"] == true)
+                                    ? _G
+                                    : _Y,
                                 size: 20),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 10),
                             Expanded(
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                  Text("Method: ${l["method"] ?? ""}",
-                                      style: GoogleFonts.dmSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500)),
-                                  Text(l["verified_at"]?.toString() ?? "",
-                                      style: GoogleFonts.dmSans(
-                                          fontSize: 11, color: _T2))
-                                ])),
-                            Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                    color: ok ? _GL : _RL,
-                                    borderRadius: BorderRadius.circular(6)),
-                                child: Text(ok ? "Authentic" : "Failed",
+                                child: Text(
+                                    (_data?["subscription_active"] == true)
+                                        ? strings.tr(
+                                            'Forfait payant actif : verifications illimitees + export PDF',
+                                            'Paid plan active: unlimited verifications + PDF exports',
+                                          )
+                                        : strings.tr(
+                                            'Forfait gratuit : ${_data?["free_remaining"] ?? 0}/${_data?["free_monthly_limit"] ?? 5} verifications restantes ce mois-ci',
+                                            'Free plan: ${_data?["free_remaining"] ?? 0}/${_data?["free_monthly_limit"] ?? 5} verifications left this month',
+                                          ),
                                     style: GoogleFonts.dmSans(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: ok ? _G : _R)))
-                          ]));
-                    }),
-                  ])));
+                                        fontSize: 12,
+                                        color: _T2,
+                                        height: 1.4))),
+                          ])),
+                      const SizedBox(height: 24),
+                      GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 1.8,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: [
+                            _act(
+                                Icons.qr_code_scanner_rounded,
+                                strings.tr(
+                                    'Scanner le code QR', 'Scan QR Code'),
+                                _G,
+                                () => ctx.go("/scan")),
+                            _act(
+                                Icons.nfc_rounded,
+                                strings.tr('Lire la puce NFC', 'Read NFC chip'),
+                                const Color(0xFF534AB7),
+                                () {}),
+                            _act(
+                                Icons.link_rounded,
+                                strings.tr(
+                                    'Verifier par lien', 'Verify by link'),
+                                _B,
+                                () {}),
+                            _act(
+                                Icons.card_membership_rounded,
+                                strings.tr('Abonnement', 'Subscription'),
+                                _Y,
+                                () => ctx.go("/subscription")),
+                          ]),
+                      const SizedBox(height: 24),
+                      Text(
+                          strings.tr(
+                              'Verifications recentes', 'Recent verifications'),
+                          style: GoogleFonts.dmSans(
+                              fontSize: 15, fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 12),
+                      ...((_data?["recent_logs"] as List?) ?? [])
+                          .cast<Map>()
+                          .map((l) {
+                        final ok = l["result"] == true;
+                        return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                                color: _SUR,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: _BD)),
+                            child: Row(children: [
+                              Icon(
+                                  ok
+                                      ? Icons.check_circle_rounded
+                                      : Icons.cancel_rounded,
+                                  color: ok ? _G : _R,
+                                  size: 20),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                    Text(
+                                        strings.tr('Methode', 'Method') +
+                                            ": ${l["method"] ?? ""}",
+                                        style: GoogleFonts.dmSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500)),
+                                    Text(l["verified_at"]?.toString() ?? "",
+                                        style: GoogleFonts.dmSans(
+                                            fontSize: 11, color: _T2))
+                                  ])),
+                              Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                      color: ok ? _GL : _RL,
+                                      borderRadius: BorderRadius.circular(6)),
+                                  child: Text(
+                                      ok ? strings.authentic : strings.failed,
+                                      style: GoogleFonts.dmSans(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: ok ? _G : _R)))
+                            ]));
+                      }),
+                    ])));
+  }
+
   Widget _st(String v, String l, Color c, Color bg) => Expanded(
       child: Container(
           padding: const EdgeInsets.symmetric(vertical: 18),
@@ -694,59 +780,66 @@ class _ScS extends State<ScanScreen> {
   }
 
   @override
-  Widget build(BuildContext ctx) => Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          leading: BackButton(
-              color: Colors.white, onPressed: () => ctx.go("/dashboard")),
-          title: Text("Scan QR Code",
-              style: GoogleFonts.dmSans(color: Colors.white, fontSize: 16))),
-      body: Stack(children: [
-        MobileScanner(
-            controller: _ctrl,
-            onDetect: (capture) {
-              if (_done) return;
-              final raw = capture.barcodes.firstOrNull?.rawValue;
-              if (raw == null) return;
+  Widget build(BuildContext ctx) {
+    final strings = AppStrings.of(ctx);
+    return Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading: BackButton(
+                color: Colors.white, onPressed: () => ctx.go("/dashboard")),
+            title: Text(strings.tr('Scanner le code QR', 'Scan QR Code'),
+                style: GoogleFonts.dmSans(color: Colors.white, fontSize: 16))),
+        body: Stack(children: [
+          MobileScanner(
+              controller: _ctrl,
+              onDetect: (capture) {
+                if (_done) return;
+                final raw = capture.barcodes.firstOrNull?.rawValue;
+                if (raw == null) return;
 
-              String? token;
-              if (raw.contains("/s/")) {
-                token = raw.split("/s/").last.split("?").first;
-              }
+                String? token;
+                if (raw.contains("/s/")) {
+                  token = raw.split("/s/").last.split("?").first;
+                }
 
-              if (token == null || token.isEmpty || token.length > 128) {
-                ScaffoldMessenger.of(ctx).showSnackBar(
-                  const SnackBar(
-                      content: Text(
-                          "Unsupported QR format. Scan a Diplomax share URL QR.")),
-                );
-                return;
-              }
+                if (token == null || token.isEmpty || token.length > 128) {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    SnackBar(
+                        content: Text(strings.tr(
+                            'Format QR non pris en charge. Scannez un QR de partage Diplomax.',
+                            'Unsupported QR format. Scan a Diplomax share URL QR.'))),
+                  );
+                  return;
+                }
 
-              setState(() => _done = true);
-              _ctrl.stop();
-              ctx.go("/verify/$token");
-            }),
-        Center(
-            child: Container(
-                width: 260,
-                height: 260,
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.white.withOpacity(0.3), width: 1),
-                    borderRadius: BorderRadius.circular(20)),
-                child: Stack(children: [
-                  _c(true, true),
-                  _c(true, false),
-                  _c(false, true),
-                  _c(false, false),
-                  Center(
-                      child: Text("Point at QR Code",
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white38, fontSize: 13)))
-                ]))),
-      ]));
+                setState(() => _done = true);
+                _ctrl.stop();
+                ctx.go("/verify/$token");
+              }),
+          Center(
+              child: Container(
+                  width: 260,
+                  height: 260,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Colors.white.withOpacity(0.3), width: 1),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Stack(children: [
+                    _c(true, true),
+                    _c(true, false),
+                    _c(false, true),
+                    _c(false, false),
+                    Center(
+                        child: Text(
+                            strings.tr(
+                                'Pointez vers le code QR', 'Point at QR Code'),
+                            style: GoogleFonts.dmSans(
+                                color: Colors.white38, fontSize: 13)))
+                  ]))),
+        ]));
+  }
+
   Widget _c(bool top, bool left) {
     const c = _G;
     const s = 28.0, t = 2.5;
@@ -873,21 +966,25 @@ class _VS extends State<VerifyScreen> {
   }
 
   @override
-  Widget build(BuildContext ctx) => Scaffold(
-      backgroundColor: _BG,
-      appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          leading:
-              BackButton(color: _T1, onPressed: () => ctx.go("/dashboard")),
-          title: Text("Verification",
-              style: GoogleFonts.instrumentSerif(fontSize: 20, color: _T1))),
-      body: Center(
-          child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
-              child: Padding(
-                  padding: const EdgeInsets.all(24), child: _body(ctx)))));
+  Widget build(BuildContext ctx) {
+    final strings = AppStrings.of(ctx);
+    return Scaffold(
+        backgroundColor: _BG,
+        appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading:
+                BackButton(color: _T1, onPressed: () => ctx.go("/dashboard")),
+            title: Text(strings.tr('Verification', 'Verification'),
+                style: GoogleFonts.instrumentSerif(fontSize: 20, color: _T1))),
+        body: Center(
+            child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: _body(ctx, strings)))));
+  }
 
-  Widget _body(BuildContext ctx) {
+  Widget _body(BuildContext ctx, AppStrings strings) {
     switch (_ph) {
       case _P.loading:
         return const Center(child: CircularProgressIndicator(color: _G));
@@ -900,11 +997,16 @@ class _VS extends State<VerifyScreen> {
                   const BoxDecoration(color: _GL, shape: BoxShape.circle),
               child: const Icon(Icons.videocam_rounded, color: _G, size: 40)),
           const SizedBox(height: 24),
-          Text("Identity check required",
+          Text(
+              strings.tr('Verification d\'identite requise',
+                  'Identity check required'),
               style: GoogleFonts.instrumentSerif(fontSize: 24, color: _T1)),
           const SizedBox(height: 10),
           Text(
-              "Hand the phone to the candidate. They will complete a 3-step identity check.",
+              strings.tr(
+                'Donnez le telephone au candidat. Il va effectuer une verification en 3 etapes.',
+                'Hand the phone to the candidate. They will complete a 3-step identity check.',
+              ),
               textAlign: TextAlign.center,
               style: GoogleFonts.dmSans(
                   fontSize: 13,
@@ -914,7 +1016,8 @@ class _VS extends State<VerifyScreen> {
           const SizedBox(height: 32),
           ElevatedButton.icon(
               icon: const Icon(Icons.play_arrow_rounded, size: 18),
-              label: const Text("Start liveness check"),
+              label: Text(strings.tr(
+                  'Demarrer le test de vivacite', 'Start liveness check')),
               onPressed: _startLiveness),
         ]);
       case _P.liveness_chal:
@@ -952,7 +1055,10 @@ class _VS extends State<VerifyScreen> {
                     style: GoogleFonts.dmSans(color: _R, fontSize: 12))),
             const SizedBox(height: 16)
           ],
-          Text("Press CONFIRM when candidate completes the movement.",
+          Text(
+              strings.tr(
+                  'Appuyez sur CONFIRMER quand le candidat termine le mouvement.',
+                  'Press CONFIRM when candidate completes the movement.'),
               textAlign: TextAlign.center,
               style: GoogleFonts.dmSans(fontSize: 12, color: _T2)),
           const SizedBox(height: 16),
@@ -964,12 +1070,12 @@ class _VS extends State<VerifyScreen> {
                         foregroundColor: _R,
                         side: const BorderSide(color: _R),
                         minimumSize: const Size(0, 48)),
-                    child: const Text("Not detected"))),
+                    child: Text(strings.tr('Non detecte', 'Not detected')))),
             const SizedBox(width: 12),
             Expanded(
                 child: ElevatedButton(
                     onPressed: () => _submit(true),
-                    child: const Text("Confirm ✓"))),
+                    child: Text(strings.tr('Confirmer ✓', 'Confirm ✓')))),
           ]),
         ]);
       case _P.result:
@@ -986,12 +1092,12 @@ class _VS extends State<VerifyScreen> {
               child: Column(children: [
                 Icon(st.icon, color: st.c, size: 52),
                 const SizedBox(height: 12),
-                Text(st.label,
+                Text(st.label(context),
                     style: GoogleFonts.dmSans(
                         fontSize: 18, fontWeight: FontWeight.w700, color: st.c),
                     textAlign: TextAlign.center),
                 const SizedBox(height: 6),
-                Text(st.desc,
+                Text(st.desc(context),
                     style: GoogleFonts.dmSans(
                         fontSize: 12, color: st.c, height: 1.5),
                     textAlign: TextAlign.center)
@@ -1004,7 +1110,8 @@ class _VS extends State<VerifyScreen> {
             if (st == VStatus.green && (_dash?["can_export_pdf"] == true))
               ElevatedButton.icon(
                   icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
-                  label: const Text("Download Certified True Copy (PDF)"),
+                  label: Text(strings.tr('Telecharger la copie certifiee (PDF)',
+                      'Download Certified True Copy (PDF)')),
                   onPressed: () async {
                     final docId = _res!["document_id"] as String? ?? "";
                     if (docId.isEmpty) return;
@@ -1024,7 +1131,10 @@ class _VS extends State<VerifyScreen> {
                   decoration: BoxDecoration(
                       color: _YL, borderRadius: BorderRadius.circular(8)),
                   child: Text(
-                      "PDF export is available on paid subscriptions only.",
+                      strings.tr(
+                        'L\'export PDF est reserve aux abonnements payants.',
+                        'PDF export is available on paid subscriptions only.',
+                      ),
                       style: GoogleFonts.dmSans(fontSize: 12, color: _Y))),
           ],
           ElevatedButton(
@@ -1036,20 +1146,22 @@ class _VS extends State<VerifyScreen> {
                       borderRadius: BorderRadius.circular(10)),
                   elevation: 0),
               onPressed: () => ctx.go("/dashboard"),
-              child: const Text("Back to dashboard")),
+              child: Text(strings.tr(
+                  'Retour au tableau de bord', 'Back to dashboard'))),
         ]);
     }
   }
 
   Widget _tbl(Map r) {
+    final strings = AppStrings.of(context);
     final rows = [
-      ["Student", r["student_name"] ?? "—"],
-      ["Matricule", r["matricule"] ?? "—"],
-      ["Document", r["title"] ?? "—"],
-      ["Degree", r["degree"] ?? "—"],
-      ["Mention", r["mention"] ?? "—"],
-      ["University", r["university"] ?? "—"],
-      ["Issue date", r["issue_date"] ?? "—"],
+      [strings.tr('Etudiant', 'Student'), r["student_name"] ?? "—"],
+      [strings.tr('Matricule', 'Matricule'), r["matricule"] ?? "—"],
+      [strings.tr('Document', 'Document'), r["title"] ?? "—"],
+      [strings.tr('Diplome', 'Degree'), r["degree"] ?? "—"],
+      [strings.tr('Mention', 'Mention'), r["mention"] ?? "—"],
+      [strings.tr('Universite', 'University'), r["university"] ?? "—"],
+      [strings.tr('Date d\'emission', 'Issue date'), r["issue_date"] ?? "—"],
       ["SHA-256", (r["hash_sha256"] as String?)?.substring(0, 16) ?? "—"]
     ];
     return Container(
@@ -1094,45 +1206,68 @@ class _VS extends State<VerifyScreen> {
 class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({super.key});
   @override
-  Widget build(BuildContext ctx) => Scaffold(
-      backgroundColor: _BG,
-      appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          leading:
-              BackButton(color: _T1, onPressed: () => ctx.go("/dashboard")),
-          title: Text("Subscription",
-              style: GoogleFonts.instrumentSerif(fontSize: 20))),
-      body: Center(
-          child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
-              child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Choose your plan",
-                            style: GoogleFonts.instrumentSerif(
-                                fontSize: 26, color: _T1)),
-                        const SizedBox(height: 8),
-                        Text("Pay with MTN MoMo or Orange Money.",
-                            style: GoogleFonts.dmSans(
-                                fontSize: 13,
-                                color: _T2,
-                                fontWeight: FontWeight.w300)),
-                        const SizedBox(height: 24),
-                        _p("Free", "0 FCFA / month",
-                            "Up to 5 verifications/month", false, ctx),
-                        const SizedBox(height: 12),
-                        _p(
-                            "Monthly",
-                            "15,000 FCFA / month",
-                            "Unlimited · PDF exports · Priority support",
-                            true,
-                            ctx),
-                        const SizedBox(height: 12),
-                        _p("Annual", "120,000 FCFA / year",
-                            "Unlimited · Priority · 2 months free", false, ctx),
-                      ])))));
+  Widget build(BuildContext ctx) {
+    final strings = AppStrings.of(ctx);
+    return Scaffold(
+        backgroundColor: _BG,
+        appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading:
+                BackButton(color: _T1, onPressed: () => ctx.go("/dashboard")),
+            title: Text(strings.tr('Abonnement', 'Subscription'),
+                style: GoogleFonts.instrumentSerif(fontSize: 20))),
+        body: Center(
+            child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              strings.tr('Choisissez votre forfait',
+                                  'Choose your plan'),
+                              style: GoogleFonts.instrumentSerif(
+                                  fontSize: 26, color: _T1)),
+                          const SizedBox(height: 8),
+                          Text(
+                              strings.tr('Payez avec MTN MoMo ou Orange Money.',
+                                  'Pay with MTN MoMo or Orange Money.'),
+                              style: GoogleFonts.dmSans(
+                                  fontSize: 13,
+                                  color: _T2,
+                                  fontWeight: FontWeight.w300)),
+                          const SizedBox(height: 24),
+                          _p(
+                              strings.tr('Gratuit', 'Free'),
+                              strings.tr('0 FCFA / mois', '0 FCFA / month'),
+                              strings.tr('Jusqu\'a 5 verifications/mois',
+                                  'Up to 5 verifications/month'),
+                              false,
+                              ctx),
+                          const SizedBox(height: 12),
+                          _p(
+                              strings.tr('Mensuel', 'Monthly'),
+                              strings.tr(
+                                  '15,000 FCFA / mois', '15,000 FCFA / month'),
+                              strings.tr(
+                                  'Illimite · Exports PDF · Support prioritaire',
+                                  'Unlimited · PDF exports · Priority support'),
+                              true,
+                              ctx),
+                          const SizedBox(height: 12),
+                          _p(
+                              strings.tr('Annuel', 'Annual'),
+                              strings.tr(
+                                  '120,000 FCFA / an', '120,000 FCFA / year'),
+                              strings.tr(
+                                  'Illimite · Prioritaire · 2 mois offerts',
+                                  'Unlimited · Priority · 2 months free'),
+                              false,
+                              ctx),
+                        ])))));
+  }
+
   Widget _p(String name, String price, String desc, bool featured,
           BuildContext ctx) =>
       Container(
@@ -1154,7 +1289,9 @@ class SubscriptionScreen extends StatelessWidget {
                         margin: const EdgeInsets.only(bottom: 6),
                         decoration: BoxDecoration(
                             color: _G, borderRadius: BorderRadius.circular(4)),
-                        child: Text("Most popular",
+                        child: Text(
+                            AppStrings.of(ctx)
+                                .tr('Le plus populaire', 'Most popular'),
                             style: GoogleFonts.dmSans(
                                 fontSize: 9,
                                 color: Colors.white,
@@ -1173,6 +1310,6 @@ class SubscriptionScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                     minimumSize: const Size(0, 40),
                     padding: const EdgeInsets.symmetric(horizontal: 20)),
-                child: const Text("Select"))
+                child: Text(AppStrings.of(ctx).tr('Choisir', 'Select')))
           ]));
 }

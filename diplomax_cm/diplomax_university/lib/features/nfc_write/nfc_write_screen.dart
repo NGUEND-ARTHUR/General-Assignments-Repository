@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:dio/dio.dart';
+import '../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -81,7 +82,10 @@ class _NfcState extends State<NfcWriteScreen>
     final ok = await NfcManager.instance.isAvailable();
     setState(() {
       _state = ok ? _WState.ready : _WState.error;
-      if (!ok) _errorMsg = 'NFC not available. Enable NFC in Settings.';
+      if (!ok)
+        _errorMsg = AppStrings.of(context).tr(
+            'NFC indisponible. Activez le NFC dans les parametres.',
+            'NFC not available. Enable NFC in Settings.');
     });
   }
 
@@ -96,9 +100,14 @@ class _NfcState extends State<NfcWriteScreen>
         try {
           final ndef = Ndef.from(tag);
           if (ndef == null) {
-            throw Exception('Tag not NDEF compatible. Use NTAG213/215.');
+            throw Exception(AppStrings.of(context).tr(
+                'Tag non compatible NDEF. Utilisez NTAG213/215.',
+                'Tag not NDEF compatible. Use NTAG213/215.'));
           }
-          if (!ndef.isWritable) throw Exception('Chip is read-only.');
+          if (!ndef.isWritable) {
+            throw Exception(AppStrings.of(context)
+                .tr('La puce est en lecture seule.', 'Chip is read-only.'));
+          }
           await ndef.write(msg);
           final id = tag.data['nfca']?['identifier'] as List<int>? ?? [];
           _chipUid = id
@@ -137,7 +146,8 @@ class _NfcState extends State<NfcWriteScreen>
         appBar: AppBar(
             backgroundColor: Colors.transparent,
             leading: BackButton(onPressed: () => ctx.pop(), color: _textPri),
-            title: Text('Write NFC chip',
+            title: Text(
+                AppStrings.of(ctx).tr('Ecrire une puce NFC', 'Write NFC chip'),
                 style: GoogleFonts.instrumentSerif(
                     fontSize: 20, color: _textPri))),
         body: Padding(
@@ -173,28 +183,37 @@ class _NfcState extends State<NfcWriteScreen>
   }
 
   String _title() {
+    final strings = AppStrings.of(context);
     switch (_state) {
       case _WState.success:
-        return 'Chip written!';
+        return strings.tr('Puce ecrite!', 'Chip written!');
       case _WState.error:
-        return 'Write failed';
+        return strings.tr('Echec de l\'ecriture', 'Write failed');
       case _WState.writing:
-        return 'Bring diploma close...';
+        return strings.tr('Approchez le diplome...', 'Bring diploma close...');
       default:
-        return 'Write NFC chip';
+        return strings.tr('Ecrire une puce NFC', 'Write NFC chip');
     }
   }
 
   String _subtitle() {
+    final strings = AppStrings.of(context);
     switch (_state) {
       case _WState.success:
-        return 'Diploma now carries its own cryptographic identity.';
+        return strings.tr(
+            'Le diplome porte maintenant sa propre identite cryptographique.',
+            'Diploma now carries its own cryptographic identity.');
       case _WState.error:
-        return _errorMsg ?? 'An error occurred.';
+        return _errorMsg ??
+            strings.tr('Une erreur est survenue.', 'An error occurred.');
       case _WState.writing:
-        return 'Hold the NFC chip against the back of the phone.';
+        return strings.tr(
+            'Maintenez la puce NFC contre l\'arriere du telephone.',
+            'Hold the NFC chip against the back of the phone.');
       default:
-        return 'Embed the verification URL and hash into the physical diploma chip.';
+        return strings.tr(
+            'Integrez l\'URL de verification et le hash dans la puce physique du diplome.',
+            'Embed the verification URL and hash into the physical diploma chip.');
     }
   }
 
@@ -235,16 +254,23 @@ class _NfcState extends State<NfcWriteScreen>
   }
 
   Widget _status() {
+    final strings = AppStrings.of(context);
     if (_state == _WState.success) {
       return Column(children: [
-        _row(Icons.check_rounded, 'NDEF written to chip', _green),
+        _row(
+            Icons.check_rounded,
+            strings.tr('NDEF ecrit sur la puce', 'NDEF written to chip'),
+            _green),
         if (_chipUid != null)
-          _row(Icons.tag_rounded, 'Chip UID: $_chipUid', _green),
+          _row(Icons.tag_rounded,
+              strings.tr('UID puce: $_chipUid', 'Chip UID: $_chipUid'), _green),
         _row(
             _registered ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
             _registered
-                ? 'Registered on backend'
-                : 'Backend registration pending',
+                ? strings.tr(
+                    'Enregistre sur le backend', 'Registered on backend')
+                : strings.tr('Enregistrement backend en attente',
+                    'Backend registration pending'),
             _registered ? _green : _amber),
         const SizedBox(height: 12),
         Container(
@@ -253,7 +279,8 @@ class _NfcState extends State<NfcWriteScreen>
                 color: _greenLight,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: _green.withOpacity(0.3))),
-            child: Text('Verify URL: $_url',
+            child: Text(
+                strings.tr('URL de verification: $_url', 'Verify URL: $_url'),
                 style: GoogleFonts.dmSans(fontSize: 10, color: _green))),
       ]);
     }
@@ -272,7 +299,9 @@ class _NfcState extends State<NfcWriteScreen>
                     CircularProgressIndicator(color: _amber, strokeWidth: 2)),
             const SizedBox(width: 10),
             Expanded(
-                child: Text('Waiting for NFC tag...',
+                child: Text(
+                    strings.tr('En attente d\'un tag NFC...',
+                        'Waiting for NFC tag...'),
                     style: GoogleFonts.dmSans(fontSize: 12, color: _amber))),
           ]));
     }
@@ -288,19 +317,22 @@ class _NfcState extends State<NfcWriteScreen>
       ]));
 
   Widget _action() {
+    final strings = AppStrings.of(context);
     switch (_state) {
       case _WState.checking:
         return const Center(child: CircularProgressIndicator(color: _green));
       case _WState.ready:
-        return _btn('Write to NFC chip', Icons.nfc_rounded, _write);
+        return _btn(strings.tr('Ecrire sur la puce NFC', 'Write to NFC chip'),
+            Icons.nfc_rounded, _write);
       case _WState.writing:
-        return _outBtn('Cancel', () {
+        return _outBtn(strings.tr('Annuler', 'Cancel'), () {
           NfcManager.instance.stopSession();
           setState(() => _state = _WState.ready);
         });
       case _WState.success:
         return Column(children: [
-          _btn('Done', Icons.check_rounded, () => context.pop()),
+          _btn(strings.tr('Termine', 'Done'), Icons.check_rounded,
+              () => context.pop()),
           const SizedBox(height: 8),
           TextButton(
               onPressed: () => setState(() {
@@ -308,16 +340,18 @@ class _NfcState extends State<NfcWriteScreen>
                     _chipUid = null;
                     _registered = false;
                   }),
-              child: Text('Write another chip',
+              child: Text(
+                  strings.tr('Ecrire une autre puce', 'Write another chip'),
                   style: GoogleFonts.dmSans(color: _textSec, fontSize: 13)))
         ]);
       case _WState.error:
         return Column(children: [
-          _btn('Try again', Icons.refresh_rounded, _check),
+          _btn(strings.tr('Reessayer', 'Try again'), Icons.refresh_rounded,
+              _check),
           const SizedBox(height: 8),
           TextButton(
               onPressed: () => context.pop(),
-              child: Text('Skip',
+              child: Text(strings.tr('Ignorer', 'Skip'),
                   style: GoogleFonts.dmSans(color: _textSec, fontSize: 13)))
         ]);
       default:

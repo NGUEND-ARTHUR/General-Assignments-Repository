@@ -12,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:dio/dio.dart';
 import '../../core/api/api_client.dart';
+import '../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -92,8 +93,8 @@ class NfcService {
             completer.complete(NfcResult(
               authentic: false,
               nfcUid: uid,
-              errorMessage: 'This NFC chip does not contain NDEF data. '
-                  'It may not be a Diplomax-registered diploma.',
+              errorMessage: 'Cette puce NFC ne contient pas de donnees NDEF. '
+                  'Il se peut qu\'il ne s\'agisse pas d\'un diplome enregistre sur Diplomax.',
             ));
             return;
           }
@@ -103,7 +104,7 @@ class NfcService {
             completer.complete(NfcResult(
               authentic: false,
               nfcUid: uid,
-              errorMessage: 'NFC chip is empty or unreadable.',
+              errorMessage: 'La puce NFC est vide ou illisible.',
             ));
             return;
           }
@@ -114,7 +115,8 @@ class NfcService {
             completer.complete(NfcResult(
               authentic: false,
               nfcUid: uid,
-              errorMessage: 'Could not parse NFC chip data.',
+              errorMessage:
+                  'Impossible d\'analyser les donnees de la puce NFC.',
             ));
             return;
           }
@@ -138,12 +140,12 @@ class NfcService {
           await NfcManager.instance.stopSession(errorMessage: 'Read error');
           completer.complete(NfcResult(
             authentic: false,
-            errorMessage: 'NFC read error: ${e.toString()}',
+            errorMessage: 'Erreur de lecture NFC : ${e.toString()}',
           ));
         }
       },
       // iOS: shown in the system NFC modal
-      alertMessage: 'Hold the diploma near your phone',
+      alertMessage: 'Approchez le diplome du telephone',
     );
 
     return completer.future;
@@ -162,8 +164,8 @@ class NfcService {
       onDiscovered: (NfcTag tag) async {
         final ndef = Ndef.from(tag);
         if (ndef == null || !ndef.isWritable) {
-          await NfcManager.instance
-              .stopSession(errorMessage: 'This NFC chip is not writable');
+          await NfcManager.instance.stopSession(
+              errorMessage: 'Cette puce NFC n\'est pas inscriptible');
           completer.complete(false);
           return;
         }
@@ -179,7 +181,7 @@ class NfcService {
           completer.complete(false);
         }
       },
-      alertMessage: 'Hold the NFC chip near your phone to program it',
+      alertMessage: 'Approchez la puce NFC du telephone pour la programmer',
     );
 
     return completer.future;
@@ -224,7 +226,7 @@ class NfcService {
   Future<NfcResult> _verifyByUid(String? uid) async {
     if (uid == null) {
       return const NfcResult(
-          authentic: false, errorMessage: 'No NFC UID found');
+          authentic: false, errorMessage: 'Aucun UID NFC trouve');
     }
     try {
       final response = await _dio.get('/nfc/verify/${uid.replaceAll(':', '')}');
@@ -247,11 +249,12 @@ class NfcService {
         return NfcResult(
           authentic: false,
           nfcUid: uid,
-          errorMessage: 'This NFC chip is not registered in Diplomax CM.',
+          errorMessage:
+              'Cette puce NFC n\'est pas enregistree dans Diplomax CM.',
         );
       }
       return NfcResult(
-          authentic: false, nfcUid: uid, errorMessage: 'Verification failed');
+          authentic: false, nfcUid: uid, errorMessage: 'Verification echouee');
     }
   }
 
@@ -288,7 +291,7 @@ class NfcService {
       return NfcResult(
         authentic: false,
         nfcUid: uid,
-        errorMessage: 'Blockchain verification failed: ${e.toString()}',
+        errorMessage: 'Verification blockchain echouee : ${e.toString()}',
       );
     }
   }
@@ -382,7 +385,8 @@ class _RealNfcState extends ConsumerState<RealNfcScreen>
           backgroundColor: Colors.transparent,
           leading:
               BackButton(onPressed: () => context.go('/home'), color: _textPri),
-          title: Text('NFC verification',
+          title: Text(
+              AppStrings.of(context).tr('Verification NFC', 'NFC verification'),
               style:
                   GoogleFonts.instrumentSerif(fontSize: 22, color: _textPri)),
         ),
@@ -407,33 +411,48 @@ class _RealNfcState extends ConsumerState<RealNfcScreen>
     Color c = _textPri;
     switch (_state) {
       case _NfcState.idle:
-        title = 'NFC diploma verification';
-        sub =
-            'Hold your physical diploma near the back of the phone to scan its chip.';
+        title = AppStrings.of(context)
+            .tr('Verification NFC du diplome', 'NFC diploma verification');
+        sub = AppStrings.of(context).tr(
+            'Placez votre diplome physique pres de l\'arriere du telephone pour scanner sa puce.',
+            'Hold your physical diploma near the back of the phone to scan its chip.');
         break;
       case _NfcState.scanning:
-        title = 'Scanning...';
-        sub = 'Keep the diploma still against the back of the phone.';
+        title = AppStrings.of(context).tr('Analyse...', 'Scanning...');
+        sub = AppStrings.of(context).tr(
+            'Gardez le diplome immobile contre l\'arriere du telephone.',
+            'Keep the diploma still against the back of the phone.');
         break;
       case _NfcState.processing:
-        title = 'Verifying on blockchain...';
-        sub = 'Querying Hyperledger Fabric. This takes a few seconds.';
+        title = AppStrings.of(context).tr(
+            'Verification sur la blockchain...', 'Verifying on blockchain...');
+        sub = AppStrings.of(context).tr(
+            'Interrogation de Hyperledger Fabric. Cela prend quelques secondes.',
+            'Querying Hyperledger Fabric. This takes a few seconds.');
         break;
       case _NfcState.success:
-        title = 'Diploma authenticated';
-        sub = 'This diploma is genuine and verified on the blockchain.';
+        title = AppStrings.of(context)
+            .tr('Diplome authentifie', 'Diploma authenticated');
+        sub = AppStrings.of(context).tr(
+            'Ce diplome est authentique et verifie sur la blockchain.',
+            'This diploma is genuine and verified on the blockchain.');
         c = _green;
         break;
       case _NfcState.error:
-        title = 'Verification failed';
+        title = AppStrings.of(context)
+            .tr('Verification echouee', 'Verification failed');
         sub = _result?.errorMessage ??
-            'This chip is not recognised by Diplomax CM.';
+            AppStrings.of(context).tr(
+                'Cette puce n\'est pas reconnue par Diplomax CM.',
+                'This chip is not recognised by Diplomax CM.');
         c = _red;
         break;
       case _NfcState.unsupported:
-        title = 'NFC not available';
-        sub =
-            'This device does not support NFC, or NFC is disabled in Settings.';
+        title =
+            AppStrings.of(context).tr('NFC indisponible', 'NFC not available');
+        sub = AppStrings.of(context).tr(
+            'Cet appareil ne prend pas en charge le NFC, ou le NFC est desactive dans les parametres.',
+            'This device does not support NFC, or NFC is disabled in Settings.');
         c = const Color(0xFFBA7517);
         break;
     }
@@ -516,7 +535,8 @@ class _RealNfcState extends ConsumerState<RealNfcScreen>
                   color: _bg,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: _border)),
-              child: Text('UID: ${_result!.nfcUid}',
+              child: Text(
+                  '${AppStrings.of(context).tr('UID', 'UID')}: ${_result!.nfcUid}',
                   style: GoogleFonts.dmSans(fontSize: 10, color: _textSec)),
             ),
           ),
@@ -540,7 +560,12 @@ class _RealNfcState extends ConsumerState<RealNfcScreen>
             Icon(authentic ? Icons.verified_rounded : Icons.gpp_bad_rounded,
                 color: authentic ? _green : _red, size: 20),
             const SizedBox(width: 8),
-            Text(authentic ? 'Document authentic' : 'Verification failed',
+            Text(
+                authentic
+                    ? AppStrings.of(context)
+                        .tr('Document authentique', 'Document authentic')
+                    : AppStrings.of(context)
+                        .tr('Verification echouee', 'Verification failed'),
                 style: GoogleFonts.dmSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -550,14 +575,24 @@ class _RealNfcState extends ConsumerState<RealNfcScreen>
             const SizedBox(height: 12),
             const Divider(height: 1, color: Color(0xFFD3D1C7)),
             const SizedBox(height: 10),
-            _row('Student', r.studentName ?? '—'),
-            _row('Matricule', r.matricule ?? '—'),
-            _row('Document', r.title ?? '—'),
-            _row('University', r.university ?? '—'),
-            _row('Mention', r.mention ?? '—'),
-            _row('Issue date', r.issueDate ?? '—'),
-            _row('Blockchain',
-                r.blockchainAuthentic == true ? 'Verified ✓' : 'Not verified'),
+            _row(AppStrings.of(context).tr('Etudiant', 'Student'),
+                r.studentName ?? '-'),
+            _row(AppStrings.of(context).tr('Matricule', 'Matricule'),
+                r.matricule ?? '-'),
+            _row(AppStrings.of(context).tr('Document', 'Document'),
+                r.title ?? '-'),
+            _row(AppStrings.of(context).tr('Universite', 'University'),
+                r.university ?? '-'),
+            _row(AppStrings.of(context).tr('Mention', 'Mention'),
+                r.mention ?? '-'),
+            _row(AppStrings.of(context).tr('Date d\'emission', 'Issue date'),
+                r.issueDate ?? '-'),
+            _row(
+                AppStrings.of(context).tr('Blockchain', 'Blockchain'),
+                r.blockchainAuthentic == true
+                    ? AppStrings.of(context).tr('Verifiee ✓', 'Verified ✓')
+                    : AppStrings.of(context)
+                        .tr('Non verifiee', 'Not verified')),
           ],
         ],
       ),
@@ -586,7 +621,8 @@ class _RealNfcState extends ConsumerState<RealNfcScreen>
     if (_state == _NfcState.unsupported) {
       return OutlinedButton.icon(
         icon: const Icon(Icons.settings_rounded, size: 16),
-        label: const Text('Open NFC settings'),
+        label: Text(AppStrings.of(context)
+            .tr('Ouvrir les parametres NFC', 'Open NFC settings')),
         style: OutlinedButton.styleFrom(
             foregroundColor: _green,
             side: const BorderSide(color: _green),
@@ -598,7 +634,8 @@ class _RealNfcState extends ConsumerState<RealNfcScreen>
       return Column(children: [
         ElevatedButton.icon(
             icon: const Icon(Icons.refresh_rounded, size: 18),
-            label: const Text('Scan another chip'),
+            label: Text(AppStrings.of(context)
+                .tr('Scanner une autre puce', 'Scan another chip')),
             style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 52)),
             onPressed: _reset),
@@ -606,7 +643,8 @@ class _RealNfcState extends ConsumerState<RealNfcScreen>
           const SizedBox(height: 10),
           OutlinedButton.icon(
               icon: const Icon(Icons.open_in_new_rounded, size: 16),
-              label: const Text('View full document'),
+              label: Text(AppStrings.of(context)
+                  .tr('Voir le document complet', 'View full document')),
               style: OutlinedButton.styleFrom(
                   foregroundColor: _green,
                   side: const BorderSide(color: _green),
@@ -627,8 +665,10 @@ class _RealNfcState extends ConsumerState<RealNfcScreen>
               child: CircularProgressIndicator(
                   color: Colors.white, strokeWidth: 2))
           : const Icon(Icons.nfc_rounded, size: 18),
-      label:
-          Text(_state == _NfcState.scanning ? 'Scanning...' : 'Start NFC scan'),
+      label: Text(_state == _NfcState.scanning
+          ? AppStrings.of(context).tr('Analyse...', 'Scanning...')
+          : AppStrings.of(context)
+              .tr('Demarrer le scan NFC', 'Start NFC scan')),
       style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 52)),
       onPressed: _state == _NfcState.scanning ? null : _startScan,

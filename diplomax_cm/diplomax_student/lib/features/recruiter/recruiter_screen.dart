@@ -8,6 +8,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 import '../../core/app_colors.dart';
 import '../../core/api/api_client.dart';
 import '../../core/api/student_documents_api.dart';
+import '../../l10n/app_strings.dart';
 
 class RecruiterScreen extends StatefulWidget {
   const RecruiterScreen({super.key});
@@ -36,8 +37,8 @@ class _RecruiterState extends State<RecruiterScreen>
   bool _valid = false;
   bool _autoScanLocked = false;
   String? _error;
-  String _studentName = 'Étudiant';
-  String _matricule = '—';
+  String _studentName = 'Etudiant';
+  String _matricule = '-';
   Map<String, dynamic>? _previewDoc;
   Map<String, dynamic>? _verifiedShareData;
 
@@ -59,10 +60,10 @@ class _RecruiterState extends State<RecruiterScreen>
       setState(() {
         _studentName = (storedName != null && storedName.trim().isNotEmpty)
             ? storedName
-            : 'Étudiant';
+            : 'Etudiant';
         _matricule = (storedMat != null && storedMat.trim().isNotEmpty)
             ? storedMat
-            : '—';
+            : '-';
         _previewDoc = docs.isNotEmpty ? docs.first : null;
       });
     } catch (_) {
@@ -70,10 +71,10 @@ class _RecruiterState extends State<RecruiterScreen>
       setState(() {
         _studentName = (storedName != null && storedName.trim().isNotEmpty)
             ? storedName
-            : 'Étudiant';
+            : 'Etudiant';
         _matricule = (storedMat != null && storedMat.trim().isNotEmpty)
             ? storedMat
-            : '—';
+            : '-';
       });
     }
   }
@@ -90,7 +91,9 @@ class _RecruiterState extends State<RecruiterScreen>
     final token = _extractToken(rawInput ?? _tokenCtrl.text);
     if (token.isEmpty) {
       setState(() {
-        _error = 'Entrez un token ou un lien de partage valide.';
+        _error = AppStrings.of(context).tr(
+            'Entrez un token ou un lien de partage valide.',
+            'Enter a valid token or share link.');
       });
       return;
     }
@@ -117,7 +120,10 @@ class _RecruiterState extends State<RecruiterScreen>
         final startRes = await _shareApi.dio
             .post('/liveness/start', queryParameters: {'share_token': token});
         final sessionId = (startRes.data['session_id'] ?? '').toString();
-        if (sessionId.isEmpty) throw Exception('Session liveness invalide');
+        if (sessionId.isEmpty) {
+          throw Exception(AppStrings.of(context)
+              .tr('Session liveness invalide', 'Invalid liveness session'));
+        }
 
         final challenges =
             (startRes.data['challenges'] as List?)?.whereType<Map>().toList() ??
@@ -129,13 +135,15 @@ class _RecruiterState extends State<RecruiterScreen>
           final axis = (challenge['axis'] ?? 'y').toString();
           final direction = (challenge['direction'] ?? 'right').toString();
           final threshold = (challenge['threshold'] as num?)?.toDouble() ?? 0.6;
-          final instruction =
-              (challenge['instruction'] ?? 'Effectuez le mouvement demandé')
-                  .toString();
+          final instruction = (challenge['instruction'] ??
+                  AppStrings.of(context).tr('Effectuez le mouvement demande',
+                      'Perform the requested movement'))
+              .toString();
 
           final proceed = await _confirmChallenge(instruction);
           if (!proceed) {
-            throw Exception('Vérification annulée');
+            throw Exception(AppStrings.of(context)
+                .tr('Verification annulee', 'Verification cancelled'));
           }
 
           final evidence = await _captureMotionEvidence(
@@ -153,7 +161,9 @@ class _RecruiterState extends State<RecruiterScreen>
           );
 
           if (!evidence.detected) {
-            throw Exception('Mouvement non détecté au challenge $step');
+            throw Exception(AppStrings.of(context).tr(
+                'Mouvement non detecte au challenge $step',
+                'Movement not detected at challenge $step'));
           }
         }
 
@@ -176,7 +186,8 @@ class _RecruiterState extends State<RecruiterScreen>
       setState(() {
         _step = _RecStep.result;
         _valid = false;
-        _error = 'Vérification impossible: ${e.toString()}';
+        _error =
+            '${AppStrings.of(context).tr('Verification impossible', 'Verification failed')}: ${e.toString()}';
       });
     } finally {
       if (!mounted) return;
@@ -193,7 +204,10 @@ class _RecruiterState extends State<RecruiterScreen>
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: Text('Challenge liveness', style: GoogleFonts.dmSans()),
+        title: Text(
+            AppStrings.of(context)
+                .tr('Challenge de presence', 'Liveness challenge'),
+            style: GoogleFonts.dmSans()),
         content: Text(
           instruction,
           style: GoogleFonts.dmSans(fontSize: 13),
@@ -201,11 +215,11 @@ class _RecruiterState extends State<RecruiterScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Annuler'),
+            child: Text(AppStrings.of(context).tr('Annuler', 'Cancel')),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Commencer'),
+            child: Text(AppStrings.of(context).tr('Commencer', 'Start')),
           ),
         ],
       ),
@@ -262,20 +276,25 @@ class _RecruiterState extends State<RecruiterScreen>
     final token = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Entrer le token/lien', style: GoogleFonts.dmSans()),
+        title: Text(
+            AppStrings.of(context)
+                .tr('Entrer le token/lien', 'Enter token/link'),
+            style: GoogleFonts.dmSans()),
         content: TextField(
           controller: ctrl,
-          decoration: const InputDecoration(
-            hintText: 'https://verify.diplomax.cm/s/<token>',
+          decoration: InputDecoration(
+            hintText: AppStrings.of(context).tr(
+                'https://verify.diplomax.cm/s/<token>',
+                'https://verify.diplomax.cm/s/<token>'),
           ),
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Annuler')),
+              child: Text(AppStrings.of(context).tr('Annuler', 'Cancel'))),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, _extractToken(ctrl.text)),
-            child: const Text('Vérifier'),
+            child: Text(AppStrings.of(context).tr('Verifier', 'Verify')),
           ),
         ],
       ),
@@ -304,7 +323,8 @@ class _RecruiterState extends State<RecruiterScreen>
       backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/home')),
-        title: Text('Espace Recruteur',
+        title: Text(
+            AppStrings.of(context).tr('Espace Recruteur', 'Recruiter Space'),
             style: GoogleFonts.instrumentSerif(fontSize: 22)),
       ),
       body: SingleChildScrollView(
@@ -326,7 +346,9 @@ class _RecruiterState extends State<RecruiterScreen>
                   const Icon(Icons.business_rounded,
                       size: 16, color: AppColors.info),
                   const SizedBox(width: 8),
-                  Text('Mode vérification recruteur',
+                  Text(
+                      AppStrings.of(context).tr('Mode verification recruteur',
+                          'Recruiter verification mode'),
                       style: GoogleFonts.dmSans(
                           fontSize: 12,
                           color: AppColors.info,
@@ -401,10 +423,12 @@ class _RecruiterState extends State<RecruiterScreen>
                 children: [
                   TextField(
                     controller: _tokenCtrl,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       isDense: true,
                       border: InputBorder.none,
-                      hintText: 'Token ou lien https://verify.../s/<token>',
+                      hintText: AppStrings.of(context).tr(
+                          'Token ou lien https://verify.../s/<token>',
+                          'Token or link https://verify.../s/<token>'),
                     ),
                   ),
                   if (_error != null)
@@ -437,13 +461,16 @@ class _RecruiterState extends State<RecruiterScreen>
               const SizedBox(height: 4),
               ElevatedButton.icon(
                 icon: const Icon(Icons.qr_code_scanner_rounded, size: 18),
-                label: const Text('Scanner le QR Code du candidat'),
+                label: Text(AppStrings.of(context).tr(
+                    'Scanner le QR Code du candidat',
+                    'Scan candidate QR code')),
                 onPressed: () => _scan(_tokenCtrl.text),
               ),
               const SizedBox(height: 10),
               OutlinedButton.icon(
                 icon: const Icon(Icons.link_rounded, size: 18),
-                label: const Text('Vérifier via lien de partage'),
+                label: Text(AppStrings.of(context).tr(
+                    'Verifier via lien de partage', 'Verify via share link')),
                 onPressed: () async {
                   final token = await _askToken();
                   if (token == null || token.isEmpty) return;
@@ -457,7 +484,8 @@ class _RecruiterState extends State<RecruiterScreen>
               const SizedBox(height: 16),
               OutlinedButton.icon(
                 icon: const Icon(Icons.refresh_rounded, size: 18),
-                label: const Text('Nouvelle vérification'),
+                label: Text(AppStrings.of(context)
+                    .tr('Nouvelle verification', 'New verification')),
                 onPressed: () => setState(() {
                   _step = _RecStep.idle;
                 }),
@@ -475,18 +503,23 @@ class _RecruiterState extends State<RecruiterScreen>
         return Column(mainAxisSize: MainAxisSize.min, children: [
           const Icon(Icons.qr_code_2_rounded, color: Colors.white38, size: 52),
           const SizedBox(height: 10),
-          Text('Pointez vers le QR Code ou collez un lien',
+          Text(
+              AppStrings.of(context).tr(
+                  'Pointez vers le QR Code ou collez un lien',
+                  'Point to the QR code or paste a link'),
               style: GoogleFonts.dmSans(color: Colors.white38, fontSize: 12)),
         ]);
       case _RecStep.scanning:
-        return Text('Lecture...',
+        return Text(AppStrings.of(context).tr('Lecture...', 'Reading...'),
             style: GoogleFonts.dmSans(color: AppColors.accent, fontSize: 13));
       case _RecStep.checking:
         return Column(mainAxisSize: MainAxisSize.min, children: [
           const CircularProgressIndicator(
               color: AppColors.accent, strokeWidth: 2),
           const SizedBox(height: 12),
-          Text('Vérification serveur...',
+          Text(
+              AppStrings.of(context)
+                  .tr('Verification serveur...', 'Server verification...'),
               style: GoogleFonts.dmSans(color: Colors.white70, fontSize: 12)),
         ]);
       case _RecStep.result:
@@ -494,7 +527,12 @@ class _RecruiterState extends State<RecruiterScreen>
           Icon(_valid ? Icons.check_circle_rounded : Icons.cancel_rounded,
               size: 60, color: _valid ? AppColors.success : AppColors.error),
           const SizedBox(height: 8),
-          Text(_valid ? 'Document authentique' : 'Document invalide',
+          Text(
+              _valid
+                  ? AppStrings.of(context)
+                      .tr('Document authentique', 'Authentic document')
+                  : AppStrings.of(context)
+                      .tr('Document invalide', 'Invalid document'),
               style: GoogleFonts.dmSans(
                   color: _valid ? AppColors.success : AppColors.error,
                   fontSize: 13,
@@ -516,10 +554,12 @@ class _RecruiterState extends State<RecruiterScreen>
 
   Widget _checkingCard() {
     final checks = [
-      'Lecture du QR Code',
-      'Requête serveur universitaire',
-      'Vérification hash cryptographique',
-      'Contrôle liste noire'
+      AppStrings.of(context).tr('Lecture du QR Code', 'QR code reading'),
+      AppStrings.of(context)
+          .tr('Requete serveur universitaire', 'University server request'),
+      AppStrings.of(context)
+          .tr('Verification hash cryptographique', 'Cryptographic hash check'),
+      AppStrings.of(context).tr('Controle liste noire', 'Blacklist check')
     ];
     return Container(
       padding: const EdgeInsets.all(14),
@@ -554,17 +594,19 @@ class _RecruiterState extends State<RecruiterScreen>
 
   Widget _resultCard() {
     final doc = _verifiedShareData ?? _previewDoc;
-    final title = doc?['title'] as String? ?? 'Document académique';
-    final university =
-        (doc?['university'] ?? doc?['university_name'] ?? 'Université')
-            .toString();
-    final mention = doc?['mention'] as String? ?? '—';
+    final title = doc?['title'] as String? ??
+        AppStrings.of(context).tr('Document academique', 'Academic document');
+    final university = (doc?['university'] ??
+            doc?['university_name'] ??
+            AppStrings.of(context).tr('Universite', 'University'))
+        .toString();
+    final mention = doc?['mention'] as String? ?? '-';
     final issueYear = _issueYear(doc?['issue_date'] as String?);
     final hash = doc?['hash_sha256'] as String? ?? '';
     final holder = (doc?['student_name'] as String?) ?? _studentName;
     final matricule = (doc?['matricule'] as String?) ?? _matricule;
     final shortHash = hash.isEmpty
-        ? 'Hash indisponible'
+        ? AppStrings.of(context).tr('Hash indisponible', 'Hash unavailable')
         : (hash.length > 44 ? '${hash.substring(0, 44)}...' : hash);
 
     return Container(
@@ -581,7 +623,9 @@ class _RecruiterState extends State<RecruiterScreen>
             const Icon(Icons.verified_rounded,
                 color: AppColors.success, size: 20),
             const SizedBox(width: 8),
-            Text('Document vérifié en temps réel',
+            Text(
+                AppStrings.of(context).tr('Document verifie en temps reel',
+                    'Document verified in real time'),
                 style: GoogleFonts.dmSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -590,13 +634,18 @@ class _RecruiterState extends State<RecruiterScreen>
           const SizedBox(height: 12),
           const Divider(height: 1, color: AppColors.divider),
           const SizedBox(height: 10),
-          _infoRow('Titulaire', holder),
-          _infoRow('Matricule', matricule),
-          _infoRow('Diplôme', title),
-          _infoRow('Université', university),
-          _infoRow('Mention', mention),
-          _infoRow('Année', issueYear),
-          _infoRow('Statut', 'Authentique — Non modifié'),
+          _infoRow(AppStrings.of(context).tr('Titulaire', 'Holder'), holder),
+          _infoRow(
+              AppStrings.of(context).tr('Matricule', 'Matricule'), matricule),
+          _infoRow(AppStrings.of(context).tr('Diplome', 'Degree'), title),
+          _infoRow(AppStrings.of(context).tr('Universite', 'University'),
+              university),
+          _infoRow(AppStrings.of(context).tr('Mention', 'Mention'), mention),
+          _infoRow(AppStrings.of(context).tr('Annee', 'Year'), issueYear),
+          _infoRow(
+              AppStrings.of(context).tr('Statut', 'Status'),
+              AppStrings.of(context)
+                  .tr('Authentique - Non modifie', 'Authentic - Unmodified')),
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.all(10),
@@ -620,7 +669,7 @@ class _RecruiterState extends State<RecruiterScreen>
 
   String _issueYear(String? issueDate) {
     final parsed = DateTime.tryParse(issueDate ?? '');
-    return parsed == null ? '—' : '${parsed.year}';
+    return parsed == null ? '-' : '${parsed.year}';
   }
 
   Widget _livenessCheck() {
@@ -634,20 +683,26 @@ class _RecruiterState extends State<RecruiterScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Vérification biométrique candidat',
+          Text(
+              AppStrings.of(context).tr('Verification biometrique candidat',
+                  'Candidate biometric verification'),
               style: GoogleFonts.dmSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: AppColors.warning)),
           const SizedBox(height: 8),
           Text(
-              'Demandez au candidat de confirmer son identité via selfie vidéo pour un contrôle biométrique complet.',
+              AppStrings.of(context).tr(
+                  'Demandez au candidat de confirmer son identite via selfie video pour un controle biometrique complet.',
+                  'Ask the candidate to confirm identity via selfie video for full biometric verification.'),
               style: GoogleFonts.dmSans(
                   fontSize: 12, color: AppColors.warning, height: 1.5)),
           const SizedBox(height: 12),
           OutlinedButton.icon(
             icon: const Icon(Icons.videocam_rounded, size: 16),
-            label: const Text('Lancer la vérification Liveness'),
+            label: Text(AppStrings.of(context).tr(
+                'Lancer la verification de presence',
+                'Start liveness verification')),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.warning,
               side: const BorderSide(color: AppColors.warning),

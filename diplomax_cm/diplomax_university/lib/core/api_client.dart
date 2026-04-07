@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 const kUniversityApiBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'https://api.diplomax.cm/v1',
+  defaultValue: 'https://diplomax-backend.onrender.com/v1',
 );
 
 class UnivApiClient {

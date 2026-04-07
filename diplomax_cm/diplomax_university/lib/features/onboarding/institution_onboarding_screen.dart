@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
+import '../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -223,7 +224,7 @@ class _OnboardingState extends ConsumerState<InstitutionOnboardingScreen> {
     try {
       final dio = Dio(BaseOptions(
           baseUrl: const String.fromEnvironment('API_BASE_URL',
-              defaultValue: 'https://api.diplomax.cm/v1')));
+              defaultValue: 'https://diplomax-backend.onrender.com/v1')));
       final r = await dio.post('/institutions/register', data: {
         'institution_type': _data.institutionType,
         'name': _data.name,
@@ -265,6 +266,7 @@ class _OnboardingState extends ConsumerState<InstitutionOnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     if (_done) return _buildDone();
     return Scaffold(
       backgroundColor: _bg,
@@ -273,7 +275,7 @@ class _OnboardingState extends ConsumerState<InstitutionOnboardingScreen> {
         leading: BackButton(
             color: _textPri,
             onPressed: _step == 0 ? () => context.go('/login') : _back),
-        title: Text('Join Diplomax CM',
+        title: Text(strings.tr('Rejoindre Diplomax CM', 'Join Diplomax CM'),
             style: GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
       ),
       body: Column(children: [
@@ -326,11 +328,13 @@ class _OnboardingState extends ConsumerState<InstitutionOnboardingScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Step ${_step + 1} of ${_steps.length}',
+                  AppStrings.of(context).tr(
+                      'Etape ${_step + 1} sur ${_steps.length}',
+                      'Step ${_step + 1} of ${_steps.length}'),
                   style: GoogleFonts.dmSans(fontSize: 11, color: _textSec),
                 ),
                 Text(
-                  _steps[_step],
+                  _stepLabel(_steps[_step], AppStrings.of(context)),
                   style: GoogleFonts.dmSans(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
@@ -361,15 +365,17 @@ class _OnboardingState extends ConsumerState<InstitutionOnboardingScreen> {
                             child: const Icon(Icons.mark_email_read_rounded,
                                 color: _green, size: 46)),
                         const SizedBox(height: 24),
-                        Text('Application submitted!',
+                        Text(
+                            AppStrings.of(context).tr(
+                                'Demande soumise!', 'Application submitted!'),
                             style: GoogleFonts.instrumentSerif(
                                 fontSize: 28, color: _textPri),
                             textAlign: TextAlign.center),
                         const SizedBox(height: 12),
                         Text(
-                            'Your registration has been received.\n'
-                            'The Diplomax team will review it within 2 business days\n'
-                            'and contact you at ${_data.adminEmail}.',
+                            AppStrings.of(context).tr(
+                                'Votre inscription a ete recue.\nL\'equipe Diplomax l\'examinera sous 2 jours ouvrables\net vous contactera a ${_data.adminEmail}.',
+                                'Your registration has been received.\nThe Diplomax team will review it within 2 business days\nand contact you at ${_data.adminEmail}.'),
                             textAlign: TextAlign.center,
                             style: GoogleFonts.dmSans(
                                 fontSize: 13,
@@ -383,12 +389,24 @@ class _OnboardingState extends ConsumerState<InstitutionOnboardingScreen> {
                                 color: _greenLight,
                                 borderRadius: BorderRadius.circular(12)),
                             child: Column(children: [
-                              _refRow('Reference ID',
+                              _refRow(
+                                  AppStrings.of(context)
+                                      .tr('ID reference', 'Reference ID'),
                                   _registrationId?.toUpperCase() ?? '—'),
-                              _refRow('Institution', _data.name),
-                              _refRow('Contact email', _data.adminEmail),
-                              _refRow('Next step',
-                                  'Check your email for confirmation'),
+                              _refRow(
+                                  AppStrings.of(context)
+                                      .tr('Institution', 'Institution'),
+                                  _data.name),
+                              _refRow(
+                                  AppStrings.of(context)
+                                      .tr('Email contact', 'Contact email'),
+                                  _data.adminEmail),
+                              _refRow(
+                                  AppStrings.of(context)
+                                      .tr('Prochaine etape', 'Next step'),
+                                  AppStrings.of(context).tr(
+                                      'Verifiez votre email pour confirmation',
+                                      'Check your email for confirmation')),
                             ])),
                         const SizedBox(height: 24),
                         Container(
@@ -401,17 +419,27 @@ class _OnboardingState extends ConsumerState<InstitutionOnboardingScreen> {
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('While you wait:',
+                                  Text(
+                                      AppStrings.of(context).tr(
+                                          'En attendant:', 'While you wait:'),
                                       style: GoogleFonts.dmSans(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                           color: _amber)),
                                   const SizedBox(height: 8),
                                   ...[
-                                    'Prepare your MINESUP/MINEFOP accreditation certificate',
-                                    'Have your institution\'s official letterhead ready',
-                                    'Decide on your matricule format (e.g. ${_data.matriculePrefix.toUpperCase()}20241001)',
-                                    'Brief your registrar on the Diplomax workflow',
+                                    AppStrings.of(context).tr(
+                                        'Preparez votre certificat d\'accreditation MINESUP/MINEFOP',
+                                        'Prepare your MINESUP/MINEFOP accreditation certificate'),
+                                    AppStrings.of(context).tr(
+                                        'Preparez le papier entete officiel de votre institution',
+                                        'Have your institution\'s official letterhead ready'),
+                                    AppStrings.of(context).tr(
+                                        'Choisissez votre format de matricule (ex: ${_data.matriculePrefix.toUpperCase()}20241001)',
+                                        'Decide on your matricule format (e.g. ${_data.matriculePrefix.toUpperCase()}20241001)'),
+                                    AppStrings.of(context).tr(
+                                        'Informez votre service de scolarite du flux Diplomax',
+                                        'Brief your registrar on the Diplomax workflow'),
                                   ].map((s) => Padding(
                                       padding: const EdgeInsets.only(bottom: 4),
                                       child: Row(children: [
@@ -428,10 +456,29 @@ class _OnboardingState extends ConsumerState<InstitutionOnboardingScreen> {
                         const SizedBox(height: 24),
                         TextButton(
                             onPressed: () => context.go('/login'),
-                            child: Text('Back to login',
+                            child: Text(
+                                AppStrings.of(context).tr(
+                                    'Retour a la connexion', 'Back to login'),
                                 style: GoogleFonts.dmSans(
                                     color: _textSec, fontSize: 13))),
                       ])))));
+
+  String _stepLabel(String step, AppStrings strings) {
+    switch (step) {
+      case 'Institution type':
+        return strings.tr('Type d\'institution', 'Institution type');
+      case 'Basic details':
+        return strings.tr('Informations de base', 'Basic details');
+      case 'Accreditation':
+        return strings.tr('Accreditation', 'Accreditation');
+      case 'Admin contact':
+        return strings.tr('Contact administrateur', 'Admin contact');
+      case 'Review & submit':
+        return strings.tr('Verifier et soumettre', 'Review & submit');
+      default:
+        return step;
+    }
+  }
 
   Widget _refRow(String k, String v) => Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -460,10 +507,15 @@ class _Step1State extends State<_Step1TypeSelect> {
   Widget build(BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('What type of institution are you?',
+        Text(
+            AppStrings.of(context).tr('Quel type d\'institution etes-vous?',
+                'What type of institution are you?'),
             style: GoogleFonts.instrumentSerif(fontSize: 22, color: _textPri)),
         const SizedBox(height: 6),
-        Text('This determines which document types you can issue.',
+        Text(
+            AppStrings.of(context).tr(
+                'Cela determine les types de documents que vous pouvez emettre.',
+                'This determines which document types you can issue.'),
             style: GoogleFonts.dmSans(
                 fontSize: 13, color: _textSec, fontWeight: FontWeight.w300)),
         const SizedBox(height: 20),
@@ -516,7 +568,10 @@ class _Step1State extends State<_Step1TypeSelect> {
                               style: GoogleFonts.dmSans(
                                   fontSize: 11, color: _textSec, height: 1.4)),
                           const SizedBox(height: 4),
-                          Text('Docs: ${t.allowedDocs.join(' · ')}',
+                          Text(
+                              AppStrings.of(context).tr(
+                                  'Docs: ${t.allowedDocs.join(' · ')}',
+                                  'Docs: ${t.allowedDocs.join(' · ')}'),
                               style: GoogleFonts.dmSans(
                                   fontSize: 10,
                                   color: selected ? t.color : _textHint,
@@ -538,7 +593,7 @@ class _Step1State extends State<_Step1TypeSelect> {
                 elevation: 0),
             onPressed:
                 widget.data.institutionType.isEmpty ? null : widget.onNext,
-            child: const Text('Continue')),
+            child: Text(AppStrings.of(context).tr('Continuer', 'Continue'))),
       ]));
 }
 
@@ -566,33 +621,57 @@ class _Step2Details extends StatelessWidget {
   Widget build(BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Tell us about your institution',
+        Text(
+            AppStrings.of(context).tr('Parlez-nous de votre institution',
+                'Tell us about your institution'),
             style: GoogleFonts.instrumentSerif(fontSize: 22, color: _textPri)),
         const SizedBox(height: 20),
-        _tf('Full institution name *', (v) => data.name = v,
-            hint: 'e.g. The ICT University'),
-        _tf('Short name', (v) => data.shortName = v,
-            hint: 'e.g. ICT University'),
-        _tf('Acronym', (v) => data.acronym = v, hint: 'e.g. ICTU, ENSP, UY1'),
-        _tf('Brief description', (v) => data.description = v,
-            hint: 'One sentence about your institution', maxLines: 2),
-        _tf('Founded year', (v) => data.foundedYear = v,
-            hint: 'e.g. 2005', keyboardType: TextInputType.number),
-        _divider('Location'),
-        _tf('City *', (v) => data.city = v,
-            hint: 'e.g. Yaoundé, Douala, Bafoussam'),
+        _tf(
+            AppStrings.of(context).tr(
+                'Nom complet de l\'institution *', 'Full institution name *'),
+            (v) => data.name = v,
+            hint: AppStrings.of(context)
+                .tr('ex: The ICT University', 'e.g. The ICT University')),
+        _tf(AppStrings.of(context).tr('Nom court', 'Short name'),
+            (v) => data.shortName = v,
+            hint: AppStrings.of(context)
+                .tr('ex: ICT University', 'e.g. ICT University')),
+        _tf(AppStrings.of(context).tr('Acronyme', 'Acronym'),
+            (v) => data.acronym = v,
+            hint: AppStrings.of(context)
+                .tr('ex: ICTU, ENSP, UY1', 'e.g. ICTU, ENSP, UY1')),
+        _tf(AppStrings.of(context).tr('Description breve', 'Brief description'),
+            (v) => data.description = v,
+            hint: AppStrings.of(context).tr('Une phrase sur votre institution',
+                'One sentence about your institution'),
+            maxLines: 2),
+        _tf(AppStrings.of(context).tr('Annee de creation', 'Founded year'),
+            (v) => data.foundedYear = v,
+            hint: AppStrings.of(context).tr('ex: 2005', 'e.g. 2005'),
+            keyboardType: TextInputType.number),
+        _divider(AppStrings.of(context).tr('Localisation', 'Location')),
+        _tf(AppStrings.of(context).tr('Ville *', 'City *'),
+            (v) => data.city = v,
+            hint: AppStrings.of(context).tr('ex: Yaounde, Douala, Bafoussam',
+                'e.g. Yaounde, Douala, Bafoussam')),
         _regionDropdown(context),
-        _tf('Address', (v) => data.address = v,
-            hint: 'Street address, neighbourhood'),
-        _divider('Contact'),
-        _tf('Official email *', (v) => data.email = v,
+        _tf(AppStrings.of(context).tr('Adresse', 'Address'),
+            (v) => data.address = v,
+            hint: AppStrings.of(context)
+                .tr('Adresse et quartier', 'Street address, neighbourhood')),
+        _divider(AppStrings.of(context).tr('Contact', 'Contact')),
+        _tf(AppStrings.of(context).tr('Email officiel *', 'Official email *'),
+            (v) => data.email = v,
             hint: 'info@institution.cm',
             keyboardType: TextInputType.emailAddress),
-        _tf('Phone *', (v) => data.phone = v,
+        _tf(AppStrings.of(context).tr('Telephone *', 'Phone *'),
+            (v) => data.phone = v,
             hint: '+237 6XX XXX XXX', keyboardType: TextInputType.phone),
-        _tf('WhatsApp', (v) => data.whatsapp = v,
+        _tf(AppStrings.of(context).tr('WhatsApp', 'WhatsApp'),
+            (v) => data.whatsapp = v,
             hint: '+237 6XX XXX XXX', keyboardType: TextInputType.phone),
-        _tf('Website', (v) => data.website = v,
+        _tf(AppStrings.of(context).tr('Site web', 'Website'),
+            (v) => data.website = v,
             hint: 'https://www.institution.cm',
             keyboardType: TextInputType.url),
         const SizedBox(height: 20),
@@ -607,18 +686,20 @@ class _Step2Details extends StatelessWidget {
             onPressed: data.name.trim().isEmpty || data.city.trim().isEmpty
                 ? null
                 : onNext,
-            child: const Text('Continue')),
+            child: Text(AppStrings.of(context).tr('Continuer', 'Continue'))),
       ]));
 
   Widget _regionDropdown(BuildContext context) => Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Region',
+        Text(AppStrings.of(context).tr('Region', 'Region'),
             style: GoogleFonts.dmSans(
                 fontSize: 11, fontWeight: FontWeight.w500, color: _textSec)),
         const SizedBox(height: 4),
         DropdownButtonFormField<String>(
-            hint: Text('Select region',
+            hint: Text(
+                AppStrings.of(context)
+                    .tr('Selectionner une region', 'Select region'),
                 style: GoogleFonts.dmSans(color: _textHint, fontSize: 13)),
             decoration: _inputDec(),
             items: _cameroonRegions
@@ -704,18 +785,23 @@ class _Step3State extends State<_Step3Accreditation> {
   Widget build(BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Accreditation & identification',
+        Text(
+            AppStrings.of(context).tr('Accreditation et identification',
+                'Accreditation & identification'),
             style: GoogleFonts.instrumentSerif(fontSize: 22, color: _textPri)),
         const SizedBox(height: 6),
         Text(
-            'This information is used to verify your institution and link it '
-            'to the national education registry.',
+            AppStrings.of(context).tr(
+                'Ces informations servent a verifier votre institution et a la relier au registre national de l\'education.',
+                'This information is used to verify your institution and link it to the national education registry.'),
             style:
                 GoogleFonts.dmSans(fontSize: 12, color: _textSec, height: 1.5)),
         const SizedBox(height: 16),
-        _label('Accreditation body *'),
+        _label(AppStrings.of(context)
+            .tr('Organisme d\'accreditation *', 'Accreditation body *')),
         DropdownButtonFormField<String>(
-            hint: Text('Select…',
+            hint: Text(
+                AppStrings.of(context).tr('Selectionner...', 'Select...'),
                 style: GoogleFonts.dmSans(color: _textHint, fontSize: 13)),
             decoration: _inputDec(),
             items: _accreditationBodies
@@ -729,9 +815,13 @@ class _Step3State extends State<_Step3Accreditation> {
               if (v != null) widget.data.accreditationBody = v;
             }),
         const SizedBox(height: 12),
-        _tf('Accreditation / licence number',
+        _tf(
+            AppStrings.of(context).tr('Numero d\'accreditation / licence',
+                'Accreditation / licence number'),
             (v) => widget.data.accreditationNumber = v,
-            hint: 'Your official registration number'),
+            hint: AppStrings.of(context).tr(
+                'Votre numero officiel d\'enregistrement',
+                'Your official registration number')),
         const SizedBox(height: 8),
         Container(
             padding: const EdgeInsets.all(12),
@@ -747,11 +837,15 @@ class _Step3State extends State<_Step3Accreditation> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                    Text('Government institution?',
+                    Text(
+                        AppStrings.of(context).tr(
+                            'Institution publique?', 'Government institution?'),
                         style: GoogleFonts.dmSans(
                             fontSize: 13, fontWeight: FontWeight.w500)),
                     Text(
-                        'Public universities, national schools, state training centres',
+                        AppStrings.of(context).tr(
+                            'Universites publiques, ecoles nationales, centres de formation d\'Etat',
+                            'Public universities, national schools, state training centres'),
                         style:
                             GoogleFonts.dmSans(fontSize: 11, color: _textSec)),
                   ])),
@@ -762,14 +856,17 @@ class _Step3State extends State<_Step3Accreditation> {
                       setState(() => widget.data.isGovernment = v)),
             ])),
         const SizedBox(height: 20),
-        _label('Matricule prefix *'),
+        _label(AppStrings.of(context)
+            .tr('Prefixe matricule *', 'Matricule prefix *')),
         const SizedBox(height: 4),
         TextField(
             maxLength: 8,
             textCapitalization: TextCapitalization.characters,
             onChanged: (v) => widget.data.matriculePrefix = v.toUpperCase(),
             style: GoogleFonts.dmSans(fontSize: 14),
-            decoration: _inputDec(hint: 'e.g. ICTU, ENSP, CFPR')),
+            decoration: _inputDec(
+                hint: AppStrings.of(context)
+                    .tr('ex: ICTU, ENSP, CFPR', 'e.g. ICTU, ENSP, CFPR'))),
         const SizedBox(height: 4),
         if (widget.data.matriculePrefix.isNotEmpty)
           Container(
@@ -780,7 +877,7 @@ class _Step3State extends State<_Step3Accreditation> {
                 const Icon(Icons.info_rounded, color: _green, size: 14),
                 const SizedBox(width: 8),
                 Text(
-                    'Example matricule: '
+                    '${AppStrings.of(context).tr('Exemple matricule: ', 'Example matricule: ')}'
                     '${widget.data.matriculePrefix.toUpperCase()}20241001',
                     style: GoogleFonts.dmSans(
                       fontSize: 11,
@@ -796,17 +893,27 @@ class _Step3State extends State<_Step3Accreditation> {
                 border: Border.all(color: _amber.withOpacity(0.2))),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Documents you will need to upload after approval:',
+              Text(
+                  AppStrings.of(context).tr(
+                      'Documents a televerser apres approbation:',
+                      'Documents you will need to upload after approval:'),
                   style: GoogleFonts.dmSans(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                       color: _amber)),
               const SizedBox(height: 6),
               ...[
-                'Official accreditation certificate from the ministry',
-                'Institution registration document or statuts',
-                'Official letterhead (for the PDF template)',
-                'Logo (PNG, minimum 200×200px)',
+                AppStrings.of(context).tr(
+                    'Certificat officiel d\'accreditation du ministere',
+                    'Official accreditation certificate from the ministry'),
+                AppStrings.of(context).tr(
+                    'Document d\'enregistrement ou statuts de l\'institution',
+                    'Institution registration document or statutes'),
+                AppStrings.of(context).tr(
+                    'Papier entete officiel (pour le modele PDF)',
+                    'Official letterhead (for the PDF template)'),
+                AppStrings.of(context).tr('Logo (PNG, minimum 200x200px)',
+                    'Logo (PNG, minimum 200x200px)'),
               ].map((s) => Padding(
                   padding: const EdgeInsets.only(bottom: 3),
                   child: Row(children: [
@@ -827,7 +934,7 @@ class _Step3State extends State<_Step3Accreditation> {
                 elevation: 0),
             onPressed:
                 widget.data.matriculePrefix.isEmpty ? null : widget.onNext,
-            child: const Text('Continue')),
+            child: Text(AppStrings.of(context).tr('Continuer', 'Continue'))),
       ]));
 
   Widget _label(String t) => Padding(
@@ -885,20 +992,27 @@ class _Step4Admin extends StatelessWidget {
   Widget build(BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Administrator account',
+        Text(
+            AppStrings.of(context)
+                .tr('Compte administrateur', 'Administrator account'),
             style: GoogleFonts.instrumentSerif(fontSize: 22, color: _textPri)),
         const SizedBox(height: 6),
         Text(
-            'This person will be the first admin of your institution on Diplomax. '
-            'They can create additional staff accounts after logging in.',
+            AppStrings.of(context).tr(
+                'Cette personne sera le premier administrateur de votre institution sur Diplomax. Elle pourra creer d\'autres comptes staff apres connexion.',
+                'This person will be the first admin of your institution on Diplomax. They can create additional staff accounts after logging in.'),
             style:
                 GoogleFonts.dmSans(fontSize: 12, color: _textSec, height: 1.5)),
         const SizedBox(height: 20),
-        _tf('Full name *', (v) => data.adminFullName = v,
-            hint: 'e.g. Jean-Paul Mbarga'),
-        _label('Title / Role *'),
+        _tf(AppStrings.of(context).tr('Nom complet *', 'Full name *'),
+            (v) => data.adminFullName = v,
+            hint: AppStrings.of(context)
+                .tr('ex: Jean-Paul Mbarga', 'e.g. Jean-Paul Mbarga')),
+        _label(AppStrings.of(context).tr('Titre / role *', 'Title / Role *')),
         DropdownButtonFormField<String>(
-            hint: Text('Select your role',
+            hint: Text(
+                AppStrings.of(context)
+                    .tr('Selectionnez votre role', 'Select your role'),
                 style: GoogleFonts.dmSans(color: _textHint, fontSize: 13)),
             decoration: _inputDec(),
             items: _titles
@@ -910,13 +1024,20 @@ class _Step4Admin extends StatelessWidget {
               if (v != null) data.adminTitle = v;
             }),
         const SizedBox(height: 12),
-        _tf('Work email *', (v) => data.adminEmail = v,
+        _tf(AppStrings.of(context).tr('Email professionnel *', 'Work email *'),
+            (v) => data.adminEmail = v,
             hint: 'your.email@institution.cm',
             keyboardType: TextInputType.emailAddress),
-        _tf('Phone *', (v) => data.adminPhone = v,
+        _tf(AppStrings.of(context).tr('Telephone *', 'Phone *'),
+            (v) => data.adminPhone = v,
             hint: '+237 6XX XXX XXX', keyboardType: TextInputType.phone),
-        _tf('Choose a password *', (v) => data.adminPassword = v,
-            hint: 'Minimum 8 characters', obscure: true),
+        _tf(
+            AppStrings.of(context)
+                .tr('Choisir un mot de passe *', 'Choose a password *'),
+            (v) => data.adminPassword = v,
+            hint: AppStrings.of(context)
+                .tr('Minimum 8 caracteres', 'Minimum 8 characters'),
+            obscure: true),
         Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -928,8 +1049,9 @@ class _Step4Admin extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                   child: Text(
-                      'Your password is encrypted before storage. Diplomax staff cannot '
-                      'see it. You can change it after your first login.',
+                      AppStrings.of(context).tr(
+                          'Votre mot de passe est chiffre avant stockage. L\'equipe Diplomax ne peut pas le voir. Vous pourrez le modifier apres votre premiere connexion.',
+                          'Your password is encrypted before storage. Diplomax staff cannot see it. You can change it after your first login.'),
                       style: GoogleFonts.dmSans(
                           fontSize: 11, color: _green, height: 1.5))),
             ])),
@@ -945,7 +1067,8 @@ class _Step4Admin extends StatelessWidget {
             onPressed: data.adminFullName.isEmpty || data.adminEmail.isEmpty
                 ? null
                 : onNext,
-            child: const Text('Continue to review')),
+            child: Text(AppStrings.of(context)
+                .tr('Continuer vers la revision', 'Continue to review'))),
       ]));
 
   Widget _label(String t) => Padding(
@@ -1002,10 +1125,15 @@ class _Step5Review extends StatelessWidget {
   Widget build(BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Review your application',
+        Text(
+            AppStrings.of(context)
+                .tr('Verifiez votre demande', 'Review your application'),
             style: GoogleFonts.instrumentSerif(fontSize: 22, color: _textPri)),
         const SizedBox(height: 6),
-        Text('Check all information before submitting.',
+        Text(
+            AppStrings.of(context).tr(
+                'Verifiez toutes les informations avant de soumettre.',
+                'Check all information before submitting.'),
             style: GoogleFonts.dmSans(fontSize: 12, color: _textSec)),
         const SizedBox(height: 20),
         _reviewSection('Institution', [
@@ -1050,9 +1178,9 @@ class _Step5Review extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: _amber.withOpacity(0.2))),
             child: Text(
-                'By submitting, you confirm that all information is accurate and that '
-                'your institution is legally permitted to issue academic documents. '
-                'False information may result in permanent suspension.',
+                AppStrings.of(context).tr(
+                    'En soumettant, vous confirmez que toutes les informations sont exactes et que votre institution est legalement autorisee a emettre des documents academiques. De fausses informations peuvent entrainer une suspension permanente.',
+                    'By submitting, you confirm that all information is accurate and that your institution is legally permitted to issue academic documents. False information may result in permanent suspension.'),
                 style: GoogleFonts.dmSans(
                     fontSize: 11, color: _amber, height: 1.5))),
         const SizedBox(height: 20),
@@ -1064,7 +1192,11 @@ class _Step5Review extends StatelessWidget {
                     child: CircularProgressIndicator(
                         color: Colors.white, strokeWidth: 2))
                 : const Icon(Icons.send_rounded, size: 18),
-            label: Text(loading ? 'Submitting…' : 'Submit application'),
+            label: Text(loading
+                ? AppStrings.of(context)
+                    .tr('Soumission en cours...', 'Submitting...')
+                : AppStrings.of(context)
+                    .tr('Soumettre la demande', 'Submit application')),
             style: ElevatedButton.styleFrom(
                 backgroundColor: _green,
                 foregroundColor: Colors.white,
@@ -1086,8 +1218,7 @@ class _Step5Review extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: const BoxDecoration(
                 color: _greenLight,
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(12))),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
             child: Text(title,
                 style: GoogleFonts.dmSans(
                     fontSize: 12, fontWeight: FontWeight.w500, color: _green))),

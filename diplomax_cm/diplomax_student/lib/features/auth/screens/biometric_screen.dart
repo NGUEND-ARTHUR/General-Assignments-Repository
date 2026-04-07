@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/app_colors.dart';
+import '../../../l10n/app_strings.dart';
 
 class BiometricScreen extends StatefulWidget {
   const BiometricScreen({super.key});
@@ -47,6 +48,7 @@ class _BiometricScreenState extends State<BiometricScreen>
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -63,7 +65,8 @@ class _BiometricScreenState extends State<BiometricScreen>
               const Spacer(),
 
               Text(
-                'Vérification\nbiométrique',
+                strings.tr(
+                    'Vérification\nbiométrique', 'Biometric\nverification'),
                 style: GoogleFonts.instrumentSerif(
                   fontSize: 36,
                   fontWeight: FontWeight.w400,
@@ -74,7 +77,10 @@ class _BiometricScreenState extends State<BiometricScreen>
               ),
               const SizedBox(height: 12),
               Text(
-                'Placez votre doigt sur le capteur\npour accéder à votre coffre-fort.',
+                strings.tr(
+                  'Placez votre doigt sur le capteur\npour accéder à votre coffre-fort.',
+                  'Place your finger on the sensor\nto access your vault.',
+                ),
                 style: GoogleFonts.dmSans(
                   fontSize: 14,
                   color: AppColors.textSecondary,
@@ -150,7 +156,8 @@ class _BiometricScreenState extends State<BiometricScreen>
                 duration: const Duration(milliseconds: 300),
                 child: _success
                     ? Text(
-                        'Identité vérifiée ✓',
+                        strings.tr(
+                            'Identité vérifiée ✓', 'Identity verified ✓'),
                         key: const ValueKey('success'),
                         style: GoogleFonts.dmSans(
                           fontSize: 14,
@@ -160,7 +167,8 @@ class _BiometricScreenState extends State<BiometricScreen>
                       )
                     : _scanning
                         ? Text(
-                            'Vérification en cours...',
+                            strings.tr('Vérification en cours...',
+                                'Verification in progress...'),
                             key: const ValueKey('scanning'),
                             style: GoogleFonts.dmSans(
                               fontSize: 14,
@@ -169,7 +177,8 @@ class _BiometricScreenState extends State<BiometricScreen>
                             ),
                           )
                         : Text(
-                            'Appuyez sur le capteur pour commencer',
+                            strings.tr('Appuyez sur le capteur pour commencer',
+                                'Tap the sensor to start'),
                             key: const ValueKey('idle'),
                             style: GoogleFonts.dmSans(
                               fontSize: 14,
@@ -187,7 +196,8 @@ class _BiometricScreenState extends State<BiometricScreen>
                 icon: const Icon(Icons.face_rounded,
                     size: 18, color: AppColors.primary),
                 label: Text(
-                  'Utiliser la reconnaissance faciale',
+                  strings.tr('Utiliser la reconnaissance faciale',
+                      'Use face recognition'),
                   style: GoogleFonts.dmSans(
                     color: AppColors.primary,
                     fontSize: 13,
@@ -199,7 +209,8 @@ class _BiometricScreenState extends State<BiometricScreen>
               TextButton(
                 onPressed: () => context.go('/home'),
                 child: Text(
-                  'Continuer avec le mot de passe',
+                  strings.tr('Continuer avec le mot de passe',
+                      'Continue with password'),
                   style: GoogleFonts.dmSans(
                     color: AppColors.textSecondary,
                     fontSize: 13,

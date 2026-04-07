@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../../l10n/app_strings.dart';
 
 const _G = Color(0xFF0F6E56);
 const _GL = Color(0xFFE1F5EE);
@@ -18,7 +19,7 @@ const _RL = Color(0xFFFCEBEB);
 const _A = Color(0xFFBA7517);
 const _AL = Color(0xFFFAEEDA);
 const _API = String.fromEnvironment('API_BASE_URL',
-    defaultValue: 'https://api.diplomax.cm/v1');
+    defaultValue: 'https://diplomax-backend.onrender.com/v1');
 const _sto = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true));
 Dio _dio(String tok) =>
@@ -71,12 +72,13 @@ class _DS extends ConsumerState<UnivDocumentsScreen> {
       backgroundColor: _BG,
       appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Text('Documents',
+          title: Text(AppStrings.of(ctx).documents,
               style: GoogleFonts.instrumentSerif(fontSize: 22, color: _T1)),
           actions: [
             IconButton(
                 icon: const Icon(Icons.batch_prediction_rounded, color: _G),
-                tooltip: 'Batch sign',
+                tooltip:
+                    AppStrings.of(ctx).tr('Signature en lot', 'Batch sign'),
                 onPressed: () => ctx.go('/issue/batch'))
           ]),
       body: Column(children: [
@@ -88,7 +90,8 @@ class _DS extends ConsumerState<UnivDocumentsScreen> {
                       controller: _q,
                       onSubmitted: (_) => _fetch(),
                       decoration: InputDecoration(
-                          hintText: 'Search documents',
+                          hintText: AppStrings.of(ctx).tr(
+                              'Rechercher des documents', 'Search documents'),
                           hintStyle: const TextStyle(color: _TH, fontSize: 13),
                           prefixIcon: const Icon(Icons.search_rounded,
                               size: 18, color: _TH),
@@ -146,7 +149,7 @@ class _DS extends ConsumerState<UnivDocumentsScreen> {
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                               color: act ? _G : _BD, width: act ? 1.5 : 0.5)),
-                      child: Text(t[0].toUpperCase() + t.substring(1),
+                      child: Text(_typeFilterLabel(ctx, t),
                           style: GoogleFonts.dmSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -164,7 +167,9 @@ class _DS extends ConsumerState<UnivDocumentsScreen> {
                             const Icon(Icons.folder_open_rounded,
                                 size: 56, color: Color(0xFFE0DDD5)),
                             const SizedBox(height: 14),
-                            Text('No documents found',
+                            Text(
+                                AppStrings.of(ctx).tr('Aucun document trouve',
+                                    'No documents found'),
                                 style: GoogleFonts.dmSans(
                                     fontSize: 15, color: _T2))
                           ]))
@@ -232,7 +237,10 @@ class _DS extends ConsumerState<UnivDocumentsScreen> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(4)),
-                                                      child: Text('REVOKED',
+                                                      child: Text(
+                                                          AppStrings.of(ctx).tr(
+                                                              'REVOQUE',
+                                                              'REVOKED'),
                                                           style: GoogleFonts
                                                               .dmSans(
                                                                   fontSize: 9,
@@ -252,7 +260,10 @@ class _DS extends ConsumerState<UnivDocumentsScreen> {
                                                   const Icon(Icons.link_rounded,
                                                       size: 11, color: _G),
                                                   const SizedBox(width: 3),
-                                                  Text('Blockchain anchored',
+                                                  Text(
+                                                      AppStrings.of(ctx).tr(
+                                                          'Ancre sur la blockchain',
+                                                          'Blockchain anchored'),
                                                       style: GoogleFonts.dmSans(
                                                           fontSize: 10,
                                                           color: _G))
@@ -274,6 +285,23 @@ class _DS extends ConsumerState<UnivDocumentsScreen> {
         return Icons.verified_rounded;
       default:
         return Icons.assignment_rounded;
+    }
+  }
+
+  String _typeFilterLabel(BuildContext context, String type) {
+    switch (type) {
+      case 'all':
+        return AppStrings.of(context).tr('Tous', 'All');
+      case 'diploma':
+        return AppStrings.of(context).tr('Diplome', 'Diploma');
+      case 'transcript':
+        return AppStrings.of(context).tr('Releve', 'Transcript');
+      case 'certificate':
+        return AppStrings.of(context).tr('Certificat', 'Certificate');
+      case 'attestation':
+        return AppStrings.of(context).tr('Attestation', 'Attestation');
+      default:
+        return type;
     }
   }
 }
@@ -312,22 +340,28 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
     final confirm = await showDialog<bool>(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text('Revoke document?',
+              title: Text(
+                  AppStrings.of(context)
+                      .tr('Revoquer le document ?', 'Revoke document?'),
                   style: GoogleFonts.instrumentSerif()),
               content: Text(
-                  'This will permanently mark the document as REVOKED on the blockchain. The student will be notified.',
+                  AppStrings.of(context).tr(
+                      'Cette action marquera definitivement le document comme REVOQUE sur la blockchain. L\'etudiant sera notifie.',
+                      'This will permanently mark the document as REVOKED on the blockchain. The student will be notified.'),
                   style: GoogleFonts.dmSans(fontSize: 13)),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: const Text('Cancel')),
+                    child:
+                        Text(AppStrings.of(context).tr('Annuler', 'Cancel'))),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: _R,
                         foregroundColor: Colors.white,
                         elevation: 0),
                     onPressed: () => Navigator.pop(context, true),
-                    child: const Text('Revoke'))
+                    child:
+                        Text(AppStrings.of(context).tr('Revoquer', 'Revoke')))
               ],
             ));
     if (confirm != true) return;
@@ -337,8 +371,10 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
           data: {'reason': 'Revoked by university registrar'});
       _fetch();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Document revoked on blockchain'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppStrings.of(context).tr(
+                'Document revoque sur la blockchain',
+                'Document revoked on blockchain')),
             backgroundColor: _R,
             behavior: SnackBarBehavior.floating));
       }
@@ -351,13 +387,14 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
         appBar: AppBar(
             backgroundColor: Colors.transparent,
             leading: const BackButton(color: _T1),
-            title: Text('Document detail',
+            title: Text(
+                AppStrings.of(ctx).tr('Detail du document', 'Document detail'),
                 style: GoogleFonts.instrumentSerif(fontSize: 20, color: _T1)),
             actions: [
               if (_doc != null && _doc!['is_revoked'] != true)
                 IconButton(
                     icon: const Icon(Icons.block_rounded, color: _R),
-                    tooltip: 'Revoke',
+                    tooltip: AppStrings.of(ctx).tr('Revoquer', 'Revoke'),
                     onPressed: _revoke)
             ]),
         body: _load
@@ -384,7 +421,9 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                       child: Text(
-                          'This document has been REVOKED on the blockchain.',
+                          AppStrings.of(context).tr(
+                              'Ce document a ete REVOQUE sur la blockchain.',
+                              'This document has been REVOKED on the blockchain.'),
                           style: GoogleFonts.dmSans(
                               fontSize: 12,
                               color: _R,
@@ -404,13 +443,35 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
                             fontSize: 18, color: _T1)),
                     const SizedBox(height: 12),
                     ...[
-                      ('Student', d['student_name'] ?? '—'),
-                      ('Matricule', d['matricule'] ?? '—'),
-                      ('Type', d['type'] ?? '—'),
-                      ('Degree', d['degree'] ?? '—'),
-                      ('Field', d['field'] ?? '—'),
-                      ('Mention', d['mention'] ?? '—'),
-                      ('Issue date', d['issue_date'] ?? '—')
+                      (
+                        AppStrings.of(context).tr('Etudiant', 'Student'),
+                        d['student_name'] ?? '-'
+                      ),
+                      (
+                        AppStrings.of(context).tr('Matricule', 'Matricule'),
+                        d['matricule'] ?? '-'
+                      ),
+                      (
+                        AppStrings.of(context).tr('Type', 'Type'),
+                        d['type'] ?? '-'
+                      ),
+                      (
+                        AppStrings.of(context).tr('Diplome', 'Degree'),
+                        d['degree'] ?? '-'
+                      ),
+                      (
+                        AppStrings.of(context).tr('Filiere', 'Field'),
+                        d['field'] ?? '-'
+                      ),
+                      (
+                        AppStrings.of(context).tr('Mention', 'Mention'),
+                        d['mention'] ?? '-'
+                      ),
+                      (
+                        AppStrings.of(context)
+                            .tr('Date d\'emission', 'Issue date'),
+                        d['issue_date'] ?? '-'
+                      )
                     ].map((r) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: Row(children: [
@@ -439,20 +500,23 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
                     Row(children: [
                       const Icon(Icons.security_rounded, color: _G, size: 16),
                       const SizedBox(width: 8),
-                      Text('Cryptographic proof',
+                      Text(
+                          AppStrings.of(context).tr(
+                              'Preuve cryptographique', 'Cryptographic proof'),
                           style: GoogleFonts.dmSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: _G))
                     ]),
                     const SizedBox(height: 10),
-                    Text('SHA-256: ${(d['hash_sha256'] as String?) ?? '—'}',
+                    Text('SHA-256: ${(d['hash_sha256'] as String?) ?? '-'}',
                         style: GoogleFonts.dmSans(fontSize: 10, color: _G),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis),
                     if (d['blockchain_tx'] != null) ...[
                       const SizedBox(height: 4),
-                      Text('Blockchain TX: ${d['blockchain_tx']}',
+                      Text(
+                          '${AppStrings.of(context).tr('Transaction blockchain', 'Blockchain TX')}: ${d['blockchain_tx']}',
                           style: GoogleFonts.dmSans(fontSize: 10, color: _G),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis)
@@ -463,7 +527,10 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
                         const Icon(Icons.check_circle_rounded,
                             color: _G, size: 14),
                         const SizedBox(width: 6),
-                        Text('Anchored on Hyperledger Fabric',
+                        Text(
+                            AppStrings.of(context).tr(
+                                'Ancre sur Hyperledger Fabric',
+                                'Anchored on Hyperledger Fabric'),
                             style: GoogleFonts.dmSans(
                                 fontSize: 11,
                                 color: _G,
@@ -475,7 +542,8 @@ class _DD extends ConsumerState<UnivDocDetailScreen> {
           if (d['rsa_signature'] == null)
             ElevatedButton.icon(
                 icon: const Icon(Icons.draw_rounded, size: 18),
-                label: const Text('Sign this document'),
+                label: Text(AppStrings.of(context)
+                    .tr('Signer ce document', 'Sign this document')),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: _G,
                     foregroundColor: Colors.white,

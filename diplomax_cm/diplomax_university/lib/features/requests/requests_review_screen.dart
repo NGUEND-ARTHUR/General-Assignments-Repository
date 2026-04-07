@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import '../../core/api_client.dart';
+import '../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -65,8 +66,10 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
     });
     await _load();
     if (mounted) {
+      final strings = AppStrings.of(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Request $status', style: GoogleFonts.dmSans()),
+          content: Text(strings.tr('Demande $status', 'Request $status'),
+              style: GoogleFonts.dmSans()),
           backgroundColor: status == 'approved' ? _green : _red,
           behavior: SnackBarBehavior.floating,
           shape:
@@ -78,8 +81,12 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
     await _api.dio.post('/requests/admin/$requestId/issue');
     await _load();
     if (mounted) {
+      final strings = AppStrings.of(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Document issued and sent to student vault',
+          content: Text(
+              strings.tr(
+                  'Document emis et envoye dans le coffre de l\'etudiant',
+                  'Document issued and sent to student vault'),
               style: GoogleFonts.dmSans()),
           backgroundColor: _green,
           behavior: SnackBarBehavior.floating));
@@ -110,27 +117,34 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
     }
 
     if (!mounted) return;
+    final strings = AppStrings.of(context);
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title:
-            Text('Set request pricing', style: GoogleFonts.instrumentSerif()),
+        title: Text(
+            strings.tr(
+                'Configurer les tarifs des demandes', 'Set request pricing'),
+            style: GoogleFonts.instrumentSerif()),
         content: SizedBox(
           width: 420,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _priceField(ctrls['diploma']!, 'Diploma copy'),
-              _priceField(ctrls['transcript']!, 'Official transcript'),
-              _priceField(ctrls['certificate']!, 'Certificate'),
-              _priceField(ctrls['attestation']!, 'Attestation'),
+              _priceField(ctrls['diploma']!,
+                  strings.tr('Copie du diplome', 'Diploma copy')),
+              _priceField(ctrls['transcript']!,
+                  strings.tr('Releve officiel', 'Official transcript')),
+              _priceField(ctrls['certificate']!,
+                  strings.tr('Certificat', 'Certificate')),
+              _priceField(ctrls['attestation']!,
+                  strings.tr('Attestation', 'Attestation')),
             ],
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(strings.tr('Annuler', 'Cancel')),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -168,8 +182,9 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content:
-                          Text('Pricing updated', style: GoogleFonts.dmSans()),
+                      content: Text(
+                          strings.tr('Tarifs mis a jour', 'Pricing updated'),
+                          style: GoogleFonts.dmSans()),
                       backgroundColor: _green,
                     ),
                   );
@@ -181,7 +196,8 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
                   SnackBar(
                     content: Text(
                       (e.response?.data as Map?)?['detail']?.toString() ??
-                          'Failed to update pricing',
+                          strings.tr('Echec de la mise a jour des tarifs',
+                              'Failed to update pricing'),
                       style: GoogleFonts.dmSans(),
                     ),
                     backgroundColor: _red,
@@ -189,7 +205,7 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
                 );
               }
             },
-            child: const Text('Save'),
+            child: Text(strings.tr('Enregistrer', 'Save')),
           ),
         ],
       ),
@@ -218,19 +234,24 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
   void _showRejectDialog(String requestId) => showDialog(
       context: context,
       builder: (_) {
+        final strings = AppStrings.of(context);
         final ctrl = TextEditingController();
         return AlertDialog(
-            title: Text('Reject request', style: GoogleFonts.instrumentSerif()),
+            title: Text(strings.tr('Rejeter la demande', 'Reject request'),
+                style: GoogleFonts.instrumentSerif()),
             content: Column(mainAxisSize: MainAxisSize.min, children: [
-              Text('Provide a reason (shown to the student):',
+              Text(
+                  strings.tr('Fournissez une raison (visible par l\'etudiant):',
+                      'Provide a reason (shown to the student):'),
                   style: GoogleFonts.dmSans(fontSize: 13)),
               const SizedBox(height: 10),
               TextField(
                   controller: ctrl,
                   maxLines: 3,
                   decoration: InputDecoration(
-                      hintText:
-                          'e.g. Fees not yet settled / Incomplete enrolment',
+                      hintText: strings.tr(
+                          'ex: Frais non regles / Inscription incomplete',
+                          'e.g. Fees not yet settled / Incomplete enrolment'),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8)),
                       contentPadding: const EdgeInsets.all(10))),
@@ -238,7 +259,7 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
             actions: [
               TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel')),
+                  child: Text(strings.tr('Annuler', 'Cancel'))),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       backgroundColor: _red,
@@ -249,21 +270,23 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
                     _updateStatus(requestId, 'rejected',
                         notes: ctrl.text.trim());
                   },
-                  child: const Text('Reject')),
+                  child: Text(strings.tr('Rejeter', 'Reject'))),
             ]);
       });
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+    return Scaffold(
       backgroundColor: _bg,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Text('Student requests',
+        title: Text(strings.tr('Demandes etudiantes', 'Student requests'),
             style: GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
         actions: [
           IconButton(
               icon: const Icon(Icons.payments_rounded, color: _textPri),
-              tooltip: 'Manage pricing',
+              tooltip: strings.tr('Gerer les tarifs', 'Manage pricing'),
               onPressed: _openPricingDialog),
           IconButton(
               icon: const Icon(Icons.refresh_rounded, color: _textPri),
@@ -300,7 +323,7 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
                           border: Border.all(
                               color: active ? _green : _border,
                               width: active ? 1.5 : 0.5)),
-                      child: Text(s[0].toUpperCase() + s.substring(1),
+                      child: Text(_statusLabel(s, strings),
                           style: GoogleFonts.dmSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -318,7 +341,10 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
                             const Icon(Icons.inbox_rounded,
                                 size: 56, color: Color(0xFFE0DDD5)),
                             const SizedBox(height: 14),
-                            Text('No $_filterStatus requests',
+                            Text(
+                                strings.tr(
+                                    'Aucune demande ${_statusLabel(_filterStatus, strings).toLowerCase()}',
+                                    'No ${_statusLabel(_filterStatus, strings).toLowerCase()} requests'),
                                 style: GoogleFonts.dmSans(
                                     fontSize: 15, color: _textSec)),
                           ]))
@@ -337,7 +363,26 @@ class _ReviewState extends ConsumerState<RequestsReviewScreen> {
                                   onIssue: () =>
                                       _issueFromRequest(_requests[i]['id']),
                                 )))),
-      ]));
+      ]),
+    );
+  }
+
+  String _statusLabel(String status, AppStrings strings) {
+    switch (status) {
+      case 'pending':
+        return strings.tr('En attente', 'Pending');
+      case 'reviewing':
+        return strings.tr('En revision', 'Reviewing');
+      case 'approved':
+        return strings.tr('Approuve', 'Approved');
+      case 'rejected':
+        return strings.tr('Rejete', 'Rejected');
+      case 'ready':
+        return strings.tr('Pret', 'Ready');
+      default:
+        return status;
+    }
+  }
 }
 
 class _RequestReviewCard extends StatelessWidget {
@@ -351,6 +396,7 @@ class _RequestReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     final status = data['status'] as String? ?? 'pending';
     final urgency = data['urgency'] as String? ?? 'normal';
     final docType = data['doc_type'] as String? ?? '';
@@ -396,11 +442,15 @@ class _RequestReviewCard extends StatelessWidget {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                      Text(_docTypeLabel(docType),
+                      Text(
+                          strings.tr(
+                              _docTypeLabelFr(docType), _docTypeLabel(docType)),
                           style: GoogleFonts.dmSans(
                               fontSize: 13, fontWeight: FontWeight.w500)),
                       Text(
-                          'Matricule: ${data['matricule'] ?? data['student_id'] ?? '—'}',
+                          strings.tr(
+                              'Matricule: ${data['matricule'] ?? data['student_id'] ?? '—'}',
+                              'Matricule: ${data['matricule'] ?? data['student_id'] ?? '—'}'),
                           style: GoogleFonts.dmSans(
                               fontSize: 11, color: _textSec)),
                     ])),
@@ -414,7 +464,9 @@ class _RequestReviewCard extends StatelessWidget {
                               : _amberLight,
                           borderRadius: BorderRadius.circular(6)),
                       child: Text(
-                          urgency == 'very_urgent' ? '🔴 URGENT' : '🟡 Urgent',
+                          urgency == 'very_urgent'
+                              ? strings.tr('🔴 TRES URGENT', '🔴 URGENT')
+                              : strings.tr('🟡 Urgent', '🟡 Urgent'),
                           style: GoogleFonts.dmSans(
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
@@ -427,13 +479,18 @@ class _RequestReviewCard extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _infoRow(Icons.help_outline_rounded, 'Purpose', purpose),
+                    _infoRow(Icons.help_outline_rounded,
+                        strings.tr('Objet', 'Purpose'), purpose),
                     if (destination != null && destination.isNotEmpty)
-                      _infoRow(Icons.location_on_rounded, 'Destination',
+                      _infoRow(
+                          Icons.location_on_rounded,
+                          strings.tr('Destination', 'Destination'),
                           destination),
                     if (notes != null && notes.isNotEmpty)
-                      _infoRow(Icons.note_rounded, 'Notes', notes),
-                    _infoRow(Icons.payments_rounded, 'Fee', '$fee FCFA'),
+                      _infoRow(Icons.note_rounded, strings.tr('Notes', 'Notes'),
+                          notes),
+                    _infoRow(Icons.payments_rounded, strings.tr('Frais', 'Fee'),
+                        '$fee FCFA'),
                     const SizedBox(height: 12),
                     // Action buttons based on status
                     if (status == 'pending')
@@ -448,7 +505,7 @@ class _RequestReviewCard extends StatelessWidget {
                                         borderRadius:
                                             BorderRadius.circular(10))),
                                 onPressed: onReject,
-                                child: const Text('Reject'))),
+                                child: Text(strings.tr('Rejeter', 'Reject')))),
                         const SizedBox(width: 10),
                         Expanded(
                             child: ElevatedButton(
@@ -461,12 +518,15 @@ class _RequestReviewCard extends StatelessWidget {
                                         borderRadius:
                                             BorderRadius.circular(10))),
                                 onPressed: onApprove,
-                                child: const Text('Approve'))),
+                                child:
+                                    Text(strings.tr('Approuver', 'Approve')))),
                       ]),
                     if (status == 'approved')
                       ElevatedButton.icon(
                           icon: const Icon(Icons.verified_rounded, size: 16),
-                          label: const Text('Issue document now'),
+                          label: Text(strings.tr(
+                              'Emettre le document maintenant',
+                              'Issue document now')),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: _green,
                               foregroundColor: Colors.white,
@@ -486,7 +546,9 @@ class _RequestReviewCard extends StatelessWidget {
                                 color: _green, size: 16),
                             const SizedBox(width: 8),
                             Text(
-                                'Document issued. Waiting for student to pay and collect.',
+                                strings.tr(
+                                    'Document emis. En attente du paiement et du retrait par l\'etudiant.',
+                                    'Document issued. Waiting for student to pay and collect.'),
                                 style: GoogleFonts.dmSans(
                                     fontSize: 11, color: _green)),
                           ])),
@@ -528,6 +590,19 @@ class _RequestReviewCard extends StatelessWidget {
         return 'Official transcript';
       case 'certificate':
         return 'Certificate';
+      default:
+        return 'Attestation';
+    }
+  }
+
+  String _docTypeLabelFr(String t) {
+    switch (t) {
+      case 'diploma':
+        return 'Copie du diplome';
+      case 'transcript':
+        return 'Releve officiel';
+      case 'certificate':
+        return 'Certificat';
       default:
         return 'Attestation';
     }

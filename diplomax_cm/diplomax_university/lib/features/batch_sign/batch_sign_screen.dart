@@ -14,6 +14,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pointycastle/export.dart' as pc;
 import 'package:convert/convert.dart';
+import '../../l10n/app_strings.dart';
 
 const _G = Color(0xFF0F6E56);
 const _GL = Color(0xFFE1F5EE);
@@ -27,7 +28,7 @@ const _AL = Color(0xFFFAEEDA);
 const _R = Color(0xFFA32D2D);
 
 const _API = String.fromEnvironment('API_BASE_URL',
-    defaultValue: 'https://api.diplomax.cm/v1');
+    defaultValue: 'https://diplomax-backend.onrender.com/v1');
 const _sto = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true));
 
@@ -173,7 +174,8 @@ class _BS extends ConsumerState<BatchSignScreen> {
           backgroundColor: Colors.transparent,
           leading:
               BackButton(color: _T1, onPressed: () => context.go('/documents')),
-          title: Text('Batch sign',
+          title: Text(
+              AppStrings.of(context).tr('Signature en lot', 'Batch sign'),
               style: GoogleFonts.instrumentSerif(fontSize: 20, color: _T1)),
         ),
         body: Padding(padding: const EdgeInsets.all(20), child: _buildBody()),
@@ -182,12 +184,14 @@ class _BS extends ConsumerState<BatchSignScreen> {
   Widget _buildBody() {
     switch (_phase) {
       case _Phase.loading:
-        return const Center(
+        return Center(
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CircularProgressIndicator(color: _G),
-          SizedBox(height: 16),
-          Text('Loading pending documents…'),
+          const CircularProgressIndicator(color: _G),
+          const SizedBox(height: 16),
+          Text(AppStrings.of(context).tr(
+              'Chargement des documents en attente...',
+              'Loading pending documents...')),
         ]));
 
       case _Phase.preview:
@@ -241,7 +245,9 @@ class _BS extends ConsumerState<BatchSignScreen> {
                           style: GoogleFonts.dmSans(fontSize: 13))),
                 ])),
           ] else ...[
-            Text('Pending documents:',
+            Text(
+                AppStrings.of(context)
+                    .tr('Documents en attente :', 'Pending documents:'),
                 style: GoogleFonts.dmSans(
                     fontSize: 14, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
@@ -280,7 +286,10 @@ class _BS extends ConsumerState<BatchSignScreen> {
             if (_pending.length > 50)
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text('… and ${_pending.length - 50} more',
+                  child: Text(
+                      AppStrings.of(context).tr(
+                          '... et ${_pending.length - 50} de plus',
+                          '... and ${_pending.length - 50} more'),
                       style: GoogleFonts.dmSans(fontSize: 12, color: _T2))),
           ],
 
@@ -298,7 +307,9 @@ class _BS extends ConsumerState<BatchSignScreen> {
           if (_pending.isNotEmpty)
             ElevatedButton.icon(
                 icon: const Icon(Icons.draw_rounded, size: 18),
-                label: Text('Sign all ${_pending.length} documents now'),
+                label: Text(AppStrings.of(context).tr(
+                    'Signer maintenant les ${_pending.length} documents',
+                    'Sign all ${_pending.length} documents now')),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: _G,
                     foregroundColor: Colors.white,
@@ -335,10 +346,15 @@ class _BS extends ConsumerState<BatchSignScreen> {
                 style: GoogleFonts.instrumentSerif(fontSize: 28, color: _G)),
           ]),
           const SizedBox(height: 24),
-          Text('Signing in progress…',
+          Text(
+              AppStrings.of(context)
+                  .tr('Signature en cours...', 'Signing in progress...'),
               style: GoogleFonts.instrumentSerif(fontSize: 22, color: _T1)),
           const SizedBox(height: 8),
-          Text('$done / $total documents signed  ·  $rate docs/sec',
+          Text(
+              AppStrings.of(context).tr(
+                  '$done / $total documents signes  ·  $rate docs/sec',
+                  '$done / $total documents signed  ·  $rate docs/sec'),
               style: GoogleFonts.dmSans(fontSize: 13, color: _T2)),
           const SizedBox(height: 16),
           LinearProgressIndicator(
@@ -361,7 +377,9 @@ class _BS extends ConsumerState<BatchSignScreen> {
                   const BoxDecoration(color: _GL, shape: BoxShape.circle),
               child: const Icon(Icons.verified_rounded, color: _G, size: 50)),
           const SizedBox(height: 24),
-          Text('Batch signing complete!',
+          Text(
+              AppStrings.of(context)
+                  .tr('Signature en lot terminee !', 'Batch signing complete!'),
               style: GoogleFonts.instrumentSerif(fontSize: 26, color: _T1)),
           const SizedBox(height: 16),
           Container(
@@ -371,13 +389,20 @@ class _BS extends ConsumerState<BatchSignScreen> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: _BD)),
               child: Column(children: [
-                _resultRow('Documents signed', _signed.toString(), _G),
                 _resultRow(
-                    'Failed', _failed.toString(), _failed > 0 ? _R : _T2),
+                    AppStrings.of(context)
+                        .tr('Documents signes', 'Documents signed'),
+                    _signed.toString(),
+                    _G),
+                _resultRow(AppStrings.of(context).tr('Echecs', 'Failed'),
+                    _failed.toString(), _failed > 0 ? _R : _T2),
                 _resultRow(
-                    'Time elapsed', '${duration.toStringAsFixed(1)}s', _T2),
+                    AppStrings.of(context).tr('Temps ecoule', 'Time elapsed'),
+                    '${duration.toStringAsFixed(1)}s',
+                    _T2),
                 _resultRow(
-                    'Docs per second',
+                    AppStrings.of(context)
+                        .tr('Docs par seconde', 'Docs per second'),
                     duration > 0
                         ? (_signed / duration).toStringAsFixed(0)
                         : '—',
@@ -393,7 +418,8 @@ class _BS extends ConsumerState<BatchSignScreen> {
                       borderRadius: BorderRadius.circular(12)),
                   elevation: 0),
               onPressed: () => context.go('/documents'),
-              child: const Text('Back to documents')),
+              child: Text(AppStrings.of(context)
+                  .tr('Retour aux documents', 'Back to documents'))),
         ]));
     }
   }

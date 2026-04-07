@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../../l10n/app_strings.dart';
+import '../../../l10n/language_toggle.dart';
 
 const _green = Color(0xFF0F6E56);
 const _bg = Color(0xFFF7F6F2);
@@ -15,7 +17,7 @@ const _textHint = Color(0xFFAAAAAA);
 const _red = Color(0xFFA32D2D);
 const _redLight = Color(0xFFFCEBEB);
 const _kApiBase = String.fromEnvironment('API_BASE_URL',
-    defaultValue: 'https://api.diplomax.cm/v1');
+    defaultValue: 'https://diplomax-backend.onrender.com/v1');
 
 class UniversityLoginScreen extends ConsumerStatefulWidget {
   const UniversityLoginScreen({super.key});
@@ -39,8 +41,9 @@ class _S extends ConsumerState<UniversityLoginScreen> {
   }
 
   Future<void> _login() async {
+    final strings = AppStrings.of(context);
     if (_em.text.trim().isEmpty || _pw.text.isEmpty) {
-      setState(() => _err = 'Enter email and password');
+      setState(() => _err = strings.enterEmailAndPassword);
       return;
     }
     setState(() => _loading = true);
@@ -58,138 +61,143 @@ class _S extends ConsumerState<UniversityLoginScreen> {
       if (mounted) context.go('/dashboard');
     } on DioException catch (e) {
       setState(() => _err = e.response?.statusCode == 401
-          ? 'Invalid email or password'
-          : 'Connection failed. Check network.');
+          ? strings.invalidEmailOrPassword
+          : strings.connectionFailedNetwork);
     } finally {
       setState(() => _loading = false);
     }
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: _bg,
-        body: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 32),
-                    Row(children: [
-                      Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                              color: _green,
-                              borderRadius: BorderRadius.circular(14)),
-                          child: const Icon(Icons.school_rounded,
-                              color: Colors.white, size: 26)),
-                      const SizedBox(width: 14),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Diplomax CM',
-                                style: GoogleFonts.instrumentSerif(
-                                    fontSize: 20, color: _textPri)),
-                            Text('University Portal',
-                                style: GoogleFonts.dmSans(
-                                    fontSize: 12, color: _textSec)),
-                          ]),
-                    ]),
-                    const SizedBox(height: 48),
-                    Text('Sign in',
-                        style: GoogleFonts.instrumentSerif(
-                            fontSize: 32, color: _textPri)),
-                    const SizedBox(height: 6),
-                    Text('Issue, sign, and manage academic documents.',
-                        style: GoogleFonts.dmSans(
-                            fontSize: 13,
-                            color: _textSec,
-                            fontWeight: FontWeight.w300)),
-                    const SizedBox(height: 32),
-                    _lbl('Email address'),
-                    TextField(
-                        controller: _em,
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        style: GoogleFonts.dmSans(fontSize: 14),
-                        decoration: _dec(
-                            'admin@ictuniversity.cm', Icons.email_outlined)),
+  Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+    return Scaffold(
+      backgroundColor: _bg,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 32),
+                  Row(children: [
+                    Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                            color: _green,
+                            borderRadius: BorderRadius.circular(14)),
+                        child: const Icon(Icons.school_rounded,
+                            color: Colors.white, size: 26)),
+                    const SizedBox(width: 14),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Diplomax CM',
+                              style: GoogleFonts.instrumentSerif(
+                                  fontSize: 20, color: _textPri)),
+                          Text(strings.universityPortal,
+                              style: GoogleFonts.dmSans(
+                                  fontSize: 12, color: _textSec)),
+                        ]),
+                    const Spacer(),
+                    const LanguageToggleButton(compact: true),
+                  ]),
+                  const SizedBox(height: 48),
+                  Text(strings.signIn,
+                      style: GoogleFonts.instrumentSerif(
+                          fontSize: 32, color: _textPri)),
+                  const SizedBox(height: 6),
+                  Text(strings.signInSubtitle,
+                      style: GoogleFonts.dmSans(
+                          fontSize: 13,
+                          color: _textSec,
+                          fontWeight: FontWeight.w300)),
+                  const SizedBox(height: 32),
+                  _lbl(strings.emailAddress),
+                  TextField(
+                      controller: _em,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      style: GoogleFonts.dmSans(fontSize: 14),
+                      decoration:
+                          _dec(strings.emailHint, Icons.email_outlined)),
+                  const SizedBox(height: 16),
+                  _lbl(strings.password),
+                  TextField(
+                      controller: _pw,
+                      obscureText: _obs,
+                      onSubmitted: (_) => _login(),
+                      style: GoogleFonts.dmSans(fontSize: 14),
+                      decoration:
+                          _dec(strings.yourPassword, Icons.lock_outline_rounded)
+                              .copyWith(
+                                  suffixIcon: IconButton(
+                                      icon: Icon(
+                                          _obs
+                                              ? Icons.visibility_rounded
+                                              : Icons.visibility_off_rounded,
+                                          size: 18,
+                                          color: _textHint),
+                                      onPressed: () =>
+                                          setState(() => _obs = !_obs)))),
+                  const SizedBox(height: 24),
+                  if (_err != null) ...[
+                    Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                            color: _redLight,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Row(children: [
+                          const Icon(Icons.error_outline_rounded,
+                              color: _red, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                              child: Text(_err!,
+                                  style: GoogleFonts.dmSans(
+                                      color: _red, fontSize: 13)))
+                        ])),
                     const SizedBox(height: 16),
-                    _lbl('Password'),
-                    TextField(
-                        controller: _pw,
-                        obscureText: _obs,
-                        onSubmitted: (_) => _login(),
-                        style: GoogleFonts.dmSans(fontSize: 14),
-                        decoration:
-                            _dec('Your password', Icons.lock_outline_rounded)
-                                .copyWith(
-                                    suffixIcon: IconButton(
-                                        icon: Icon(
-                                            _obs
-                                                ? Icons.visibility_rounded
-                                                : Icons.visibility_off_rounded,
-                                            size: 18,
-                                            color: _textHint),
-                                        onPressed: () =>
-                                            setState(() => _obs = !_obs)))),
-                    const SizedBox(height: 24),
-                    if (_err != null) ...[
-                      Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                              color: _redLight,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Row(children: [
-                            const Icon(Icons.error_outline_rounded,
-                                color: _red, size: 16),
-                            const SizedBox(width: 8),
-                            Expanded(
-                                child: Text(_err!,
-                                    style: GoogleFonts.dmSans(
-                                        color: _red, fontSize: 13)))
-                          ])),
-                      const SizedBox(height: 16),
-                    ],
-                    SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: _green,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(double.infinity, 52),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14)),
-                                elevation: 0),
-                            onPressed: _loading ? null : _login,
-                            child: _loading
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                        color: Colors.white, strokeWidth: 2))
-                                : Text('Sign in',
-                                    style: GoogleFonts.dmSans(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500)))),
-                    const SizedBox(height: 20),
-                    Center(
-                        child: TextButton(
-                            onPressed: () => context.go('/register'),
-                            child: Text('New institution? Register here',
-                                style: GoogleFonts.dmSans(
-                                    fontSize: 13, color: _green)))),
                   ],
-                ),
+                  SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: _green,
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size(double.infinity, 52),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14)),
+                              elevation: 0),
+                          onPressed: _loading ? null : _login,
+                          child: _loading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                      color: Colors.white, strokeWidth: 2))
+                              : Text(strings.signIn,
+                                  style: GoogleFonts.dmSans(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500)))),
+                  const SizedBox(height: 20),
+                  Center(
+                      child: TextButton(
+                          onPressed: () => context.go('/register'),
+                          child: Text(strings.newInstitutionRegisterHere,
+                              style: GoogleFonts.dmSans(
+                                  fontSize: 13, color: _green)))),
+                ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 
   Widget _lbl(String t) => Padding(
       padding: const EdgeInsets.only(bottom: 6),

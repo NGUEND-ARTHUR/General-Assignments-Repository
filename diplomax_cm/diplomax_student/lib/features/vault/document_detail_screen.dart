@@ -6,6 +6,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/models.dart';
 import '../../core/api/student_documents_api.dart';
+import '../../l10n/app_strings.dart';
 
 class DocumentDetailScreen extends StatefulWidget {
   final String documentId;
@@ -38,7 +39,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = 'Impossible de charger le document';
+        _error = AppStrings.of(context).failedToLoadDocument;
         _loading = false;
       });
     }
@@ -165,7 +166,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                           color: Colors.white, size: 12),
                       const SizedBox(width: 4),
                       Text(
-                        'Document authentifié',
+                        AppStrings.of(context).documentAuthenticated,
                         style: GoogleFonts.dmSans(
                           color: Colors.white,
                           fontSize: 10,
@@ -185,15 +186,24 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
 
   Widget _buildInfoCard() {
     final rows = [
-      ('Université', doc['university_name'] as String? ?? '—'),
-      ('Diplôme', doc['degree'] as String? ?? '—'),
-      ('Mention', doc['mention'] as String? ?? '—'),
-      ('Date d\'émission', _formatDate(doc['issue_date'] as String?)),
-      ('Matricule', doc['matricule'] as String? ?? '—'),
-      ('Réf. document', '#${_shortId()}'),
+      (
+        AppStrings.of(context).university,
+        doc['university_name'] as String? ?? '—'
+      ),
+      (AppStrings.of(context).diplomaLabel, doc['degree'] as String? ?? '—'),
+      (AppStrings.of(context).mention, doc['mention'] as String? ?? '—'),
+      (
+        AppStrings.of(context).issueDate,
+        _formatDate(doc['issue_date'] as String?)
+      ),
+      (
+        AppStrings.of(context).registrationNumber,
+        doc['matricule'] as String? ?? '—'
+      ),
+      (AppStrings.of(context).documentReference, '#${_shortId()}'),
     ];
     return _card(
-      title: 'Informations',
+      title: AppStrings.of(context).information,
       child: Column(
         children: rows.map((r) => _infoRow(r.$1, r.$2)).toList(),
       ),
@@ -212,7 +222,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
             grades.length;
 
     return _card(
-      title: 'Relevé de notes',
+      title: AppStrings.of(context).gradesReport,
       trailing: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
@@ -220,7 +230,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
-          'Moy. ${avg.toStringAsFixed(2)}/20',
+          '${AppStrings.of(context).average} ${avg.toStringAsFixed(2)}${AppStrings.of(context).gradeOutOf}',
           style: GoogleFonts.dmSans(
             fontSize: 12,
             color: AppColors.primary,
@@ -260,7 +270,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                   ),
                 ),
                 Text(
-                  '$value/20',
+                  '$value${AppStrings.of(context).gradeOutOf}',
                   style: GoogleFonts.dmSans(
                     fontSize: 12,
                     color: color,
@@ -288,7 +298,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
 
   String _titleForDoc() {
     final type = _typeFromString(doc['type'] as String? ?? 'attestation');
-    return type.label;
+    return _localizedDocTypeLabel(type);
   }
 
   String _formatDate(String? value) {
@@ -310,10 +320,24 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     }
   }
 
+  String _localizedDocTypeLabel(DocumentType type) {
+    final strings = AppStrings.of(context);
+    switch (type) {
+      case DocumentType.diploma:
+        return strings.diplomaLabel;
+      case DocumentType.transcript:
+        return strings.transcriptLabel;
+      case DocumentType.certificate:
+        return strings.certificateLabel;
+      case DocumentType.attestation:
+        return strings.attestationLabel;
+    }
+  }
+
   Widget _buildSecurityCard(BuildContext context) {
     final hash = doc['hash_sha256'] as String? ?? '—';
     return _card(
-      title: 'Empreinte cryptographique',
+      title: AppStrings.of(context).cryptographicFingerprint,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -321,7 +345,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
             onTap: () {
               Clipboard.setData(ClipboardData(text: hash));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Hash copié !')),
+                SnackBar(content: Text(AppStrings.of(context).hashCopied)),
               );
             },
             child: Container(
@@ -352,11 +376,12 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          _securityBadge(Icons.lock_rounded, 'Chiffrement E2EE', true),
           _securityBadge(
-              Icons.visibility_off_rounded, 'Zero-Knowledge Proof', true),
+              Icons.lock_rounded, AppStrings.of(context).e2eEncryption, true),
+          _securityBadge(Icons.visibility_off_rounded,
+              AppStrings.of(context).zeroKnowledgeProof, true),
           _securityBadge(
-              Icons.shield_rounded, 'Anti-altération (Hash SHA-256)', true),
+              Icons.shield_rounded, AppStrings.of(context).tamperProof, true),
         ],
       ),
     );
@@ -367,7 +392,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     final hash = doc['hash_sha256'] as String? ?? '';
     final hashPart = hash.length >= 20 ? hash.substring(0, 20) : hash;
     return _card(
-      title: 'QR Code de partage',
+      title: AppStrings.of(context).qrCodeSharing,
       child: Center(
         child: Column(
           children: [
@@ -380,7 +405,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Code valable 24h · Usage unique',
+              AppStrings.of(context).codeValidSingleUse,
               style: GoogleFonts.dmSans(
                 fontSize: 11,
                 color: AppColors.textHint,
@@ -398,13 +423,13 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
       children: [
         ElevatedButton.icon(
           icon: const Icon(Icons.qr_code_rounded, size: 18),
-          label: const Text('Générer un QR Code dynamique'),
+          label: Text(AppStrings.of(context).generateDynamicQRCode),
           onPressed: () => context.go('/home/qr-generate'),
         ),
         const SizedBox(height: 10),
         OutlinedButton.icon(
           icon: const Icon(Icons.nfc_rounded, size: 18),
-          label: const Text('Valider via NFC'),
+          label: Text(AppStrings.of(context).validateViaNCF),
           onPressed: () => context.go('/home/nfc'),
         ),
       ],
@@ -502,7 +527,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                'Actif',
+                AppStrings.of(context).active,
                 style: GoogleFonts.dmSans(
                   fontSize: 9,
                   color: AppColors.primary,

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../core/app_colors.dart';
 import '../core/api/student_documents_api.dart';
+import '../l10n/app_strings.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,10 +26,10 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _loading = true;
   String? _error;
   List<Map<String, dynamic>> _docs = const [];
-  String _fullName = 'Étudiant';
-  String _firstName = 'Étudiant';
+  String _fullName = 'Etudiant';
+  String _firstName = 'Etudiant';
   String _matricule = '—';
-  String _university = 'Université';
+  String _university = 'Universite';
 
   @override
   void initState() {
@@ -44,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!mounted) return;
     final fullName = (storedName != null && storedName.trim().isNotEmpty)
         ? storedName.trim()
-        : 'Étudiant';
+        : 'Student';
     final firstName = fullName.split(' ').first;
 
     setState(() {
@@ -85,7 +86,10 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = 'Impossible de charger les documents';
+        _error = AppStrings.of(context).tr(
+          'Impossible de charger les documents',
+          'Unable to load documents',
+        );
         _loading = false;
       });
     }
@@ -93,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -111,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // ── Quick Actions ────────────────────────────────────────
             SliverToBoxAdapter(
               child: _buildSection(
-                title: 'Actions rapides',
+                title: strings.tr('Actions rapides', 'Quick actions'),
                 child: _buildQuickActions(),
               ),
             ),
@@ -124,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Mes documents',
+                      strings.tr('Mes documents', 'My documents'),
                       style: GoogleFonts.dmSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -134,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     TextButton(
                       onPressed: () => context.go('/home/vault'),
                       child: Text(
-                        'Voir tout',
+                        strings.tr('Voir tout', 'View all'),
                         style: GoogleFonts.dmSans(
                           color: AppColors.primary,
                           fontSize: 13,
@@ -217,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Bonjour,',
+                      AppStrings.of(context).tr('Bonjour,', 'Hello,'),
                       style: GoogleFonts.dmSans(
                         color: Colors.white.withOpacity(0.7),
                         fontSize: 12,
@@ -290,9 +295,13 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _statCard('${_docs.length}', 'Documents', AppColors.primary),
           const SizedBox(width: 10),
-          _statCard('$verifiedCount', 'Vérifiés', AppColors.success),
+          _statCard(
+              '$verifiedCount',
+              AppStrings.of(context).tr('Verifies', 'Verified'),
+              AppColors.success),
           const SizedBox(width: 10),
-          _statCard('1', 'Diplôme', AppColors.certifColor),
+          _statCard('1', AppStrings.of(context).tr('Diplome', 'Diploma'),
+              AppColors.certifColor),
         ],
       ),
     );
@@ -353,28 +362,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickActions() {
+    final strings = AppStrings.of(context);
     final actions = [
       (
         Icons.qr_code_rounded,
-        'Générer\nQR Code',
+        strings.tr('Generer\nQR Code', 'Generate\nQR Code'),
         AppColors.primary,
         '/home/qr-generate'
       ),
       (
         Icons.qr_code_scanner_rounded,
-        'Scanner\nQR Code',
+        strings.tr('Scanner\nQR Code', 'Scan\nQR Code'),
         AppColors.info,
         '/home/qr-scan'
       ),
       (
         Icons.nfc_rounded,
-        'Validation\nNFC',
+        strings.tr('Validation\nNFC', 'NFC\nValidation'),
         AppColors.certifColor,
         '/home/nfc'
       ),
       (
         Icons.account_circle_rounded,
-        'Mon\nProfil',
+        strings.tr('Mon\nProfil', 'My\nProfile'),
         const Color(0xFF7F77DD),
         '/home/profile'
       ),
@@ -556,13 +566,13 @@ class _HomeScreenState extends State<HomeScreen> {
   String _typeLabel(String type) {
     switch (type) {
       case 'diploma':
-        return 'Diplôme';
+        return AppStrings.of(context).tr('Diplome', 'Diploma');
       case 'transcript':
-        return 'Relevé';
+        return AppStrings.of(context).tr('Releve', 'Transcript');
       case 'certificate':
-        return 'Certificat';
+        return AppStrings.of(context).tr('Certificat', 'Certificate');
       default:
-        return 'Attestation';
+        return AppStrings.of(context).tr('Attestation', 'Attestation');
     }
   }
 
@@ -611,11 +621,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBottomNav() {
+    final strings = AppStrings.of(context);
     final items = [
-      (Icons.home_rounded, 'Accueil'),
-      (Icons.folder_rounded, 'Coffre-fort'),
+      (Icons.home_rounded, strings.tr('Accueil', 'Home')),
+      (Icons.folder_rounded, strings.tr('Coffre-fort', 'Vault')),
       (Icons.qr_code_rounded, 'QR Code'),
-      (Icons.person_rounded, 'Profil'),
+      (Icons.person_rounded, strings.tr('Profil', 'Profile')),
     ];
     final routes = [
       '/home',

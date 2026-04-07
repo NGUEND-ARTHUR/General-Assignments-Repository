@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import '../../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -144,7 +145,7 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
     try {
       final dio = Dio(BaseOptions(
           baseUrl: const String.fromEnvironment('API_BASE_URL',
-              defaultValue: 'https://api.diplomax.cm/v1')));
+              defaultValue: 'https://diplomax-backend.onrender.com/v1')));
 
       final response = await dio.post('/documents/issue', data: {
         'student_matricule': _matCtrl.text.trim().toUpperCase(),
@@ -174,7 +175,9 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
       setState(() {
         _loading = false;
         _errorMsg = (e.response?.data as Map?)?['detail']?.toString() ??
-            'Issuance failed. Please check the matricule.';
+            AppStrings.of(context).tr(
+                'Emission echouee. Verifiez le matricule.',
+                'Issuance failed. Please check the matricule.');
       });
     }
   }
@@ -188,7 +191,8 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
         backgroundColor: Colors.transparent,
         leading:
             BackButton(color: _textPri, onPressed: () => context.go('/issue')),
-        title: Text('Manual form',
+        title: Text(
+            AppStrings.of(context).tr('Formulaire manuel', 'Manual form'),
             style: GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
       ),
       body: Form(
@@ -197,65 +201,84 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
           padding: const EdgeInsets.all(20),
           children: [
             // ── Step 1: Document type ─────────────────────────────────────
-            _stepHeader('1', 'Document type'),
+            _stepHeader('1',
+                AppStrings.of(context).tr('Type de document', 'Document type')),
             const SizedBox(height: 10),
             _docTypeSelector(),
             const SizedBox(height: 24),
 
             // ── Step 2: Student ──────────────────────────────────────────
-            _stepHeader('2', 'Student'),
+            _stepHeader('2', AppStrings.of(context).tr('Etudiant', 'Student')),
             const SizedBox(height: 10),
             _field(
               ctrl: _matCtrl,
-              label: 'Matricule *',
+              label: AppStrings.of(context).tr('Matricule *', 'Matricule *'),
               hint: 'ICTU20223180',
               icon: Icons.badge_rounded,
               textCapitalization: TextCapitalization.characters,
               validator: (v) => (v == null || v.trim().isEmpty)
-                  ? 'Matricule is required'
+                  ? AppStrings.of(context)
+                      .tr('Le matricule est requis', 'Matricule is required')
                   : null,
             ),
             const SizedBox(height: 24),
 
             // ── Step 3: Document details ─────────────────────────────────
-            _stepHeader('3', 'Document details'),
+            _stepHeader(
+                '3',
+                AppStrings.of(context)
+                    .tr('Details du document', 'Document details')),
             const SizedBox(height: 10),
-            _dropdownRow('Degree / level', _degrees, _degreeCtrl.text, (v) {
+            _dropdownRow(
+                AppStrings.of(context).tr('Diplome / niveau', 'Degree / level'),
+                _degrees,
+                _degreeCtrl.text, (v) {
               setState(() => _degreeCtrl.text = v);
               _autoTitle();
             }),
             const SizedBox(height: 12),
             _field(
               ctrl: _fieldCtrl,
-              label: 'Field of study *',
+              label: AppStrings.of(context).tr('Filiere *', 'Field of study *'),
               hint: 'Software Engineering & Cybersecurity',
               icon: Icons.school_rounded,
               onChanged: (_) => _autoTitle(),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Field is required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? AppStrings.of(context)
+                      .tr('La filiere est requise', 'Field is required')
+                  : null,
             ),
             const SizedBox(height: 12),
             _field(
               ctrl: _titleCtrl,
-              label: 'Full document title *',
+              label: AppStrings.of(context)
+                  .tr('Titre complet du document *', 'Full document title *'),
               hint: 'e.g. Licence en Génie Logiciel',
               icon: Icons.title_rounded,
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Title is required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? AppStrings.of(context)
+                      .tr('Le titre est requis', 'Title is required')
+                  : null,
             ),
             const SizedBox(height: 12),
-            _dropdownRow('Mention / honour', _mentions, _mention,
+            _dropdownRow(
+                AppStrings.of(context).tr('Mention', 'Mention / honour'),
+                _mentions,
+                _mention,
                 (v) => setState(() => _mention = v)),
             const SizedBox(height: 12),
             _field(
               ctrl: _dateCtrl,
-              label: 'Issue date *',
-              hint: 'Tap to pick date',
+              label: AppStrings.of(context)
+                  .tr('Date d\'emission *', 'Issue date *'),
+              hint: AppStrings.of(context)
+                  .tr('Touchez pour choisir une date', 'Tap to pick date'),
               icon: Icons.calendar_today_rounded,
               readOnly: true,
               onTap: _pickDate,
               validator: (v) => (v == null || v.trim().isEmpty)
-                  ? 'Issue date is required'
+                  ? AppStrings.of(context).tr('La date d\'emission est requise',
+                      'Issue date is required')
                   : null,
             ),
             const SizedBox(height: 24),
@@ -263,11 +286,16 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
             // ── Step 4: Courses (only for diploma/transcript) ─────────────
             if (_showGrades) ...[
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                _stepHeader('4', 'Course grades'),
+                _stepHeader(
+                    '4',
+                    AppStrings.of(context)
+                        .tr('Notes des cours', 'Course grades')),
                 TextButton.icon(
                     icon:
                         const Icon(Icons.add_rounded, size: 16, color: _green),
-                    label: Text('Add course',
+                    label: Text(
+                        AppStrings.of(context)
+                            .tr('Ajouter un cours', 'Add course'),
                         style: GoogleFonts.dmSans(color: _green, fontSize: 13)),
                     onPressed: () => setState(() => _grades.add(_GradeRow()))),
               ]),
@@ -283,7 +311,10 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
                       const Icon(Icons.info_outline_rounded,
                           color: _textHint, size: 16),
                       const SizedBox(width: 8),
-                      Text('No courses added. Tap "Add course" to begin.',
+                      Text(
+                          AppStrings.of(context).tr(
+                              'Aucun cours ajoute. Touchez "Ajouter un cours" pour commencer.',
+                              'No courses added. Tap "Add course" to begin.'),
                           style: GoogleFonts.dmSans(
                               fontSize: 12, color: _textHint)),
                     ]))
@@ -337,8 +368,11 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                           child: Text(
-                              'On submission, a SHA-256 fingerprint is computed and anchored '
-                              'on the Hyperledger blockchain. This document will be permanently verifiable.',
+                              AppStrings.of(context).tr(
+                                  'Lors de la soumission, une empreinte SHA-256 est calculee et ancree '
+                                      'sur la blockchain Hyperledger. Ce document restera verifiable de facon permanente.',
+                                  'On submission, a SHA-256 fingerprint is computed and anchored '
+                                      'on the Hyperledger blockchain. This document will be permanently verifiable.'),
                               style: GoogleFonts.dmSans(
                                   fontSize: 11, color: _green, height: 1.5))),
                     ])),
@@ -353,8 +387,11 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
                     : const Icon(Icons.verified_rounded, size: 18),
-                label: Text(
-                    _loading ? 'Issuing...' : 'Issue & anchor on blockchain'),
+                label: Text(_loading
+                    ? AppStrings.of(context).tr('Emission...', 'Issuing...')
+                    : AppStrings.of(context).tr(
+                        'Emettre et ancrer sur blockchain',
+                        'Issue & anchor on blockchain')),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: _green,
                     foregroundColor: Colors.white,
@@ -385,13 +422,18 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
                 child:
                     const Icon(Icons.check_rounded, color: _green, size: 44)),
             const SizedBox(height: 24),
-            Text('Document issued!',
+            Text(
+                AppStrings.of(context)
+                    .tr('Document emis !', 'Document issued!'),
                 style:
                     GoogleFonts.instrumentSerif(fontSize: 28, color: _textPri)),
             const SizedBox(height: 10),
             Text(
-                'The document has been created, encrypted, and anchored on the blockchain.\n'
-                'The student can now access it in their Diplomax vault.',
+                AppStrings.of(context).tr(
+                    'Le document a ete cree, chiffre et ancre sur la blockchain.\n'
+                        'L\'etudiant peut maintenant y acceder dans son coffre Diplomax.',
+                    'The document has been created, encrypted, and anchored on the blockchain.\n'
+                        'The student can now access it in their Diplomax vault.'),
                 textAlign: TextAlign.center,
                 style: GoogleFonts.dmSans(
                     fontSize: 13,
@@ -401,7 +443,7 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
             const SizedBox(height: 8),
             if (_issuedDocId != null)
               Text(
-                  'Document ID: ${_issuedDocId!.substring(0, 8).toUpperCase()}',
+                  '${AppStrings.of(context).tr('ID document', 'Document ID')}: ${_issuedDocId!.substring(0, 8).toUpperCase()}',
                   style: GoogleFonts.dmSans(
                     fontSize: 11,
                     color: _textHint,
@@ -409,7 +451,8 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
             const SizedBox(height: 32),
             ElevatedButton.icon(
                 icon: const Icon(Icons.draw_rounded, size: 18),
-                label: const Text('Sign document now'),
+                label: Text(AppStrings.of(context)
+                    .tr('Signer le document maintenant', 'Sign document now')),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: _green,
                     foregroundColor: Colors.white,
@@ -422,7 +465,8 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
             const SizedBox(height: 12),
             OutlinedButton.icon(
                 icon: const Icon(Icons.add_rounded, size: 18),
-                label: const Text('Issue another document'),
+                label: Text(AppStrings.of(context)
+                    .tr('Emettre un autre document', 'Issue another document')),
                 style: OutlinedButton.styleFrom(
                     foregroundColor: _green,
                     side: const BorderSide(color: _green),
@@ -433,7 +477,9 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
             const SizedBox(height: 12),
             TextButton(
                 onPressed: () => context.go('/documents'),
-                child: Text('Go to documents list',
+                child: Text(
+                    AppStrings.of(context).tr('Aller a la liste des documents',
+                        'Go to documents list'),
                     style: GoogleFonts.dmSans(color: _textSec, fontSize: 13))),
           ]),
         ))),
@@ -476,7 +522,7 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
                 child: Column(children: [
                   Icon(t.$3, color: active ? _green : _textHint, size: 22),
                   const SizedBox(height: 4),
-                  Text(t.$2,
+                  Text(AppStrings.of(context).tr(t.$2, t.$2),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.dmSans(
                           fontSize: 10,
@@ -544,7 +590,7 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
         const SizedBox(height: 5),
         DropdownButtonFormField<String>(
           initialValue: items.contains(value) ? value : null,
-          hint: Text('Select...',
+          hint: Text(AppStrings.of(context).tr('Selectionner...', 'Select...'),
               style: GoogleFonts.dmSans(color: _textHint, fontSize: 13)),
           decoration: InputDecoration(
             filled: true,
@@ -588,13 +634,16 @@ class _ManualFormState extends ConsumerState<ManualDocumentFormScreen> {
       child: Row(children: [
         const Icon(Icons.calculate_rounded, color: _green, size: 16),
         const SizedBox(width: 8),
-        Text('Weighted average: ',
+        Text(
+            AppStrings.of(context)
+                .tr('Moyenne ponderee : ', 'Weighted average: '),
             style: GoogleFonts.dmSans(fontSize: 12, color: _green)),
         Text('${avg.toStringAsFixed(2)} / 20',
             style: GoogleFonts.dmSans(
                 fontSize: 13, fontWeight: FontWeight.w700, color: _green)),
         const SizedBox(width: 8),
-        Text('($totalCredits credits)',
+        Text(
+            '($totalCredits ${AppStrings.of(context).tr('credits', 'credits')})',
             style: GoogleFonts.dmSans(
                 fontSize: 11, color: _green.withOpacity(0.7))),
       ]),
@@ -646,7 +695,8 @@ class _GradeRowWidgetState extends State<_GradeRowWidget> {
             border: Border.all(color: const Color(0xFFE0DDD5))),
         child: Column(children: [
           Row(children: [
-            Text('Course ${widget.index + 1}',
+            Text(
+                '${AppStrings.of(context).tr('Cours', 'Course')} ${widget.index + 1}',
                 style: GoogleFonts.dmSans(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
@@ -665,7 +715,8 @@ class _GradeRowWidgetState extends State<_GradeRowWidget> {
                 child: TextField(
                     controller: _codeCtrl,
                     style: const TextStyle(fontSize: 12),
-                    decoration: _mini('Code'),
+                    decoration:
+                        _mini(AppStrings.of(context).tr('Code', 'Code')),
                     onChanged: (v) {
                       widget.row.code = v;
                       widget.onChanged();
@@ -675,7 +726,8 @@ class _GradeRowWidgetState extends State<_GradeRowWidget> {
                 child: TextField(
                     controller: _nameCtrl,
                     style: const TextStyle(fontSize: 12),
-                    decoration: _mini('Course name'),
+                    decoration: _mini(AppStrings.of(context)
+                        .tr('Nom du cours', 'Course name')),
                     onChanged: (v) {
                       widget.row.name = v;
                       widget.onChanged();
@@ -691,7 +743,8 @@ class _GradeRowWidgetState extends State<_GradeRowWidget> {
                     style: const TextStyle(fontSize: 12),
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    decoration: _mini('Grade /20'),
+                    decoration: _mini(
+                        AppStrings.of(context).tr('Note /20', 'Grade /20')),
                     onChanged: (v) {
                       widget.row.grade = double.tryParse(v) ?? 0;
                       widget.onChanged();
@@ -703,7 +756,8 @@ class _GradeRowWidgetState extends State<_GradeRowWidget> {
                     controller: _credCtrl,
                     style: const TextStyle(fontSize: 12),
                     keyboardType: TextInputType.number,
-                    decoration: _mini('Credits'),
+                    decoration:
+                        _mini(AppStrings.of(context).tr('Credits', 'Credits')),
                     onChanged: (v) {
                       widget.row.credits = int.tryParse(v) ?? 3;
                       widget.onChanged();
@@ -716,7 +770,8 @@ class _GradeRowWidgetState extends State<_GradeRowWidget> {
                         : 'S1',
                     style:
                         const TextStyle(fontSize: 12, color: Color(0xFF1A1A1A)),
-                    decoration: _mini('Semester'),
+                    decoration: _mini(
+                        AppStrings.of(context).tr('Semestre', 'Semester')),
                     items: widget.semesters
                         .map((s) => DropdownMenuItem(
                             value: s,

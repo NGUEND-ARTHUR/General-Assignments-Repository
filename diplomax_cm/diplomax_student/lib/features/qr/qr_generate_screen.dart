@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../core/app_colors.dart';
 import '../../core/api/student_documents_api.dart';
+import '../../l10n/app_strings.dart';
 
 class QrGenerateScreen extends StatefulWidget {
   const QrGenerateScreen({super.key});
@@ -38,7 +39,8 @@ class _QrGenerateState extends State<QrGenerateScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _error = 'Impossible de charger les documents';
+        _error = AppStrings.of(context).tr(
+            'Impossible de charger les documents', 'Unable to load documents');
         _loading = false;
       });
     }
@@ -54,7 +56,8 @@ class _QrGenerateState extends State<QrGenerateScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/home')),
-        title: Text('Générer un QR Code',
+        title: Text(
+            AppStrings.of(context).tr('Generer un QR Code', 'Generate QR code'),
             style: GoogleFonts.instrumentSerif(fontSize: 20)),
       ),
       body: SingleChildScrollView(
@@ -63,7 +66,10 @@ class _QrGenerateState extends State<QrGenerateScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Document selector
-            Text('Sélectionner un document', style: _label()),
+            Text(
+                AppStrings.of(context)
+                    .tr('Selectionner un document', 'Select a document'),
+                style: _label()),
             const SizedBox(height: 8),
             if (_loading)
               const Padding(
@@ -83,7 +89,10 @@ class _QrGenerateState extends State<QrGenerateScreen> {
 
             // Options
             if (_selected != null) ...[
-              Text('Options de partage', style: _label()),
+              Text(
+                  AppStrings.of(context)
+                      .tr('Options de partage', 'Share options'),
+                  style: _label()),
               const SizedBox(height: 12),
               _optionCard(),
               const SizedBox(height: 24),
@@ -111,7 +120,9 @@ class _QrGenerateState extends State<QrGenerateScreen> {
                   ),
                   const SizedBox(height: 16),
                   if (_selected == null)
-                    Text('Sélectionnez un document',
+                    Text(
+                        AppStrings.of(context).tr(
+                            'Selectionnez un document', 'Select a document'),
                         style: GoogleFonts.dmSans(
                             color: AppColors.textHint, fontSize: 13))
                   else ...[
@@ -120,7 +131,7 @@ class _QrGenerateState extends State<QrGenerateScreen> {
                             fontSize: 13, fontWeight: FontWeight.w500)),
                     const SizedBox(height: 4),
                     Text(
-                        'Valide ${_validity}h · ${_zkpMode ? "Mode ZKP" : "Mode standard"}',
+                        '${AppStrings.of(context).tr('Valide', 'Valid')} ${_validity}h · ${_zkpMode ? AppStrings.of(context).tr('Mode ZKP', 'ZKP mode') : AppStrings.of(context).tr('Mode standard', 'Standard mode')}',
                         style: GoogleFonts.dmSans(
                             color: AppColors.textHint, fontSize: 11)),
                   ],
@@ -131,7 +142,8 @@ class _QrGenerateState extends State<QrGenerateScreen> {
             if (_selected != null)
               ElevatedButton.icon(
                 icon: const Icon(Icons.share_rounded, size: 18),
-                label: const Text('Partager ce QR Code'),
+                label: Text(AppStrings.of(context)
+                    .tr('Partager ce QR Code', 'Share this QR code')),
                 onPressed: () {},
               ),
           ],
@@ -186,7 +198,8 @@ class _QrGenerateState extends State<QrGenerateScreen> {
           // Validity
           Row(
             children: [
-              Text('Validité', style: GoogleFonts.dmSans(fontSize: 13)),
+              Text(AppStrings.of(context).tr('Validite', 'Validity'),
+                  style: GoogleFonts.dmSans(fontSize: 13)),
               const Spacer(),
               ...[12, 24, 48].map((h) => GestureDetector(
                     onTap: () => setState(() => _validity = h),
@@ -222,10 +235,15 @@ class _QrGenerateState extends State<QrGenerateScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Mode Zero-Knowledge',
+                  Text(
+                      AppStrings.of(context)
+                          .tr('Mode Zero-Knowledge', 'Zero-Knowledge mode'),
                       style: GoogleFonts.dmSans(
                           fontSize: 13, fontWeight: FontWeight.w400)),
-                  Text('Partager uniquement la mention',
+                  Text(
+                      AppStrings.of(context).tr(
+                          'Partager uniquement la mention',
+                          'Share mention only'),
                       style: GoogleFonts.dmSans(
                           fontSize: 11, color: AppColors.textHint)),
                 ],

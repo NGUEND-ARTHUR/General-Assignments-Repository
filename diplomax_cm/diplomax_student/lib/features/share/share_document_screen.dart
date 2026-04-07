@@ -10,6 +10,7 @@ import 'dart:math';
 import '../../../core/crypto/crypto_service.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/sensors/anti_fraud_sensor.dart';
+import '../../l10n/app_strings.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS
@@ -201,7 +202,9 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: BackButton(onPressed: () => context.pop(), color: _textPri),
-          title: Text('Share document',
+          title: Text(
+              AppStrings.of(context)
+                  .tr('Partager le document', 'Share document'),
               style:
                   GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
         ),
@@ -214,15 +217,20 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
               _docBadge(),
               const SizedBox(height: 20),
 
-              _sectionTitle('Validity period'),
+              _sectionTitle(AppStrings.of(context)
+                  .tr('Periode de validite', 'Validity period')),
               const SizedBox(height: 10),
               _validitySelector(),
               const SizedBox(height: 20),
 
-              _sectionTitle('Verification required from recipient'),
+              _sectionTitle(AppStrings.of(context).tr(
+                  'Verification requise du destinataire',
+                  'Verification required from recipient')),
               const SizedBox(height: 6),
               Text(
-                'Choose what the recruiter must do before seeing the document.',
+                AppStrings.of(context).tr(
+                    'Choisissez ce que le recruteur doit faire avant de voir le document.',
+                    'Choose what the recruiter must do before seeing the document.'),
                 style: GoogleFonts.dmSans(
                   fontSize: 12,
                   color: _textSec,
@@ -233,7 +241,8 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
               _verificationModeSelector(),
               const SizedBox(height: 20),
 
-              _sectionTitle('Privacy mode'),
+              _sectionTitle(AppStrings.of(context)
+                  .tr('Mode de confidentialite', 'Privacy mode')),
               const SizedBox(height: 10),
               _zkpToggle(),
               const SizedBox(height: 28),
@@ -246,8 +255,11 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
                     : const Icon(Icons.qr_code_rounded, size: 18),
-                label: Text(
-                    _generating ? 'Generating...' : 'Generate secure QR code'),
+                label: Text(_generating
+                    ? AppStrings.of(context)
+                        .tr('Generation en cours...', 'Generating...')
+                    : AppStrings.of(context).tr('Generer un QR code securise',
+                        'Generate secure QR code')),
                 onPressed: _generating ? null : _generate,
               ),
 
@@ -287,7 +299,9 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
                       fontSize: 13, fontWeight: FontWeight.w500),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),
-              Text('Mention: ${widget.mention}',
+              Text(
+                  AppStrings.of(context).tr('Mention: ${widget.mention}',
+                      'Mention: ${widget.mention}'),
                   style: GoogleFonts.dmSans(fontSize: 11, color: _textSec)),
             ],
           )),
@@ -423,22 +437,32 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
   String _verLabel(ShareVerificationMode m) {
     switch (m) {
       case ShareVerificationMode.none:
-        return 'No additional check';
+        return AppStrings.of(context)
+            .tr('Aucun controle supplementaire', 'No additional check');
       case ShareVerificationMode.zkpOnly:
-        return 'Privacy mode only';
+        return AppStrings.of(context)
+            .tr('Mode confidentialite uniquement', 'Privacy mode only');
       case ShareVerificationMode.liveness:
-        return 'Liveness verification (recommended)';
+        return AppStrings.of(context).tr(
+            'Verification de presence (recommandee)',
+            'Liveness verification (recommended)');
     }
   }
 
   String _verDesc(ShareVerificationMode m) {
     switch (m) {
       case ShareVerificationMode.none:
-        return 'Anyone with the QR code can view the document';
+        return AppStrings.of(context).tr(
+            'Toute personne ayant le QR code peut voir le document',
+            'Anyone with the QR code can view the document');
       case ShareVerificationMode.zkpOnly:
-        return 'Recruiter sees only the mention, not all grades';
+        return AppStrings.of(context).tr(
+            'Le recruteur voit uniquement la mention, pas toutes les notes',
+            'Recruiter sees only the mention, not all grades');
       case ShareVerificationMode.liveness:
-        return 'Recruiter triggers a selfie video challenge to confirm you are the diploma holder';
+        return AppStrings.of(context).tr(
+            'Le recruteur lance un challenge selfie video pour confirmer votre identite',
+            'Recruiter triggers a selfie video challenge to confirm you are the diploma holder');
     }
   }
 
@@ -467,13 +491,17 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Zero-Knowledge mode',
+              Text(
+                  AppStrings.of(context)
+                      .tr('Mode Zero-Knowledge', 'Zero-Knowledge mode'),
                   style: GoogleFonts.dmSans(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   )),
               Text(
-                  'Share only your mention ("Bien") without revealing individual course grades.',
+                  AppStrings.of(context).tr(
+                      'Partagez uniquement votre mention ("Bien") sans reveler les notes individuelles.',
+                      'Share only your mention ("Good") without revealing individual course grades.'),
                   style: GoogleFonts.dmSans(
                       fontSize: 11, color: _textSec, height: 1.4)),
             ],
@@ -510,9 +538,11 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
               size: 200,
               backgroundColor: Colors.white,
               foregroundColor: _green,
-              errorStateBuilder: (ctx, err) => const SizedBox(
+              errorStateBuilder: (ctx, err) => SizedBox(
                 height: 200,
-                child: Center(child: Text('QR generation error')),
+                child: Center(
+                    child: Text(AppStrings.of(context).tr(
+                        'Erreur de generation du QR', 'QR generation error'))),
               ),
             ),
             const SizedBox(height: 14),
@@ -543,7 +573,9 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            Text('Expires $expStr',
+            Text(
+                AppStrings.of(context)
+                    .tr('Expire le $expStr', 'Expires $expStr'),
                 style: GoogleFonts.dmSans(fontSize: 11, color: _textHint)),
           ]),
         ),
@@ -574,7 +606,10 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
                 // Copy to clipboard
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Link copied!', style: GoogleFonts.dmSans()),
+                    content: Text(
+                        AppStrings.of(context)
+                            .tr('Lien copie!', 'Link copied!'),
+                        style: GoogleFonts.dmSans()),
                     backgroundColor: _green,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
@@ -605,10 +640,9 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                     child: Text(
-                  'When the recruiter scans this QR code, they will be asked to '
-                  'hand you the phone. You will need to complete a short 3-step '
-                  'face movement challenge to confirm your identity before the '
-                  'document data is released.',
+                  AppStrings.of(context).tr(
+                      'Quand le recruteur scanne ce QR code, il vous demandera le telephone. Vous devrez completer un court challenge de mouvement du visage en 3 etapes pour confirmer votre identite avant la divulgation du document.',
+                      'When the recruiter scans this QR code, they will ask to hand you the phone. You must complete a short 3-step face movement challenge before document data is released.'),
                   style: GoogleFonts.dmSans(
                     fontSize: 11,
                     color: _green,

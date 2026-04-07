@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/api_client.dart';
+import '../../../l10n/app_strings.dart';
 import 'package:pointycastle/export.dart' as pc;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:convert/convert.dart';
@@ -84,7 +85,7 @@ class DocumentSigningService {
   Future<String> signHash(String documentHash) async {
     final stored = await _storage.read(key: _privKeyAlias);
     if (stored == null) {
-      throw Exception('No private key found. Run setup first.');
+      throw Exception('No private key found');
     }
 
     final parts = stored.split('|');
@@ -187,7 +188,7 @@ class _SignState extends State<SignDocumentScreen> {
           data is Map<String, dynamic> ? data['hash_sha256'] as String? : null;
 
       if (hashToSign == null || hashToSign.isEmpty) {
-        throw Exception('Document hash not found on backend');
+        throw Exception('Document hash not found');
       }
 
       final sig = await _svc.signHash(hashToSign);
@@ -206,10 +207,11 @@ class _SignState extends State<SignDocumentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return Scaffold(
       backgroundColor: _bg,
       appBar: AppBar(
-        title: Text('Sign document',
+        title: Text(strings.tr('Signer le document', 'Sign document'),
             style: GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
         leading: const BackButton(color: _textPri),
       ),
@@ -222,14 +224,15 @@ class _SignState extends State<SignDocumentScreen> {
               icon: Icons.info_outline_rounded,
               color: _green,
               bgColor: _greenLight,
-              text: 'The university\'s RSA-2048 private key will be used to '
-                  'cryptographically sign this document\'s SHA-256 hash. '
-                  'The private key never leaves this device.',
+              text: strings.tr(
+                  'La cle privee RSA-2048 de l\'universite sera utilisee pour signer cryptographiquement le hash SHA-256 de ce document. La cle privee ne quitte jamais cet appareil.',
+                  'The university\'s RSA-2048 private key will be used to cryptographically sign this document\'s SHA-256 hash. The private key never leaves this device.'),
             ),
             const SizedBox(height: 24),
 
             // Key status
-            Text('Signing key status',
+            Text(
+                strings.tr('Etat de la cle de signature', 'Signing key status'),
                 style: GoogleFonts.dmSans(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -251,7 +254,9 @@ class _SignState extends State<SignDocumentScreen> {
                       const Icon(Icons.key_off_rounded,
                           color: Colors.orange, size: 18),
                       const SizedBox(width: 8),
-                      Text('No signing key found',
+                      Text(
+                          strings.tr('Aucune cle de signature trouvee',
+                              'No signing key found'),
                           style: GoogleFonts.dmSans(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
@@ -260,8 +265,9 @@ class _SignState extends State<SignDocumentScreen> {
                     ]),
                     const SizedBox(height: 10),
                     Text(
-                      'This is the first time you are signing on this device. '
-                      'Generate an RSA-2048 key pair to begin.',
+                      strings.tr(
+                          'C\'est votre premiere signature sur cet appareil. Generez une paire de cles RSA-2048 pour commencer.',
+                          'This is the first time you are signing on this device. Generate an RSA-2048 key pair to begin.'),
                       style: GoogleFonts.dmSans(
                           fontSize: 12, color: _textSec, height: 1.5),
                     ),
@@ -278,8 +284,9 @@ class _SignState extends State<SignDocumentScreen> {
                           : const Icon(Icons.generating_tokens_rounded,
                               size: 16),
                       label: Text(_signing
-                          ? 'Generating...'
-                          : 'Generate RSA-2048 key pair'),
+                          ? strings.tr('Generation...', 'Generating...')
+                          : strings.tr('Generer une paire de cles RSA-2048',
+                              'Generate RSA-2048 key pair')),
                       onPressed: _signing ? null : _generateKeys,
                     ),
                   ],
@@ -301,7 +308,9 @@ class _SignState extends State<SignDocumentScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('RSA-2048 key pair found',
+                          Text(
+                              strings.tr('Paire de cles RSA-2048 detectee',
+                                  'RSA-2048 key pair found'),
                               style: GoogleFonts.dmSans(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -325,7 +334,7 @@ class _SignState extends State<SignDocumentScreen> {
             ],
 
             const SizedBox(height: 24),
-            Text('Document ID',
+            Text(strings.tr('ID du document', 'Document ID'),
                 style: GoogleFonts.dmSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -355,11 +364,14 @@ class _SignState extends State<SignDocumentScreen> {
                 icon: Icons.check_circle_rounded,
                 color: _green,
                 bgColor: _greenLight,
-                text: 'Document signed successfully. The signature has been '
-                    'sent to the backend and anchored on the blockchain.',
+                text: strings.tr(
+                    'Document signe avec succes. La signature a ete envoyee au backend et ancree sur la blockchain.',
+                    'Document signed successfully. The signature has been sent to the backend and anchored on the blockchain.'),
               ),
               const SizedBox(height: 14),
-              Text('RSA-SHA256 signature (hex)',
+              Text(
+                  strings.tr('Signature RSA-SHA256 (hex)',
+                      'RSA-SHA256 signature (hex)'),
                   style: GoogleFonts.dmSans(fontSize: 12, color: _textSec)),
               const SizedBox(height: 6),
               Container(
@@ -384,7 +396,8 @@ class _SignState extends State<SignDocumentScreen> {
                   minimumSize: const Size(double.infinity, 48),
                 ),
                 onPressed: () => context.go('/documents'),
-                child: const Text('Back to documents'),
+                child: Text(
+                    strings.tr('Retour aux documents', 'Back to documents')),
               ),
             ] else if (_hasKeys) ...[
               if (_error != null) ...[
@@ -406,8 +419,10 @@ class _SignState extends State<SignDocumentScreen> {
                           strokeWidth: 2,
                         ))
                     : const Icon(Icons.draw_rounded, size: 18),
-                label:
-                    Text(_signing ? 'Signing...' : 'Sign with university key'),
+                label: Text(_signing
+                    ? strings.tr('Signature en cours...', 'Signing...')
+                    : strings.tr('Signer avec la cle de l\'universite',
+                        'Sign with university key')),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 52),
                 ),

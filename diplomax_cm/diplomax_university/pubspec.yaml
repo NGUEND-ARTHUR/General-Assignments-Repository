@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   cupertino_icons: ^1.0.8
 
   # Navigation & State
@@ -19,7 +21,7 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_animate: ^4.5.0
   data_table_2: ^2.5.14        # Desktop-grade sortable data tables
-  syncfusion_flutter_charts: ^24.1.41  # Dashboard charts
+  syncfusion_flutter_charts: ^33.1.47  # Dashboard charts
 
   # ── REAL CRYPTOGRAPHY (document signing) ─────────────────────────────────
   # Universities sign diplomas with their RSA-2048 private key
@@ -58,7 +60,7 @@ dependencies:
 
   # ── UTILITIES ──────────────────────────────────────────────────────────
   uuid: ^4.4.0
-  intl: ^0.19.0
+  intl: 0.20.2
   equatable: ^2.0.5
   shared_preferences: ^2.3.2
 

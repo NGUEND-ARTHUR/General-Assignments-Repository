@@ -9,7 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// In production this points to the deployed server; in development to localhost.
 const kBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'https://api.diplomax.cm/v1',
+  defaultValue: 'https://diplomax-backend.onrender.com/v1',
 );
 
 /// SHA-256 fingerprint of the production TLS certificate.

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/api/api_client.dart';
+import '../../../l10n/app_strings.dart';
 
 // ── Models ────────────────────────────────────────────────────────────────────
 
@@ -228,7 +229,8 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
           color: _textPri,
         ),
         title: Text(
-          'Document search',
+          AppStrings.of(context)
+              .tr('Recherche de documents', 'Document search'),
           style: GoogleFonts.instrumentSerif(
             fontSize: 20,
             color: _textPri,
@@ -264,7 +266,9 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
                 textInputAction: TextInputAction.search,
                 onSubmitted: (_) => _doSearch(),
                 decoration: InputDecoration(
-                  hintText: 'Search by title, field, degree...',
+                  hintText: AppStrings.of(context).tr(
+                      'Rechercher par titre, domaine, diplôme...',
+                      'Search by title, field, degree...'),
                   hintStyle: GoogleFonts.dmSans(color: _textHint, fontSize: 14),
                   prefixIcon: const Icon(Icons.search_rounded,
                       color: _textHint, size: 20),
@@ -314,14 +318,16 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
           children: [
             // Type filter
             _FilterChip(
-              label: _selectedType?.label ?? 'All types',
+              label: _getLocalizedTypeLabel(_selectedType) ??
+                  AppStrings.of(context).tr('Tous les types', 'All types'),
               active: _selectedType != null,
               onTap: () => _showTypeSheet(),
             ),
             const SizedBox(width: 8),
             // Year filter
             _FilterChip(
-              label: _selectedYear ?? 'Any year',
+              label: _selectedYear ??
+                  AppStrings.of(context).tr('Toute année', 'Any year'),
               active: _selectedYear != null,
               onTap: () => _showYearSheet(),
             ),
@@ -329,7 +335,7 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
             // Mention filter
             _FilterChip(
               label: (_selectedMention?.isEmpty ?? true)
-                  ? 'Any mention'
+                  ? AppStrings.of(context).tr('Toute mention', 'Any mention')
                   : _selectedMention!,
               active: _selectedMention != null && _selectedMention!.isNotEmpty,
               onTap: () => _showMentionSheet(),
@@ -356,7 +362,8 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
                     border: Border.all(color: Colors.red.withOpacity(0.3)),
                   ),
                   child: Text(
-                    'Clear filters',
+                    AppStrings.of(context)
+                        .tr('Effacer les filtres', 'Clear filters'),
                     style: GoogleFonts.dmSans(
                       fontSize: 12,
                       color: Colors.red,
@@ -370,16 +377,36 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
         ),
       );
 
+  String? _getLocalizedTypeLabel(DocumentType? type) {
+    if (type == null) return null;
+    final strings = AppStrings.of(context);
+    switch (type) {
+      case DocumentType.diploma:
+        return strings.diplomaLabel;
+      case DocumentType.transcript:
+        return strings.transcriptLabel;
+      case DocumentType.certificate:
+        return strings.certificateLabel;
+      case DocumentType.attestation:
+        return strings.attestationLabel;
+    }
+  }
+
   void _showTypeSheet() => showModalBottomSheet(
         context: context,
         builder: (_) => _PickerSheet(
-          title: 'Document type',
-          items: ['All', ...DocumentType.values.map((t) => t.label)],
+          title: AppStrings.of(context).tr('Type de document', 'Document type'),
+          items: [
+            AppStrings.of(context).tr('Tous', 'All'),
+            ...DocumentType.values.map((t) => _getLocalizedTypeLabel(t) ?? ''),
+          ],
           onSelect: (v) {
             setState(() {
-              _selectedType = v == 'All'
+              _selectedType = (v == AppStrings.of(context).tr('Tous', 'All'))
                   ? null
-                  : DocumentType.values.firstWhere((t) => t.label == v);
+                  : DocumentType.values.firstWhere(
+                      (t) => _getLocalizedTypeLabel(t) == v,
+                    );
             });
             _doSearch();
           },
@@ -389,10 +416,11 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
   void _showYearSheet() => showModalBottomSheet(
         context: context,
         builder: (_) => _PickerSheet(
-          title: 'Year',
-          items: ['Any', ..._years],
+          title: AppStrings.of(context).tr('Année', 'Year'),
+          items: [AppStrings.of(context).tr('Toute', 'Any'), ..._years],
           onSelect: (v) {
-            setState(() => _selectedYear = v == 'Any' ? null : v);
+            setState(() => _selectedYear =
+                (v == AppStrings.of(context).tr('Toute', 'Any')) ? null : v);
             _doSearch();
           },
         ),
@@ -401,10 +429,17 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
   void _showMentionSheet() => showModalBottomSheet(
         context: context,
         builder: (_) => _PickerSheet(
-          title: 'Mention',
-          items: const ['Any', 'Très Bien', 'Bien', 'Assez Bien', 'Passable'],
+          title: AppStrings.of(context).tr('Mention', 'Mention'),
+          items: [
+            AppStrings.of(context).tr('Toute', 'Any'),
+            AppStrings.of(context).tr('Très Bien', 'Very Good'),
+            AppStrings.of(context).tr('Bien', 'Good'),
+            AppStrings.of(context).tr('Assez Bien', 'Fairly Good'),
+            AppStrings.of(context).tr('Passable', 'Satisfactory')
+          ],
           onSelect: (v) {
-            setState(() => _selectedMention = v == 'Any' ? null : v);
+            setState(() => _selectedMention =
+                (v == AppStrings.of(context).tr('Toute', 'Any')) ? null : v);
             _doSearch();
           },
         ),
@@ -417,12 +452,15 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
             const Icon(Icons.search_rounded, size: 56, color: _border),
             const SizedBox(height: 16),
             Text(
-              'Search your documents',
+              AppStrings.of(context)
+                  .tr('Recherchez vos documents', 'Search your documents'),
               style: GoogleFonts.instrumentSerif(fontSize: 22, color: _textPri),
             ),
             const SizedBox(height: 8),
             Text(
-              'Search by title, field, or use filters\nto find a specific document.',
+              AppStrings.of(context).tr(
+                  'Recherchez par titre, domaine ou utilisez les filtres\npour trouver un document spécifique.',
+                  'Search by title, field, or use filters\nto find a specific document.'),
               textAlign: TextAlign.center,
               style: GoogleFonts.dmSans(
                 fontSize: 13,
@@ -442,7 +480,8 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
             const Icon(Icons.folder_off_rounded, size: 56, color: _border),
             const SizedBox(height: 16),
             Text(
-              'No documents found',
+              AppStrings.of(context)
+                  .tr('Aucun document trouvé', 'No documents found'),
               style: GoogleFonts.dmSans(
                 fontSize: 16,
                 color: _textSec,
@@ -451,7 +490,9 @@ class _SearchState extends ConsumerState<DocumentSearchScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Try different search terms or filters.',
+              AppStrings.of(context).tr(
+                  'Essayez d\'autres termes de recherche ou filtres.',
+                  'Try different search terms or filters.'),
               style: GoogleFonts.dmSans(fontSize: 13, color: _textHint),
             ),
           ],

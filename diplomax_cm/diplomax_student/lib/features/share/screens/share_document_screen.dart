@@ -10,6 +10,7 @@ import 'dart:math';
 import '../../../core/crypto/crypto_service.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/sensors/anti_fraud_sensor.dart';
+import '../../../l10n/app_strings.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS
@@ -201,7 +202,9 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: BackButton(onPressed: () => context.pop(), color: _textPri),
-          title: Text('Share document',
+          title: Text(
+              AppStrings.of(context)
+                  .tr('Partager le document', 'Share document'),
               style:
                   GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
         ),
@@ -214,7 +217,8 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
               _docBadge(),
               const SizedBox(height: 20),
 
-              _sectionTitle('Validity period'),
+              _sectionTitle(AppStrings.of(context)
+                  .tr('Periode de validite', 'Validity period')),
               const SizedBox(height: 10),
               _validitySelector(),
               const SizedBox(height: 20),
@@ -287,7 +291,9 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
                       fontSize: 13, fontWeight: FontWeight.w500),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),
-              Text('Mention: ${widget.mention}',
+              Text(
+                  AppStrings.of(context).tr('Mention: ${widget.mention}',
+                      'Mention: ${widget.mention}'),
                   style: GoogleFonts.dmSans(fontSize: 11, color: _textSec)),
             ],
           )),
@@ -423,22 +429,32 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
   String _verLabel(ShareVerificationMode m) {
     switch (m) {
       case ShareVerificationMode.none:
-        return 'No additional check';
+        return AppStrings.of(context)
+            .tr('Aucun controle supplementaire', 'No additional check');
       case ShareVerificationMode.zkpOnly:
-        return 'Privacy mode only';
+        return AppStrings.of(context)
+            .tr('Mode confidentialite uniquement', 'Privacy mode only');
       case ShareVerificationMode.liveness:
-        return 'Liveness verification (recommended)';
+        return AppStrings.of(context).tr(
+            'Verification de presence (recommandee)',
+            'Liveness verification (recommended)');
     }
   }
 
   String _verDesc(ShareVerificationMode m) {
     switch (m) {
       case ShareVerificationMode.none:
-        return 'Anyone with the QR code can view the document';
+        return AppStrings.of(context).tr(
+            'N\'importe qui avec le code QR peut voir le document',
+            'Anyone with the QR code can view the document');
       case ShareVerificationMode.zkpOnly:
-        return 'Recruiter sees only the mention, not all grades';
+        return AppStrings.of(context).tr(
+            'Le recruteur voit uniquement la mention, pas toutes les notes',
+            'Recruiter sees only the mention, not all grades');
       case ShareVerificationMode.liveness:
-        return 'Recruiter triggers a selfie video challenge to confirm you are the diploma holder';
+        return AppStrings.of(context).tr(
+            'Le recruteur declenche un defi video selfie pour confirmer que vous etes le titulaire du diplome',
+            'Recruiter triggers a selfie video challenge to confirm you are the diploma holder');
     }
   }
 
@@ -467,13 +483,17 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Zero-Knowledge mode',
+              Text(
+                  AppStrings.of(context)
+                      .tr('Mode Zero-Knowledge', 'Zero-Knowledge mode'),
                   style: GoogleFonts.dmSans(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   )),
               Text(
-                  'Share only your mention ("Bien") without revealing individual course grades.',
+                  AppStrings.of(context).tr(
+                      'Partagez uniquement votre mention ("Bien") sans reveler les notes individuelles.',
+                      'Share only your mention ("Good") without revealing individual course grades.'),
                   style: GoogleFonts.dmSans(
                       fontSize: 11, color: _textSec, height: 1.4)),
             ],
@@ -510,9 +530,11 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
               size: 200,
               backgroundColor: Colors.white,
               foregroundColor: _green,
-              errorStateBuilder: (ctx, err) => const SizedBox(
+              errorStateBuilder: (ctx, err) => SizedBox(
                 height: 200,
-                child: Center(child: Text('QR generation error')),
+                child: Center(
+                    child: Text(AppStrings.of(context).tr(
+                        'Erreur de generation du QR', 'QR generation error'))),
               ),
             ),
             const SizedBox(height: 14),
@@ -543,7 +565,9 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            Text('Expires $expStr',
+            Text(
+                AppStrings.of(context)
+                    .tr('Expire le $expStr', 'Expires $expStr'),
                 style: GoogleFonts.dmSans(fontSize: 11, color: _textHint)),
           ]),
         ),
@@ -574,7 +598,10 @@ class _ShareDocumentState extends ConsumerState<ShareDocumentScreen> {
                 // Copy to clipboard
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Link copied!', style: GoogleFonts.dmSans()),
+                    content: Text(
+                        AppStrings.of(context)
+                            .tr('Lien copie!', 'Link copied!'),
+                        style: GoogleFonts.dmSans()),
                     backgroundColor: _green,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(

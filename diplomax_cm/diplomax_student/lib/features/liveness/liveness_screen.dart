@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/app_colors.dart';
+import '../../l10n/app_strings.dart';
 
 class LivenessScreen extends StatefulWidget {
   const LivenessScreen({super.key});
@@ -66,7 +67,9 @@ class _LivenessState extends State<LivenessScreen>
       backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/home')),
-        title: Text('Vérification Liveness',
+        title: Text(
+            AppStrings.of(context)
+                .tr('Verification de presence', 'Liveness verification'),
             style: GoogleFonts.instrumentSerif(fontSize: 22)),
       ),
       body: Padding(
@@ -92,19 +95,29 @@ class _LivenessState extends State<LivenessScreen>
     String title, sub;
     switch (_step) {
       case _LivenessStep.intro:
-        title = 'Vérification anti-fraude';
-        sub =
-            'Prouvez que vous êtes bien une personne réelle en suivant les instructions.';
+        title = AppStrings.of(context)
+            .tr('Verification anti-fraude', 'Anti-fraud verification');
+        sub = AppStrings.of(context).tr(
+            'Prouvez que vous etes bien une personne reelle en suivant les instructions.',
+            'Prove you are a real person by following the instructions.');
         break;
       case _LivenessStep.checking:
         title = _challenges[_challengeIndex].instruction;
         sub = _challenges[_challengeIndex].hint;
         break;
       case _LivenessStep.result:
-        title = _passed ? 'Identité confirmée !' : 'Vérification échouée';
+        title = _passed
+            ? AppStrings.of(context)
+                .tr('Identite confirmee !', 'Identity confirmed!')
+            : AppStrings.of(context)
+                .tr('Verification echouee', 'Verification failed');
         sub = _passed
-            ? 'Vous êtes bien une personne réelle. Accès autorisé.'
-            : 'Veuillez réessayer dans de meilleures conditions.';
+            ? AppStrings.of(context).tr(
+                'Vous etes bien une personne reelle. Acces autorise.',
+                'You are a real person. Access granted.')
+            : AppStrings.of(context).tr(
+                'Veuillez reessayer dans de meilleures conditions.',
+                'Please try again under better conditions.');
     }
     return Column(
       children: [
@@ -233,7 +246,8 @@ class _LivenessState extends State<LivenessScreen>
                     color: AppColors.primary,
                     value: (_challengeIndex + 1) / _challenges.length)),
             const SizedBox(width: 12),
-            Text('Étape ${_challengeIndex + 1} / ${_challenges.length}',
+            Text(
+                '${AppStrings.of(context).tr('Etape', 'Step')} ${_challengeIndex + 1} / ${_challenges.length}',
                 style: GoogleFonts.dmSans(
                     fontSize: 13,
                     color: AppColors.primary,
@@ -245,12 +259,22 @@ class _LivenessState extends State<LivenessScreen>
     if (_step == _LivenessStep.result && _passed) {
       return Column(
         children: [
-          _resultRow(Icons.person_rounded, 'Personne réelle détectée'),
           _resultRow(
-              Icons.no_photography_rounded, 'Aucune photo/vidéo frauduleuse'),
-          _resultRow(Icons.smartphone_rounded, 'Émulateur non détecté'),
+              Icons.person_rounded,
+              AppStrings.of(context)
+                  .tr('Personne reelle detectee', 'Real person detected')),
           _resultRow(
-              Icons.face_retouching_natural_rounded, 'Visage authentifié'),
+              Icons.no_photography_rounded,
+              AppStrings.of(context).tr('Aucune photo/video frauduleuse',
+                  'No fraudulent photo/video detected')),
+          _resultRow(
+              Icons.smartphone_rounded,
+              AppStrings.of(context)
+                  .tr('Emulateur non detecte', 'Emulator not detected')),
+          _resultRow(
+              Icons.face_retouching_natural_rounded,
+              AppStrings.of(context)
+                  .tr('Visage authentifie', 'Face authenticated')),
         ],
       );
     }
@@ -259,10 +283,14 @@ class _LivenessState extends State<LivenessScreen>
 
   Widget _antifraudInfo() {
     final points = [
-      'Suivi de 4 mouvements naturels',
-      'Détection photo/vidéo frauduleuse',
-      'Vérification correspondance visage',
-      'Anti-émulateur intégré',
+      AppStrings.of(context)
+          .tr('Suivi de 4 mouvements naturels', 'Tracking 4 natural movements'),
+      AppStrings.of(context).tr('Detection photo/video frauduleuse',
+          'Fraudulent photo/video detection'),
+      AppStrings.of(context)
+          .tr('Verification correspondance visage', 'Face match verification'),
+      AppStrings.of(context)
+          .tr('Anti-emulateur integre', 'Built-in anti-emulator'),
     ];
     return Container(
       padding: const EdgeInsets.all(14),
@@ -319,7 +347,8 @@ class _LivenessState extends State<LivenessScreen>
     if (_step == _LivenessStep.result && _passed) {
       return ElevatedButton.icon(
         icon: const Icon(Icons.check_rounded, size: 18),
-        label: const Text('Continuer vers le document'),
+        label: Text(AppStrings.of(context)
+            .tr('Continuer vers le document', 'Continue to document')),
         onPressed: () => context.go('/home'),
       );
     }
@@ -328,12 +357,13 @@ class _LivenessState extends State<LivenessScreen>
         onPressed: () => setState(() {
           _step = _LivenessStep.intro;
         }),
-        child: const Text('Annuler'),
+        child: Text(AppStrings.of(context).tr('Annuler', 'Cancel')),
       );
     }
     return ElevatedButton.icon(
       icon: const Icon(Icons.videocam_rounded, size: 18),
-      label: const Text('Démarrer la vérification'),
+      label: Text(AppStrings.of(context)
+          .tr('Demarrer la verification', 'Start verification')),
       onPressed: _startCheck,
     );
   }

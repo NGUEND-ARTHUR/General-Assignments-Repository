@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../../l10n/app_strings.dart';
 
 const _G = Color(0xFF0F6E56);
 const _GL = Color(0xFFE1F5EE);
@@ -14,7 +15,7 @@ const _T1 = Color(0xFF1A1A1A);
 const _T2 = Color(0xFF6B6B6B);
 const _TH = Color(0xFFAAAAAA);
 const _API = String.fromEnvironment('API_BASE_URL',
-    defaultValue: 'https://api.diplomax.cm/v1');
+    defaultValue: 'https://diplomax-backend.onrender.com/v1');
 
 Dio _dio(String tok) =>
     Dio(BaseOptions(baseUrl: _API, headers: {'Authorization': 'Bearer $tok'}));
@@ -93,12 +94,12 @@ class _SS extends ConsumerState<StudentsScreen> {
       backgroundColor: _BG,
       appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Text('Students',
+          title: Text(AppStrings.of(ctx).students,
               style: GoogleFonts.instrumentSerif(fontSize: 22, color: _T1)),
           actions: [
             TextButton.icon(
                 icon: const Icon(Icons.person_add_rounded, size: 16, color: _G),
-                label: Text('Add',
+                label: Text(AppStrings.of(ctx).tr('Ajouter', 'Add'),
                     style: GoogleFonts.dmSans(color: _G, fontSize: 13)),
                 onPressed: () => _addSheet(ctx))
           ]),
@@ -108,11 +109,16 @@ class _SS extends ConsumerState<StudentsScreen> {
             child: TextField(
                 controller: _q,
                 onChanged: _filter,
-                decoration: _id('Search by name, matricule, email',
+                decoration: _id(
+                    AppStrings.of(ctx).tr(
+                        'Rechercher par nom, matricule, email',
+                        'Search by name, matricule, email'),
                     ic: Icons.search_rounded))),
         Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('${_show.length} students',
+            child: Text(
+                AppStrings.of(ctx).tr(
+                    '${_show.length} etudiants', '${_show.length} students'),
                 style: GoogleFonts.dmSans(fontSize: 12, color: _T2))),
         const SizedBox(height: 8),
         Expanded(
@@ -126,7 +132,9 @@ class _SS extends ConsumerState<StudentsScreen> {
                             const Icon(Icons.people_outline_rounded,
                                 size: 56, color: Color(0xFFE0DDD5)),
                             const SizedBox(height: 14),
-                            Text('No students',
+                            Text(
+                                AppStrings.of(ctx)
+                                    .tr('Aucun etudiant', 'No students'),
                                 style: GoogleFonts.dmSans(
                                     fontSize: 15, color: _T2))
                           ]))
@@ -196,11 +204,11 @@ class _SS extends ConsumerState<StudentsScreen> {
   void _addSheet(BuildContext ctx) {
     final c = List.generate(5, (_) => TextEditingController());
     final labels = [
-      'Full name *',
-      'Matricule *',
-      'Email *',
-      'Phone',
-      'Initial password *'
+      AppStrings.of(ctx).tr('Nom complet *', 'Full name *'),
+      AppStrings.of(ctx).tr('Matricule *', 'Matricule *'),
+      AppStrings.of(ctx).tr('Email *', 'Email *'),
+      AppStrings.of(ctx).tr('Telephone', 'Phone'),
+      AppStrings.of(ctx).tr('Mot de passe initial *', 'Initial password *')
     ];
     final hints = [
       'Nguend Arthur Johann',
@@ -224,7 +232,9 @@ class _SS extends ConsumerState<StudentsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Add student',
+                  Text(
+                      AppStrings.of(ctx)
+                          .tr('Ajouter un etudiant', 'Add student'),
                       style: GoogleFonts.instrumentSerif(fontSize: 20)),
                   const SizedBox(height: 14),
                   ...List.generate(
@@ -261,7 +271,8 @@ class _SS extends ConsumerState<StudentsScreen> {
                           _fetch();
                         } catch (_) {}
                       },
-                      child: const Text('Add student')),
+                      child: Text(AppStrings.of(ctx)
+                          .tr('Ajouter etudiant', 'Add student'))),
                   const SizedBox(height: 8),
                 ])));
   }
@@ -309,7 +320,9 @@ class _SDS extends ConsumerState<StudentDetailScreen> {
         appBar: AppBar(
             backgroundColor: Colors.transparent,
             leading: const BackButton(color: _T1),
-            title: Text(_s?['full_name'] ?? 'Student',
+            title: Text(
+                _s?['full_name'] ??
+                    AppStrings.of(ctx).tr('Etudiant', 'Student'),
                 style: GoogleFonts.instrumentSerif(fontSize: 20, color: _T1))),
         body: _load
             ? const Center(child: CircularProgressIndicator(color: _G))
@@ -345,29 +358,37 @@ class _SDS extends ConsumerState<StudentDetailScreen> {
                 Text(s['matricule'] ?? '',
                     style: GoogleFonts.dmSans(fontSize: 13, color: _T2)),
                 const SizedBox(height: 10),
-                ...[('Email', s['email'] ?? '—'), ('Phone', s['phone'] ?? '—')]
-                    .map((r) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(children: [
-                          SizedBox(
-                              width: 80,
-                              child: Text(r.$1,
-                                  style: GoogleFonts.dmSans(
-                                      fontSize: 12, color: _T2))),
-                          Expanded(
-                              child: Text(r.$2,
-                                  style: GoogleFonts.dmSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500)))
-                        ]))),
+                ...[
+                  (AppStrings.of(ctx).tr('Email', 'Email'), s['email'] ?? '—'),
+                  (
+                    AppStrings.of(ctx).tr('Telephone', 'Phone'),
+                    s['phone'] ?? '—'
+                  )
+                ].map((r) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(children: [
+                      SizedBox(
+                          width: 80,
+                          child: Text(r.$1,
+                              style: GoogleFonts.dmSans(
+                                  fontSize: 12, color: _T2))),
+                      Expanded(
+                          child: Text(r.$2,
+                              style: GoogleFonts.dmSans(
+                                  fontSize: 12, fontWeight: FontWeight.w500)))
+                    ]))),
               ])),
           const SizedBox(height: 20),
-          Text('Documents (${_docs.length})',
+          Text(
+              AppStrings.of(ctx).tr(
+                  'Documents (${_docs.length})', 'Documents (${_docs.length})'),
               style: GoogleFonts.dmSans(
                   fontSize: 15, fontWeight: FontWeight.w500)),
           const SizedBox(height: 10),
           if (_docs.isEmpty)
-            Text('No documents yet.',
+            Text(
+                AppStrings.of(ctx)
+                    .tr('Aucun document pour le moment.', 'No documents yet.'),
                 style: GoogleFonts.dmSans(fontSize: 13, color: _T2))
           else
             ..._docs.map(
@@ -401,7 +422,8 @@ class _SDS extends ConsumerState<StudentDetailScreen> {
           const SizedBox(height: 20),
           ElevatedButton.icon(
               icon: const Icon(Icons.add_rounded, size: 18),
-              label: const Text('Issue a document'),
+              label: Text(AppStrings.of(ctx)
+                  .tr('Emettre un document', 'Issue a document')),
               style: ElevatedButton.styleFrom(
                   backgroundColor: _G,
                   foregroundColor: Colors.white,

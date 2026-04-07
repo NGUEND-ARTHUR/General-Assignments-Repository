@@ -7,6 +7,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import '../../core/app_colors.dart';
 import '../../core/api/api_client.dart';
+import '../../l10n/app_strings.dart';
 
 class QrScanScreen extends StatefulWidget {
   const QrScanScreen({super.key});
@@ -51,7 +52,9 @@ class _QrScanState extends State<QrScanScreen>
     final token = _extractToken(rawInput ?? _tokenCtrl.text);
     if (token.isEmpty) {
       setState(() {
-        _error = 'Entrez un token ou un lien de partage valide.';
+        _error = AppStrings.of(context).tr(
+            'Entrez un token ou un lien de partage valide.',
+            'Enter a valid token or share link.');
       });
       return;
     }
@@ -79,7 +82,8 @@ class _QrScanState extends State<QrScanScreen>
             .post('/liveness/start', queryParameters: {'share_token': token});
         final sessionId = (start.data['session_id'] ?? '').toString();
         if (sessionId.isEmpty) {
-          throw Exception('Session liveness invalide');
+          throw Exception(AppStrings.of(context)
+              .tr('Session liveness invalide', 'Invalid liveness session'));
         }
 
         final challenges =
@@ -92,13 +96,15 @@ class _QrScanState extends State<QrScanScreen>
           final axis = (challenge['axis'] ?? 'y').toString();
           final direction = (challenge['direction'] ?? 'right').toString();
           final threshold = (challenge['threshold'] as num?)?.toDouble() ?? 0.6;
-          final instruction =
-              (challenge['instruction'] ?? 'Effectuez le mouvement demandé')
-                  .toString();
+          final instruction = (challenge['instruction'] ??
+                  AppStrings.of(context).tr('Effectuez le mouvement demande',
+                      'Perform the requested movement'))
+              .toString();
 
           final proceed = await _confirmChallenge(instruction);
           if (!proceed) {
-            throw Exception('Vérification annulée');
+            throw Exception(AppStrings.of(context)
+                .tr('Verification annulee', 'Verification cancelled'));
           }
 
           final evidence = await _captureMotionEvidence(
@@ -116,7 +122,9 @@ class _QrScanState extends State<QrScanScreen>
           );
 
           if (!evidence.detected) {
-            throw Exception('Mouvement non détecté au challenge $step');
+            throw Exception(AppStrings.of(context).tr(
+                'Mouvement non detecte au challenge $step',
+                'Movement not detected at challenge $step'));
           }
         }
 
@@ -142,7 +150,8 @@ class _QrScanState extends State<QrScanScreen>
         _scanned = true;
         _valid = false;
         _processing = false;
-        _error = 'Vérification impossible: ${e.toString()}';
+        _error =
+            '${AppStrings.of(context).tr('Verification impossible', 'Verification failed')}: ${e.toString()}';
       });
     } finally {
       if (!mounted) return;
@@ -160,7 +169,10 @@ class _QrScanState extends State<QrScanScreen>
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: Text('Challenge liveness', style: GoogleFonts.dmSans()),
+        title: Text(
+            AppStrings.of(context)
+                .tr('Challenge de presence', 'Liveness challenge'),
+            style: GoogleFonts.dmSans()),
         content: Text(
           instruction,
           style: GoogleFonts.dmSans(fontSize: 13),
@@ -168,11 +180,11 @@ class _QrScanState extends State<QrScanScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Annuler'),
+            child: Text(AppStrings.of(context).tr('Annuler', 'Cancel')),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Commencer'),
+            child: Text(AppStrings.of(context).tr('Commencer', 'Start')),
           ),
         ],
       ),
@@ -246,7 +258,8 @@ class _QrScanState extends State<QrScanScreen>
         backgroundColor: Colors.transparent,
         leading: BackButton(
             onPressed: () => context.go('/home'), color: Colors.white),
-        title: Text('Scanner QR Code',
+        title: Text(
+            AppStrings.of(context).tr('Scanner QR Code', 'Scan QR code'),
             style: GoogleFonts.dmSans(color: Colors.white, fontSize: 17)),
       ),
       body: Stack(
@@ -340,12 +353,19 @@ class _QrScanState extends State<QrScanScreen>
                 const SizedBox(height: 30),
                 Text(
                   _processing
-                      ? 'Vérification serveur en cours...'
+                      ? AppStrings.of(context).tr(
+                          'Verification serveur en cours...',
+                          'Server verification in progress...')
                       : _scanned
                           ? _valid
-                              ? '✓ Document authentique'
-                              : '✗ Document invalide'
-                          : 'Pointez vers un QR Code Diplomax',
+                              ? AppStrings.of(context).tr(
+                                  '✓ Document authentique',
+                                  '✓ Authentic document')
+                              : AppStrings.of(context).tr(
+                                  '✗ Document invalide', '✗ Invalid document')
+                          : AppStrings.of(context).tr(
+                              'Pointez vers un QR Code Diplomax',
+                              'Point at a Diplomax QR code'),
                   style: GoogleFonts.dmSans(
                     color: _scanned
                         ? _valid
@@ -373,7 +393,9 @@ class _QrScanState extends State<QrScanScreen>
                             color: Colors.white, fontSize: 12),
                         decoration: InputDecoration(
                           isDense: true,
-                          hintText: 'Token ou lien https://verify.../s/<token>',
+                          hintText: AppStrings.of(context).tr(
+                              'Token ou lien https://verify.../s/<token>',
+                              'Token or link https://verify.../s/<token>'),
                           hintStyle: GoogleFonts.dmSans(
                             color: Colors.white54,
                             fontSize: 11,
@@ -414,7 +436,10 @@ class _QrScanState extends State<QrScanScreen>
                   ],
                   ElevatedButton(
                     onPressed: _processing ? null : _verifyToken,
-                    child: Text(_scanned ? 'Vérifier à nouveau' : 'Vérifier'),
+                    child: Text(_scanned
+                        ? AppStrings.of(context)
+                            .tr('Verifier a nouveau', 'Verify again')
+                        : AppStrings.of(context).tr('Verifier', 'Verify')),
                   ),
                 ],
               ),
@@ -442,20 +467,23 @@ class _QrScanState extends State<QrScanScreen>
               const Icon(Icons.verified_rounded,
                   color: AppColors.success, size: 18),
               const SizedBox(width: 8),
-              Text('Document vérifié',
+              Text(
+                  AppStrings.of(context)
+                      .tr('Document verifie', 'Verified document'),
                   style: GoogleFonts.dmSans(
                       fontSize: 14, fontWeight: FontWeight.w500)),
             ],
           ),
           const SizedBox(height: 10),
-          _row('Titulaire', (access['student_name'] ?? '—').toString()),
-          _row('Document',
-              (access['title'] ?? preview['title'] ?? '—').toString()),
-          _row('Mention',
-              (access['mention'] ?? preview['mention'] ?? '—').toString()),
+          _row(AppStrings.of(context).tr('Titulaire', 'Holder'),
+              (access['student_name'] ?? '-').toString()),
+          _row(AppStrings.of(context).tr('Document', 'Document'),
+              (access['title'] ?? preview['title'] ?? '-').toString()),
+          _row(AppStrings.of(context).tr('Mention', 'Mention'),
+              (access['mention'] ?? preview['mention'] ?? '-').toString()),
           _row(
-              'Université',
-              (access['university'] ?? preview['university'] ?? '—')
+              AppStrings.of(context).tr('Universite', 'University'),
+              (access['university'] ?? preview['university'] ?? '-')
                   .toString()),
         ],
       ),

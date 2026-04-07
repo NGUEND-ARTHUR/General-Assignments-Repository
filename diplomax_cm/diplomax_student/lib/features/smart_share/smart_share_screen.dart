@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/app_colors.dart';
 import '../../core/api/student_documents_api.dart';
+import '../../l10n/app_strings.dart';
 
 class SmartShareScreen extends StatefulWidget {
   const SmartShareScreen({super.key});
@@ -38,7 +39,8 @@ class _SmartShareState extends State<SmartShareScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _error = 'Impossible de charger les documents';
+        _error = AppStrings.of(context).tr(
+            'Impossible de charger les documents', 'Unable to load documents');
         _loading = false;
       });
     }
@@ -64,7 +66,8 @@ class _SmartShareState extends State<SmartShareScreen> {
     Clipboard.setData(ClipboardData(text: _shareLink));
     ScaffoldMessenger.of(ctx).showSnackBar(
       SnackBar(
-        content: Text('Lien copié !', style: GoogleFonts.dmSans()),
+        content: Text(AppStrings.of(ctx).tr('Lien copie !', 'Link copied!'),
+            style: GoogleFonts.dmSans()),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -78,7 +81,8 @@ class _SmartShareState extends State<SmartShareScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/home')),
-        title: Text('Smart Share',
+        title: Text(
+            AppStrings.of(context).tr('Partage intelligent', 'Smart Share'),
             style: GoogleFonts.instrumentSerif(fontSize: 22)),
       ),
       body: SingleChildScrollView(
@@ -88,7 +92,8 @@ class _SmartShareState extends State<SmartShareScreen> {
           children: [
             _infoBox(),
             const SizedBox(height: 20),
-            _sectionTitle('1. Sélectionner le document'),
+            _sectionTitle(AppStrings.of(context)
+                .tr('1. Selectionner le document', '1. Select document')),
             const SizedBox(height: 10),
             if (_loading)
               const Padding(
@@ -107,13 +112,15 @@ class _SmartShareState extends State<SmartShareScreen> {
             else
               ..._docs.map(_docTile),
             const SizedBox(height: 20),
-            _sectionTitle('2. Paramètres de partage'),
+            _sectionTitle(AppStrings.of(context)
+                .tr('2. Parametres de partage', '2. Share settings')),
             const SizedBox(height: 10),
             _optionsCard(),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               icon: const Icon(Icons.link_rounded, size: 18),
-              label: const Text('Générer le lien sécurisé'),
+              label: Text(AppStrings.of(context)
+                  .tr('Generer le lien securise', 'Generate secure link')),
               onPressed: _selected == null ? null : _generate,
             ),
             if (_generated && _selected != null) ...[
@@ -141,7 +148,9 @@ class _SmartShareState extends State<SmartShareScreen> {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Le document n\'est jamais envoyé directement. Le recruteur consulte une version sécurisée directement depuis le serveur universitaire.',
+              AppStrings.of(context).tr(
+                  'Le document n\'est jamais envoye directement. Le recruteur consulte une version securisee depuis le serveur universitaire.',
+                  'The document is never sent directly. Recruiters view a secured version from the university server.'),
               style: GoogleFonts.dmSans(
                   fontSize: 12, color: AppColors.info, height: 1.5),
             ),
@@ -235,13 +244,13 @@ class _SmartShareState extends State<SmartShareScreen> {
   String _typeLabel(String type) {
     switch (type) {
       case 'diploma':
-        return 'Diplôme';
+        return AppStrings.of(context).diplomaLabel;
       case 'transcript':
-        return 'Relevé';
+        return AppStrings.of(context).transcriptLabel;
       case 'certificate':
-        return 'Certificat';
+        return AppStrings.of(context).certificateLabel;
       default:
-        return 'Attestation';
+        return AppStrings.of(context).attestationLabel;
     }
   }
 
@@ -261,7 +270,9 @@ class _SmartShareState extends State<SmartShareScreen> {
               const Icon(Icons.timer_rounded,
                   size: 16, color: AppColors.textSecondary),
               const SizedBox(width: 8),
-              Text('Expiration du lien',
+              Text(
+                  AppStrings.of(context)
+                      .tr('Expiration du lien', 'Link expiry'),
                   style: GoogleFonts.dmSans(fontSize: 13)),
               const Spacer(),
               ...[24, 48, 72].map((h) {
@@ -305,10 +316,14 @@ class _SmartShareState extends State<SmartShareScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Mode Zero-Knowledge',
+                    Text(
+                        AppStrings.of(context)
+                            .tr('Mode Zero-Knowledge', 'Zero-Knowledge mode'),
                         style: GoogleFonts.dmSans(fontSize: 13)),
                     Text(
-                        'Partager seulement la mention (ex: "Bien"), sans exposer toutes les notes',
+                        AppStrings.of(context).tr(
+                            'Partager seulement la mention (ex: "Bien"), sans exposer toutes les notes',
+                            'Share only the mention (e.g. "Good"), without exposing all grades'),
                         style: GoogleFonts.dmSans(
                             fontSize: 10,
                             color: AppColors.textHint,
@@ -336,7 +351,9 @@ class _SmartShareState extends State<SmartShareScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                    'Aucune copie modifiable envoyée — consultation serveur uniquement',
+                    AppStrings.of(context).tr(
+                        'Aucune copie modifiable envoyee - consultation serveur uniquement',
+                        'No editable copy is sent - server-view only'),
                     style: GoogleFonts.dmSans(
                         fontSize: 11, color: AppColors.textSecondary)),
               ),
@@ -363,7 +380,9 @@ class _SmartShareState extends State<SmartShareScreen> {
               const Icon(Icons.check_circle_rounded,
                   color: AppColors.primary, size: 18),
               const SizedBox(width: 8),
-              Text('Lien sécurisé généré',
+              Text(
+                  AppStrings.of(context)
+                      .tr('Lien securise genere', 'Secure link generated'),
                   style: GoogleFonts.dmSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -394,7 +413,9 @@ class _SmartShareState extends State<SmartShareScreen> {
                     const Icon(Icons.schedule_rounded,
                         size: 12, color: AppColors.textHint),
                     const SizedBox(width: 4),
-                    Text('Expire le $_expiresAt',
+                    Text(
+                        AppStrings.of(context).tr(
+                            'Expire le $_expiresAt', 'Expires on $_expiresAt'),
                         style: GoogleFonts.dmSans(
                             fontSize: 10, color: AppColors.textHint)),
                   ],
@@ -408,7 +429,7 @@ class _SmartShareState extends State<SmartShareScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.copy_rounded, size: 16),
-                  label: const Text('Copier'),
+                  label: Text(AppStrings.of(context).tr('Copier', 'Copy')),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.primary),
@@ -422,7 +443,7 @@ class _SmartShareState extends State<SmartShareScreen> {
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.share_rounded, size: 16),
-                  label: const Text('Partager'),
+                  label: Text(AppStrings.of(context).tr('Partager', 'Share')),
                   style:
                       ElevatedButton.styleFrom(minimumSize: const Size(0, 44)),
                   onPressed: () {},

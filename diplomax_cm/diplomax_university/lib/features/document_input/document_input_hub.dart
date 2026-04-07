@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -85,7 +86,9 @@ class DocumentInputHubScreen extends StatelessWidget {
         backgroundColor: _bg,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Text('Issue a document',
+          title: Text(
+              AppStrings.of(context)
+                  .tr('Emettre un document', 'Issue a document'),
               style:
                   GoogleFonts.instrumentSerif(fontSize: 22, color: _textPri)),
         ),
@@ -105,13 +108,16 @@ class DocumentInputHubScreen extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(
                         child: Text(
-                            'Choose how you want to enter the document data. '
-                            'All methods produce the same cryptographically signed result.',
+                            AppStrings.of(context).tr(
+                                'Choisissez comment saisir les donnees du document. Toutes les methodes produisent le meme resultat signe cryptographiquement.',
+                                'Choose how you want to enter the document data. All methods produce the same cryptographically signed result.'),
                             style: GoogleFonts.dmSans(
                                 fontSize: 12, color: _green, height: 1.5))),
                   ])),
               const SizedBox(height: 20),
-              Text('Input methods',
+              Text(
+                  AppStrings.of(context)
+                      .tr('Methodes de saisie', 'Input methods'),
                   style: GoogleFonts.dmSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -148,66 +154,126 @@ class _MethodCard extends StatelessWidget {
   const _MethodCard({required this.method});
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: () => context.go(method.route),
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-              color: _surface,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _border),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2))
-              ]),
-          child: Row(children: [
-            Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                    color: method.bgColor,
-                    borderRadius: BorderRadius.circular(14)),
-                child: Icon(method.icon, color: method.color, size: 26)),
-            const SizedBox(width: 14),
-            Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Row(children: [
-                    Text(method.title,
-                        style: GoogleFonts.dmSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: _textPri)),
-                    if (method.badge != null) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 7, vertical: 2),
-                          decoration: BoxDecoration(
-                              color: method.color.withOpacity(0.12),
-                              borderRadius: BorderRadius.circular(4)),
-                          child: Text(method.badge!,
-                              style: GoogleFonts.dmSans(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                  color: method.color))),
-                    ],
-                  ]),
-                  const SizedBox(height: 3),
-                  Text(method.subtitle,
+  Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+    return GestureDetector(
+      onTap: () => context.go(method.route),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: _surface,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: _border),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2))
+            ]),
+        child: Row(children: [
+          Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                  color: method.bgColor,
+                  borderRadius: BorderRadius.circular(14)),
+              child: Icon(method.icon, color: method.color, size: 26)),
+          const SizedBox(width: 14),
+          Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Row(children: [
+                  Text(_title(method.title, strings),
                       style: GoogleFonts.dmSans(
-                          fontSize: 12,
-                          color: _textSec,
-                          fontWeight: FontWeight.w300,
-                          height: 1.4)),
-                ])),
-            Icon(Icons.chevron_right_rounded,
-                color: _textSec.withOpacity(0.4), size: 20),
-          ]),
-        ),
-      );
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: _textPri)),
+                  if (method.badge != null) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 7, vertical: 2),
+                        decoration: BoxDecoration(
+                            color: method.color.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(4)),
+                        child: Text(_badge(method.badge!, strings),
+                            style: GoogleFonts.dmSans(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: method.color))),
+                  ],
+                ]),
+                const SizedBox(height: 3),
+                Text(_subtitle(method.subtitle, strings),
+                    style: GoogleFonts.dmSans(
+                        fontSize: 12,
+                        color: _textSec,
+                        fontWeight: FontWeight.w300,
+                        height: 1.4)),
+              ])),
+          Icon(Icons.chevron_right_rounded,
+              color: _textSec.withOpacity(0.4), size: 20),
+        ]),
+      ),
+    );
+  }
+
+  String _title(String title, AppStrings strings) {
+    switch (title) {
+      case 'Manual form':
+        return strings.tr('Formulaire manuel', 'Manual form');
+      case 'Scan existing PDF':
+        return strings.tr('Scanner un PDF existant', 'Scan existing PDF');
+      case 'CSV bulk import':
+        return strings.tr('Import CSV en lot', 'CSV bulk import');
+      case 'Camera / photo scan':
+        return strings.tr('Scan camera / photo', 'Camera / photo scan');
+      case 'Fill a template':
+        return strings.tr('Remplir un modele', 'Fill a template');
+      default:
+        return title;
+    }
+  }
+
+  String _subtitle(String subtitle, AppStrings strings) {
+    switch (subtitle) {
+      case 'Enter all fields by hand — the most precise method':
+        return strings.tr(
+            'Saisissez tous les champs a la main - la methode la plus precise',
+            'Enter all fields by hand - the most precise method');
+      case 'Upload an existing university PDF — OCR extracts all fields automatically':
+        return strings.tr(
+            'Importez un PDF universitaire existant - l\'OCR extrait automatiquement tous les champs',
+            'Upload an existing university PDF - OCR extracts all fields automatically');
+      case 'Import a spreadsheet of multiple students at once':
+        return strings.tr(
+            'Importez une feuille de calcul de plusieurs etudiants en une fois',
+            'Import a spreadsheet of multiple students at once');
+      case 'Take a photo of a paper document — OCR reads it live':
+        return strings.tr(
+            'Prenez en photo un document papier - l\'OCR le lit en direct',
+            'Take a photo of a paper document - OCR reads it live');
+      case 'Choose a standard document type and fill only the student-specific fields':
+        return strings.tr(
+            'Choisissez un type de document standard et ne remplissez que les champs specifiques a l\'etudiant',
+            'Choose a standard document type and fill only the student-specific fields');
+      default:
+        return subtitle;
+    }
+  }
+
+  String _badge(String badge, AppStrings strings) {
+    switch (badge) {
+      case 'Bulk':
+        return strings.tr('Lot', 'Bulk');
+      case 'Camera':
+        return strings.tr('Camera', 'Camera');
+      case 'Quick':
+        return strings.tr('Rapide', 'Quick');
+      default:
+        return badge;
+    }
+  }
 }

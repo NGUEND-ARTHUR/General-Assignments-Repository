@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:dio/dio.dart';
+import '../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -171,7 +172,10 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Error: ${e.toString()}', style: GoogleFonts.dmSans()),
+          content: Text(
+              AppStrings.of(context)
+                  .tr('Erreur: ${e.toString()}', 'Error: ${e.toString()}'),
+              style: GoogleFonts.dmSans()),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ));
@@ -189,7 +193,9 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: BackButton(onPressed: () => context.pop(), color: _textPri),
-          title: Text('International share',
+          title: Text(
+              AppStrings.of(context)
+                  .tr('Partage international', 'International share'),
               style:
                   GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
           bottom: TabBar(
@@ -199,9 +205,13 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
             indicatorColor: _green,
             labelStyle:
                 GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w500),
-            tabs: const [
-              Tab(text: 'Create package'),
-              Tab(text: 'Package ready')
+            tabs: [
+              Tab(
+                  text: AppStrings.of(context)
+                      .tr('Creer un package', 'Create package')),
+              Tab(
+                  text: AppStrings.of(context)
+                      .tr('Package pret', 'Package ready'))
             ],
           ),
         ),
@@ -228,16 +238,18 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                 icon: Icons.flight_takeoff_rounded,
                 color: _blue,
                 bgColor: _blueLight,
-                title: 'For travel, studies abroad & visa applications',
-                body:
-                    'This creates a secure, embassy-ready package containing your '
-                    'certified academic documents with blockchain proof. The recipient '
-                    'institution receives a link to access and download a professional PDF.',
+                title: AppStrings.of(context).tr(
+                    'Pour voyages, etudes a l\'etranger et visas',
+                    'For travel, studies abroad & visa applications'),
+                body: AppStrings.of(context).tr(
+                    'Cela cree un package securise pret pour ambassade avec vos documents académiques certifies et preuve blockchain. L\'institution destinataire recoit un lien pour acceder et telecharger un PDF professionnel.',
+                    'This creates a secure, embassy-ready package containing your certified academic documents with blockchain proof. The recipient institution receives a link to access and download a professional PDF.'),
               ),
               const SizedBox(height: 20),
 
               // Selected documents
-              _sectionTitle('Documents included'),
+              _sectionTitle(AppStrings.of(context)
+                  .tr('Documents inclus', 'Documents included')),
               const SizedBox(height: 10),
               ...widget.documentTitles.asMap().entries.map((e) => Container(
                     margin: const EdgeInsets.only(bottom: 6),
@@ -259,32 +271,36 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
               const SizedBox(height: 20),
 
               // Recipient institution
-              _sectionTitle('Recipient institution'),
+              _sectionTitle(AppStrings.of(context)
+                  .tr('Institution destinataire', 'Recipient institution')),
               const SizedBox(height: 10),
               _textField(
                 ctrl: _instName,
-                label: 'Institution name',
+                label: AppStrings.of(context)
+                    .tr('Nom de l\'institution', 'Institution name'),
                 hint: 'e.g. Université de Paris, MIT, Embassy of France',
                 required: true,
               ),
               const SizedBox(height: 12),
               _textField(
                 ctrl: _instCountry,
-                label: 'Country',
+                label: AppStrings.of(context).tr('Pays', 'Country'),
                 hint: 'e.g. France, Canada, Germany',
                 required: true,
               ),
               const SizedBox(height: 12),
               _textField(
                 ctrl: _instEmail,
-                label: 'Institution email (optional)',
+                label: AppStrings.of(context).tr(
+                    'Email institution (optionnel)',
+                    'Institution email (optional)'),
                 hint: 'admissions@university.fr',
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 20),
 
               // Purpose
-              _sectionTitle('Purpose'),
+              _sectionTitle(AppStrings.of(context).tr('Objet', 'Purpose')),
               const SizedBox(height: 10),
               // Quick select chips
               Wrap(
@@ -321,36 +337,47 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
               const SizedBox(height: 10),
               _textField(
                   ctrl: _purposeCtrl,
-                  label: 'Or type custom purpose',
-                  hint: 'Describe the purpose',
+                  label: AppStrings.of(context).tr(
+                      'Ou saisir un objet personnalise',
+                      'Or type custom purpose'),
+                  hint: AppStrings.of(context)
+                      .tr('Decrivez l\'objet', 'Describe the purpose'),
                   required: true),
               const SizedBox(height: 20),
 
               // Package contents
-              _sectionTitle('Package contents'),
+              _sectionTitle(AppStrings.of(context)
+                  .tr('Contenu du package', 'Package contents')),
               const SizedBox(height: 10),
               _toggleOption(
                 icon: Icons.format_list_numbered_rounded,
-                title: 'Include course grades',
-                subtitle:
-                    'All individual course marks will be included in the PDF',
+                title: AppStrings.of(context)
+                    .tr('Inclure les notes de cours', 'Include course grades'),
+                subtitle: AppStrings.of(context).tr(
+                    'Toutes les notes individuelles seront incluses dans le PDF',
+                    'All individual course marks will be included in the PDF'),
                 value: _req.includeGrades,
                 onChanged: (v) => setState(() => _req.includeGrades = v),
               ),
               _toggleOption(
                 icon: Icons.verified_rounded,
-                title: 'Include blockchain proof',
-                subtitle:
-                    'Hyperledger Fabric transaction ID and verification URL',
+                title: AppStrings.of(context).tr(
+                    'Inclure la preuve blockchain', 'Include blockchain proof'),
+                subtitle: AppStrings.of(context).tr(
+                    'ID de transaction Hyperledger Fabric et URL de verification',
+                    'Hyperledger Fabric transaction ID and verification URL'),
                 value: _req.includeBlockchainProof,
                 onChanged: (v) =>
                     setState(() => _req.includeBlockchainProof = v),
               ),
               _toggleOption(
                 icon: Icons.description_rounded,
-                title: 'Include university attestation letter',
-                subtitle:
-                    'An official letter from the university certifying your enrolment',
+                title: AppStrings.of(context).tr(
+                    'Inclure la lettre d\'attestation universitaire',
+                    'Include university attestation letter'),
+                subtitle: AppStrings.of(context).tr(
+                    'Lettre officielle de l\'universite certifiant votre inscription',
+                    'An official letter from the university certifying your enrolment'),
                 value: _req.includeUniversityLetter,
                 onChanged: (v) =>
                     setState(() => _req.includeUniversityLetter = v),
@@ -358,7 +385,8 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
               const SizedBox(height: 20),
 
               // Validity
-              _sectionTitle('Package validity'),
+              _sectionTitle(AppStrings.of(context)
+                  .tr('Validite du package', 'Package validity')),
               const SizedBox(height: 10),
               Row(
                   children: [15, 30, 60, 90].map((d) {
@@ -384,12 +412,16 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                               color: active ? Colors.white : _textSec)),
                       Text(
                           d <= 15
-                              ? '2 weeks'
+                              ? AppStrings.of(context)
+                                  .tr('2 semaines', '2 weeks')
                               : d <= 30
-                                  ? '1 month'
+                                  ? AppStrings.of(context)
+                                      .tr('1 mois', '1 month')
                                   : d <= 60
-                                      ? '2 months'
-                                      : '3 months',
+                                      ? AppStrings.of(context)
+                                          .tr('2 mois', '2 months')
+                                      : AppStrings.of(context)
+                                          .tr('3 mois', '3 months'),
                           style: GoogleFonts.dmSans(
                               fontSize: 10,
                               color: active ? Colors.white70 : _textHint)),
@@ -400,13 +432,17 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
               const SizedBox(height: 20),
 
               // Optional password
-              _sectionTitle('Security (optional)'),
+              _sectionTitle(AppStrings.of(context)
+                  .tr('Securite (optionnel)', 'Security (optional)')),
               const SizedBox(height: 10),
               _toggleOption(
                 icon: Icons.lock_rounded,
-                title: 'Password protect this package',
-                subtitle:
-                    'The institution will need a password to access the documents',
+                title: AppStrings.of(context).tr(
+                    'Proteger ce package par mot de passe',
+                    'Password protect this package'),
+                subtitle: AppStrings.of(context).tr(
+                    'L\'institution devra entrer un mot de passe pour acceder aux documents',
+                    'The institution will need a password to access the documents'),
                 value: _showPwField,
                 onChanged: (v) => setState(() => _showPwField = v),
               ),
@@ -416,7 +452,9 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                   controller: _pwCtrl,
                   obscureText: _obscurePw,
                   decoration: InputDecoration(
-                    hintText: 'Enter package password',
+                    hintText: AppStrings.of(context).tr(
+                        'Entrez le mot de passe du package',
+                        'Enter package password'),
                     prefixIcon: const Icon(Icons.key_rounded,
                         size: 18, color: _textHint),
                     suffixIcon: IconButton(
@@ -456,8 +494,11 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                             color: Colors.white, strokeWidth: 2))
                     : const Icon(Icons.flight_takeoff_rounded, size: 18),
                 label: Text(_loading
-                    ? 'Creating package...'
-                    : 'Create international package'),
+                    ? AppStrings.of(context)
+                        .tr('Creation du package...', 'Creating package...')
+                    : AppStrings.of(context).tr(
+                        'Creer un package international',
+                        'Create international package')),
                 onPressed: _loading ? null : _submit,
               ),
               const SizedBox(height: 20),
@@ -473,7 +514,9 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Icon(Icons.flight_takeoff_rounded, size: 56, color: _textHint),
           const SizedBox(height: 16),
-          Text('Create a package first',
+          Text(
+              AppStrings.of(context)
+                  .tr('Creez d\'abord un package', 'Create a package first'),
               style: GoogleFonts.dmSans(color: _textHint, fontSize: 14)),
         ]),
       );
@@ -501,12 +544,17 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                      Text('Package created successfully',
+                      Text(
+                          AppStrings.of(context).tr('Package cree avec succes',
+                              'Package created successfully'),
                           style: GoogleFonts.dmSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                               color: _green)),
-                      Text('Valid until $expDate · ${_req.expiryDays} days',
+                      Text(
+                          AppStrings.of(context).tr(
+                              'Valide jusqu\'au $expDate · ${_req.expiryDays} jours',
+                              'Valid until $expDate · ${_req.expiryDays} days'),
                           style: GoogleFonts.dmSans(
                               fontSize: 11, color: _green.withOpacity(0.7))),
                     ])),
@@ -522,13 +570,18 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: _border)),
               child: Column(children: [
-                Text('Share this QR code',
+                Text(
+                    AppStrings.of(context)
+                        .tr('Partagez ce QR code', 'Share this QR code'),
                     style: GoogleFonts.dmSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: _textPri)),
                 const SizedBox(height: 4),
-                Text('The institution scans this to access your documents',
+                Text(
+                    AppStrings.of(context).tr(
+                        'L\'institution scanne ceci pour acceder a vos documents',
+                        'The institution scans this to access your documents'),
                     style: GoogleFonts.dmSans(fontSize: 11, color: _textSec)),
                 const SizedBox(height: 16),
                 QrImageView(
@@ -549,7 +602,10 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                         const Icon(Icons.lock_rounded, size: 13, color: _amber),
                         const SizedBox(width: 6),
-                        Text('Password protected',
+                        Text(
+                            AppStrings.of(context).tr(
+                                'Protege par mot de passe',
+                                'Password protected'),
                             style: GoogleFonts.dmSans(
                                 fontSize: 11,
                                 color: _amber,
@@ -570,7 +626,9 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                      Text('Access URL',
+                      Text(
+                          AppStrings.of(context)
+                              .tr('URL d\'acces', 'Access URL'),
                           style: GoogleFonts.dmSans(
                               fontSize: 10, color: _textHint)),
                       const SizedBox(height: 2),
@@ -584,8 +642,10 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                   onTap: () {
                     Clipboard.setData(ClipboardData(text: r.accessUrl));
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content:
-                            Text('Link copied!', style: GoogleFonts.dmSans()),
+                        content: Text(
+                            AppStrings.of(context)
+                                .tr('Lien copie!', 'Link copied!'),
+                            style: GoogleFonts.dmSans()),
                         backgroundColor: _green,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
@@ -600,7 +660,9 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
           // Download PDF button
           OutlinedButton.icon(
             icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
-            label: const Text('Download embassy-ready PDF'),
+            label: Text(AppStrings.of(context).tr(
+                'Telecharger le PDF pret pour ambassade',
+                'Download embassy-ready PDF')),
             style: OutlinedButton.styleFrom(
               foregroundColor: _green,
               side: const BorderSide(color: _green),
@@ -624,22 +686,35 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Package includes:',
+                Text(
+                    AppStrings.of(context)
+                        .tr('Le package inclut:', 'Package includes:'),
                     style: GoogleFonts.dmSans(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: _blue)),
                 const SizedBox(height: 8),
-                _pkgItem(
-                    '${_req.documentIds.length} certified academic document(s)'),
+                _pkgItem(AppStrings.of(context).tr(
+                    '${_req.documentIds.length} document(s) academique(s) certifie(s)',
+                    '${_req.documentIds.length} certified academic document(s)')),
                 if (_req.includeGrades)
-                  _pkgItem('Full course grades and marks'),
+                  _pkgItem(AppStrings.of(context).tr(
+                      'Toutes les notes et evaluations de cours',
+                      'Full course grades and marks')),
                 if (_req.includeBlockchainProof)
-                  _pkgItem('Hyperledger Fabric blockchain proof'),
+                  _pkgItem(AppStrings.of(context).tr(
+                      'Preuve blockchain Hyperledger Fabric',
+                      'Hyperledger Fabric blockchain proof')),
                 if (_req.includeUniversityLetter)
-                  _pkgItem('Official university attestation letter'),
-                _pkgItem('SHA-256 cryptographic fingerprint'),
-                _pkgItem('University RSA-2048 digital signature'),
+                  _pkgItem(AppStrings.of(context).tr(
+                      'Lettre officielle d\'attestation universitaire',
+                      'Official university attestation letter')),
+                _pkgItem(AppStrings.of(context).tr(
+                    'Empreinte cryptographique SHA-256',
+                    'SHA-256 cryptographic fingerprint')),
+                _pkgItem(AppStrings.of(context).tr(
+                    'Signature numerique universitaire RSA-2048',
+                    'University RSA-2048 digital signature')),
               ],
             ),
           ),
@@ -649,7 +724,9 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
           TextButton.icon(
             icon: const Icon(Icons.delete_outline_rounded,
                 size: 16, color: Colors.red),
-            label: Text('Revoke this package',
+            label: Text(
+                AppStrings.of(context)
+                    .tr('Revoquer ce package', 'Revoke this package'),
                 style: GoogleFonts.dmSans(color: Colors.red, fontSize: 13)),
             onPressed: () => _confirmRevoke(r.token),
           ),
@@ -661,14 +738,19 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
   void _confirmRevoke(String token) => showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text('Revoke package?', style: GoogleFonts.instrumentSerif()),
+          title: Text(
+              AppStrings.of(context)
+                  .tr('Revoquer le package?', 'Revoke package?'),
+              style: GoogleFonts.instrumentSerif()),
           content: Text(
-              'The institution will immediately lose access. This cannot be undone.',
+              AppStrings.of(context).tr(
+                  'L\'institution perdra immediatement l\'acces. Action irreversible.',
+                  'The institution will immediately lose access. This cannot be undone.'),
               style: GoogleFonts.dmSans()),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel')),
+                child: Text(AppStrings.of(context).tr('Annuler', 'Cancel'))),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
@@ -679,7 +761,7 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                   // await IntlShareService(dio).revokeShare(token);
                   context.pop();
                 },
-                child: const Text('Revoke')),
+                child: Text(AppStrings.of(context).tr('Revoquer', 'Revoke'))),
           ],
         ),
       );
@@ -756,7 +838,8 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
                       style: GoogleFonts.dmSans(
                           fontSize: 11, color: _textSec, height: 1.4)),
                 ])),
-            Switch(value: value, activeThumbColor: _green, onChanged: onChanged),
+            Switch(
+                value: value, activeThumbColor: _green, onChanged: onChanged),
           ]));
 
   Widget _textField(
@@ -774,7 +857,9 @@ class _IntlShareState extends ConsumerState<InternationalShareScreen>
           controller: ctrl,
           keyboardType: keyboardType,
           validator: required
-              ? (v) => (v == null || v.trim().isEmpty) ? 'Required' : null
+              ? (v) => (v == null || v.trim().isEmpty)
+                  ? AppStrings.of(context).tr('Requis', 'Required')
+                  : null
               : null,
           decoration: InputDecoration(
             hintText: hint,

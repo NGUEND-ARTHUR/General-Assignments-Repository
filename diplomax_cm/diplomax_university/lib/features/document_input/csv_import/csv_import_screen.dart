@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
+import '../../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -99,13 +100,17 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
         _phase = _CsvPhase.preview;
       });
     } catch (e) {
-      setState(() => _parseError = 'Could not parse CSV: ${e.toString()}');
+      setState(() => _parseError =
+          '${AppStrings.of(context).tr('Impossible d\'analyser le CSV', 'Could not parse CSV')}: ${e.toString()}');
     }
   }
 
   List<_CsvRow> _parseCsv(String content) {
     final lines = content.split('\n').map((l) => l.trim()).toList();
-    if (lines.isEmpty) throw Exception('File is empty');
+    if (lines.isEmpty) {
+      throw Exception(
+          AppStrings.of(context).tr('Le fichier est vide', 'File is empty'));
+    }
 
     // Header row
     final headers =
@@ -115,7 +120,7 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
     for (final col in _expectedColumns) {
       if (!headers.contains(col)) {
         throw Exception(
-            'Missing column: $col. Required: ${_expectedColumns.join(', ')}');
+            '${AppStrings.of(context).tr('Colonne manquante', 'Missing column')}: $col. ${AppStrings.of(context).tr('Requises', 'Required')}: ${_expectedColumns.join(', ')}');
       }
     }
 
@@ -139,7 +144,11 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
         issueDate: cells[idx['issue_date']!].trim(),
       ));
     }
-    if (rows.isEmpty) throw Exception('No data rows found in file');
+    if (rows.isEmpty) {
+      throw Exception(AppStrings.of(context).tr(
+          'Aucune ligne de donnees trouvee dans le fichier',
+          'No data rows found in file'));
+    }
     return rows;
   }
 
@@ -173,7 +182,7 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
 
     final dio = Dio(BaseOptions(
         baseUrl: const String.fromEnvironment('API_BASE_URL',
-            defaultValue: 'https://api.diplomax.cm/v1')));
+            defaultValue: 'https://diplomax-backend.onrender.com/v1')));
 
     final selected = _rows.where((r) => r.selected).toList();
 
@@ -197,8 +206,8 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
           _doneCount++;
         });
       } on DioException catch (e) {
-        final msg =
-            (e.response?.data as Map?)?['detail']?.toString() ?? 'Error';
+        final msg = (e.response?.data as Map?)?['detail']?.toString() ??
+            AppStrings.of(context).tr('Erreur', 'Error');
         setState(() {
           row.status = 'error';
           row.errorMsg = msg;
@@ -220,7 +229,8 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
           backgroundColor: Colors.transparent,
           leading: BackButton(
               color: _textPri, onPressed: () => context.go('/issue')),
-          title: Text('CSV bulk import',
+          title: Text(
+              AppStrings.of(context).tr('Import CSV en lot', 'CSV bulk import'),
               style:
                   GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
         ),
@@ -252,16 +262,21 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
           Container(
               width: 90,
               height: 90,
-              decoration:
-                  const BoxDecoration(color: _amberLight, shape: BoxShape.circle),
+              decoration: const BoxDecoration(
+                  color: _amberLight, shape: BoxShape.circle),
               child: const Icon(Icons.table_chart_rounded,
                   color: _amber, size: 46)),
           const SizedBox(height: 16),
-          Text('Import multiple students',
+          Text(
+              AppStrings.of(context).tr(
+                  'Importer plusieurs etudiants', 'Import multiple students'),
               style:
                   GoogleFonts.instrumentSerif(fontSize: 22, color: _textPri)),
           const SizedBox(height: 8),
-          Text('Upload a CSV file to issue documents to many students at once.',
+          Text(
+              AppStrings.of(context).tr(
+                  'Televersez un fichier CSV pour emettre plusieurs documents a la fois.',
+                  'Upload a CSV file to issue documents to many students at once.'),
               textAlign: TextAlign.center,
               style: GoogleFonts.dmSans(
                   fontSize: 13,
@@ -280,7 +295,9 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
                 border: Border.all(color: _amber.withOpacity(0.2))),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Required CSV format',
+              Text(
+                  AppStrings.of(context)
+                      .tr('Format CSV requis', 'Required CSV format'),
                   style: GoogleFonts.dmSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -302,9 +319,13 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
                           height: 1.5))),
               const SizedBox(height: 8),
               Text(
-                  'doc_type must be: diploma | transcript | certificate | attestation\n'
-                  'mention must be: Très Bien | Bien | Assez Bien | Passable\n'
-                  'issue_date must be: YYYY-MM-DD',
+                  AppStrings.of(context).tr(
+                      'doc_type doit etre : diploma | transcript | certificate | attestation\n'
+                          'mention doit etre : Tres Bien | Bien | Assez Bien | Passable\n'
+                          'issue_date doit etre : YYYY-MM-DD',
+                      'doc_type must be: diploma | transcript | certificate | attestation\n'
+                          'mention must be: Very Good | Good | Fairly Good | Pass\n'
+                          'issue_date must be: YYYY-MM-DD'),
                   style: GoogleFonts.dmSans(
                       fontSize: 10, color: _amber, height: 1.5)),
             ])),
@@ -322,7 +343,8 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
 
         ElevatedButton.icon(
             icon: const Icon(Icons.upload_file_rounded, size: 18),
-            label: const Text('Upload CSV file'),
+            label: Text(AppStrings.of(context)
+                .tr('Televerser le fichier CSV', 'Upload CSV file')),
             style: ElevatedButton.styleFrom(
                 backgroundColor: _amber,
                 foregroundColor: Colors.white,
@@ -335,7 +357,9 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
         // Template download hint
         Center(
             child: Text(
-                'Need a template? Create a spreadsheet with the columns above.',
+                AppStrings.of(context).tr(
+                    'Besoin d\'un modele ? Creez une feuille avec les colonnes ci-dessus.',
+                    'Need a template? Create a spreadsheet with the columns above.'),
                 textAlign: TextAlign.center,
                 style: GoogleFonts.dmSans(fontSize: 11, color: _textHint))),
       ]));
@@ -353,20 +377,24 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
               const Icon(Icons.check_circle_rounded, color: _green, size: 18),
               const SizedBox(width: 8),
               Expanded(
-                  child: Text('${_rows.length} students found in "$_fileName"',
+                  child: Text(
+                      '${_rows.length} ${AppStrings.of(context).tr('etudiants trouves dans', 'students found in')} "$_fileName"',
                       style: GoogleFonts.dmSans(
                           fontSize: 12,
                           color: _green,
                           fontWeight: FontWeight.w500))),
               TextButton(
                   onPressed: () => setState(() => _phase = _CsvPhase.idle),
-                  child: Text('Re-upload',
+                  child: Text(
+                      AppStrings.of(context).tr('Re-televerser', 'Re-upload'),
                       style: GoogleFonts.dmSans(color: _green, fontSize: 12))),
             ])),
         const SizedBox(height: 12),
         // Select all / deselect
         Row(children: [
-          Text('Select rows to issue:',
+          Text(
+              AppStrings.of(context).tr('Selectionner les lignes a emettre :',
+                  'Select rows to issue:'),
               style: GoogleFonts.dmSans(
                   fontSize: 13, fontWeight: FontWeight.w500)),
           const Spacer(),
@@ -376,7 +404,7 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
                       r.selected = true;
                     }
                   }),
-              child: Text('All',
+              child: Text(AppStrings.of(context).tr('Toutes', 'All'),
                   style: GoogleFonts.dmSans(color: _green, fontSize: 12))),
           TextButton(
               onPressed: () => setState(() {
@@ -384,7 +412,7 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
                       r.selected = false;
                     }
                   }),
-              child: Text('None',
+              child: Text(AppStrings.of(context).tr('Aucune', 'None'),
                   style: GoogleFonts.dmSans(color: _textSec, fontSize: 12))),
         ]),
         const SizedBox(height: 6),
@@ -444,7 +472,7 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
         ElevatedButton.icon(
             icon: const Icon(Icons.play_arrow_rounded, size: 18),
             label: Text(
-                'Issue ${_rows.where((r) => r.selected).length} documents'),
+                '${AppStrings.of(context).tr('Emettre', 'Issue')} ${_rows.where((r) => r.selected).length} ${AppStrings.of(context).tr('documents', 'documents')}'),
             style: ElevatedButton.styleFrom(
                 backgroundColor: _green,
                 foregroundColor: Colors.white,
@@ -461,10 +489,13 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       const CircularProgressIndicator(color: _green, strokeWidth: 2),
       const SizedBox(height: 20),
-      Text('Issuing documents…',
+      Text(
+          AppStrings.of(context)
+              .tr('Emission des documents...', 'Issuing documents...'),
           style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w500)),
       const SizedBox(height: 8),
-      Text('$done / $total completed',
+      Text(
+          '$done / $total ${AppStrings.of(context).tr('termines', 'completed')}',
           style: GoogleFonts.dmSans(fontSize: 12, color: _textSec)),
       const SizedBox(height: 16),
       LinearProgressIndicator(
@@ -478,12 +509,16 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Expanded(
-              child: _statBox('$_doneCount', 'Issued', _green, _greenLight)),
+              child: _statBox(
+                  '$_doneCount',
+                  AppStrings.of(context).tr('Emis', 'Issued'),
+                  _green,
+                  _greenLight)),
           const SizedBox(width: 12),
           Expanded(
               child: _statBox(
                   '$_errorCount',
-                  'Failed',
+                  AppStrings.of(context).tr('Echoues', 'Failed'),
                   _errorCount > 0 ? _red : _textHint,
                   _errorCount > 0 ? _redLight : _bg)),
         ]),
@@ -549,7 +584,8 @@ class _CsvImportState extends ConsumerState<CsvImportScreen> {
                     borderRadius: BorderRadius.circular(12)),
                 elevation: 0),
             onPressed: () => context.go('/documents'),
-            child: const Text('Go to documents')),
+            child: Text(AppStrings.of(context)
+                .tr('Aller aux documents', 'Go to documents'))),
       ]);
 
   Widget _statBox(String v, String l, Color c, Color bg) => Container(

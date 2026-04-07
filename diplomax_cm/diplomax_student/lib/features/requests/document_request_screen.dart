@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 import '../../core/api/api_client.dart';
+import '../../l10n/app_strings.dart';
 
 const _green = Color(0xFF0F6E56);
 const _greenLight = Color(0xFFE1F5EE);
@@ -101,10 +102,13 @@ class _RequestState extends ConsumerState<DocumentRequestScreen>
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: _bg,
         appBar: AppBar(
+          titleSpacing: 0,
           backgroundColor: Colors.transparent,
           leading:
               BackButton(color: _textPri, onPressed: () => context.go('/home')),
-          title: Text('Request a document',
+          title: Text(
+              AppStrings.of(context)
+                  .tr('Demander un document', 'Request a document'),
               style:
                   GoogleFonts.instrumentSerif(fontSize: 20, color: _textPri)),
           bottom: TabBar(
@@ -114,7 +118,14 @@ class _RequestState extends ConsumerState<DocumentRequestScreen>
             indicatorColor: _green,
             labelStyle:
                 GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w500),
-            tabs: const [Tab(text: 'New request'), Tab(text: 'My requests')],
+            tabs: [
+              Tab(
+                  text: AppStrings.of(context)
+                      .tr('Nouvelle demande', 'New request')),
+              Tab(
+                  text:
+                      AppStrings.of(context).tr('Mes demandes', 'My requests')),
+            ],
           ),
         ),
         body: TabBarView(
@@ -303,6 +314,7 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     if (_result != null) return _buildSuccess();
     return Form(
         key: _formKey,
@@ -314,7 +326,8 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
               const SizedBox(height: 20),
 
               // Doc type selector
-              _sectionTitle('What document do you need?'),
+              _sectionTitle(strings.tr('De quel document avez-vous besoin ?',
+                  'What document do you need?')),
               const SizedBox(height: 10),
               if (_pricingLoading)
                 Padding(
@@ -328,7 +341,8 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Loading university pricing…',
+                        strings.tr('Chargement des tarifs de l\'universite...',
+                            'Loading university pricing...'),
                         style:
                             GoogleFonts.dmSans(fontSize: 11, color: _textSec),
                       ),
@@ -339,7 +353,7 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
               const SizedBox(height: 20),
 
               // Purpose
-              _sectionTitle('Purpose *'),
+              _sectionTitle(strings.tr('Objet *', 'Purpose *')),
               const SizedBox(height: 8),
               Wrap(
                   spacing: 8,
@@ -362,7 +376,7 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                                           : _border,
                                       width:
                                           _purposeCtrl.text == p ? 1.5 : 0.5)),
-                              child: Text(p,
+                              child: Text(_purposeLabel(p, strings),
                                   style: GoogleFonts.dmSans(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
@@ -371,22 +385,30 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                                           : _textSec)))))
                       .toList()),
               const SizedBox(height: 10),
-              _textField(_purposeCtrl, 'Or describe your purpose',
-                  'e.g. Job application at Camtel',
+              _textField(
+                  _purposeCtrl,
+                  strings.tr(
+                      'Ou decrivez votre objectif', 'Or describe your purpose'),
+                  strings.tr('ex: Candidature chez Camtel',
+                      'e.g. Job application at Camtel'),
                   validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'Purpose is required'
+                      ? strings.tr('L\'objet est requis', 'Purpose is required')
                       : null),
               const SizedBox(height: 16),
 
               // Destination
-              _sectionTitle('For whom / destination (optional)'),
+              _sectionTitle(strings.tr('Pour qui / destination (optionnel)',
+                  'For whom / destination (optional)')),
               const SizedBox(height: 8),
-              _textField(_destCtrl, 'Recipient',
-                  'e.g. Embassy of France, Company XYZ'),
+              _textField(
+                  _destCtrl,
+                  strings.tr('Destinataire', 'Recipient'),
+                  strings.tr('ex: Ambassade de France, Entreprise XYZ',
+                      'e.g. Embassy of France, Company XYZ')),
               const SizedBox(height: 16),
 
               // Urgency
-              _sectionTitle('Urgency'),
+              _sectionTitle(strings.tr('Urgence', 'Urgency')),
               const SizedBox(height: 10),
               Column(
                   children: _urgencies.map((u) {
@@ -416,12 +438,12 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                Text(u.$2,
+                                Text(_urgencyLabel(u.$1, strings),
                                     style: GoogleFonts.dmSans(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                         color: active ? u.$5 : _textPri)),
-                                Text(u.$3,
+                                Text(_urgencyDelayLabel(u.$1, strings),
                                     style: GoogleFonts.dmSans(
                                         fontSize: 11, color: _textSec)),
                               ])),
@@ -442,14 +464,17 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
               const SizedBox(height: 16),
 
               // Additional notes
-              _sectionTitle('Additional notes (optional)'),
+              _sectionTitle(strings.tr('Notes supplementaires (optionnel)',
+                  'Additional notes (optional)')),
               const SizedBox(height: 8),
               TextFormField(
                   controller: _notesCtrl,
                   maxLines: 3,
                   style: GoogleFonts.dmSans(fontSize: 13),
                   decoration: InputDecoration(
-                      hintText: 'Any additional information for the registrar…',
+                      hintText: strings.tr(
+                          'Information complementaire pour le service de scolarite...',
+                          'Any additional information for the registrar...'),
                       hintStyle:
                           GoogleFonts.dmSans(color: _textHint, fontSize: 13),
                       filled: true,
@@ -478,7 +503,9 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Base fee ($_data.docType)',
+                          Text(
+                              strings.tr('Frais de base ($_data.docType)',
+                                  'Base fee ($_data.docType)'),
                               style: GoogleFonts.dmSans(
                                   fontSize: 12, color: _textSec)),
                           Text('$_baseFee FCFA',
@@ -489,7 +516,9 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Urgency surcharge',
+                            Text(
+                                strings.tr(
+                                    'Supplement urgence', 'Urgency surcharge'),
                                 style: GoogleFonts.dmSans(
                                     fontSize: 12, color: _textSec)),
                             Text('+$_urgencyFee FCFA',
@@ -501,7 +530,7 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Total',
+                          Text(strings.tr('Total', 'Total'),
                               style: GoogleFonts.dmSans(
                                   fontSize: 13, fontWeight: FontWeight.w500)),
                           Text('$_totalFee FCFA',
@@ -512,7 +541,9 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                         ]),
                     const SizedBox(height: 6),
                     Text(
-                        'Payable via MTN MoMo or Orange Money when document is ready.',
+                        strings.tr(
+                            'Paiement via MTN MoMo ou Orange Money lorsque le document est pret.',
+                            'Payable via MTN MoMo or Orange Money when document is ready.'),
                         style:
                             GoogleFonts.dmSans(fontSize: 10, color: _textSec)),
                   ])),
@@ -537,7 +568,9 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2))
                       : const Icon(Icons.send_rounded, size: 18),
-                  label: Text(_loading ? 'Submitting…' : 'Submit request'),
+                  label: Text(_loading
+                      ? strings.tr('Envoi en cours...', 'Submitting...')
+                      : strings.tr('Soumettre la demande', 'Submit request')),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: _green,
                       foregroundColor: Colors.white,
@@ -562,7 +595,9 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                 child:
                     const Icon(Icons.check_rounded, color: _green, size: 44)),
             const SizedBox(height: 20),
-            Text('Request submitted!',
+            Text(
+                AppStrings.of(context)
+                    .tr('Demande envoyee!', 'Request submitted!'),
                 style:
                     GoogleFonts.instrumentSerif(fontSize: 26, color: _textPri)),
             const SizedBox(height: 8),
@@ -577,10 +612,14 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                     color: _greenLight,
                     borderRadius: BorderRadius.circular(12)),
                 child: Column(children: [
-                  _resultRow('Request ID',
+                  _resultRow(
+                      AppStrings.of(context).tr('ID demande', 'Request ID'),
                       _result!.requestId.substring(0, 8).toUpperCase()),
-                  _resultRow('Fee', '${_result!.feeFcfa} FCFA'),
-                  _resultRow('Est. ready', _result!.estimatedReady),
+                  _resultRow(AppStrings.of(context).tr('Frais', 'Fee'),
+                      '${_result!.feeFcfa} FCFA'),
+                  _resultRow(
+                      AppStrings.of(context).tr('Pret estime', 'Est. ready'),
+                      _result!.estimatedReady),
                 ])),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -592,7 +631,8 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                         borderRadius: BorderRadius.circular(12)),
                     elevation: 0),
                 onPressed: () => setState(() => _result = null),
-                child: const Text('Submit another request')),
+                child: Text(AppStrings.of(context).tr(
+                    'Soumettre une autre demande', 'Submit another request'))),
           ])));
 
   Widget _resultRow(String k, String v) => Padding(
@@ -615,9 +655,9 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
         const SizedBox(width: 10),
         Expanded(
             child: Text(
-                'Request a document from your university. '
-                'The registrar will review your request and issue it within the stated timeframe. '
-                'You pay only when the document is ready.',
+                AppStrings.of(context).tr(
+                    'Demandez un document a votre universite. Le service de scolarite examinera votre demande et delivrera le document dans le delai indique. Vous ne payez que lorsque le document est pret.',
+                    'Request a document from your university. The registrar will review your request and issue it within the stated timeframe. You pay only when the document is ready.'),
                 style: GoogleFonts.dmSans(
                     fontSize: 11, color: _blue, height: 1.5))),
       ]));
@@ -649,7 +689,7 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                        Text(t.$2,
+                        Text(AppStrings.of(context).tr(t.$3, t.$2),
                             style: GoogleFonts.dmSans(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
@@ -660,6 +700,57 @@ class _NewRequestState extends ConsumerState<_NewRequestTab> {
                       ])),
                 ])));
       }).toList());
+
+  String _purposeLabel(String key, AppStrings strings) {
+    switch (key) {
+      case 'Job application':
+        return strings.tr('Candidature emploi', 'Job application');
+      case 'Visa application':
+        return strings.tr('Demande de visa', 'Visa application');
+      case 'Further studies abroad':
+        return strings.tr('Etudes a l\'etranger', 'Further studies abroad');
+      case 'Recognition of qualifications':
+        return strings.tr(
+            'Reconnaissance de diplome', 'Recognition of qualifications');
+      case 'Bank / financial institution':
+        return strings.tr(
+            'Banque / institution financiere', 'Bank / financial institution');
+      case 'Professional licence':
+        return strings.tr('Licence professionnelle', 'Professional licence');
+      case 'Scholarship application':
+        return strings.tr('Demande de bourse', 'Scholarship application');
+      case 'Other':
+        return strings.tr('Autre', 'Other');
+      default:
+        return key;
+    }
+  }
+
+  String _urgencyLabel(String key, AppStrings strings) {
+    switch (key) {
+      case 'normal':
+        return strings.tr('Standard', 'Standard');
+      case 'urgent':
+        return strings.tr('Urgent', 'Urgent');
+      case 'very_urgent':
+        return strings.tr('Tres urgent', 'Very Urgent');
+      default:
+        return key;
+    }
+  }
+
+  String _urgencyDelayLabel(String key, AppStrings strings) {
+    switch (key) {
+      case 'normal':
+        return strings.tr('5 jours ouvrables', '5 business days');
+      case 'urgent':
+        return strings.tr('2 jours ouvrables', '2 business days');
+      case 'very_urgent':
+        return strings.tr('Prochain jour ouvrable', 'Next business day');
+      default:
+        return '';
+    }
+  }
 
   Widget _sectionTitle(String t) => Text(t,
       style: GoogleFonts.dmSans(
@@ -738,23 +829,26 @@ class _MyRequestsState extends ConsumerState<_MyRequestsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     if (_loading) {
       return const Center(child: CircularProgressIndicator(color: _green));
     }
     if (_error != null) {
       return Center(
-          child:
-              Text('Error: $_error', style: GoogleFonts.dmSans(color: _red)));
+          child: Text(strings.tr('Erreur: $_error', 'Error: $_error'),
+              style: GoogleFonts.dmSans(color: _red)));
     }
     if (_requests.isEmpty) {
       return Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         const Icon(Icons.inbox_rounded, size: 56, color: Color(0xFFE0DDD5)),
         const SizedBox(height: 16),
-        Text('No requests yet',
+        Text(strings.tr('Aucune demande', 'No requests yet'),
             style: GoogleFonts.dmSans(fontSize: 16, color: _textSec)),
         const SizedBox(height: 6),
-        Text('Your submitted requests will appear here.',
+        Text(
+            strings.tr('Vos demandes apparaitront ici.',
+                'Your submitted requests will appear here.'),
             style: GoogleFonts.dmSans(fontSize: 12, color: _textHint)),
       ]));
     }
@@ -799,8 +893,14 @@ class _RequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     final cfg = _statusConfig[req.status] ??
-        (_textSec, const Color(0xFFF1EFE8), Icons.help_outline_rounded, req.status);
+        (
+          _textSec,
+          const Color(0xFFF1EFE8),
+          Icons.help_outline_rounded,
+          req.status
+        );
 
     return Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -834,7 +934,7 @@ class _RequestCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                     color: cfg.$2, borderRadius: BorderRadius.circular(6)),
-                child: Text(cfg.$4,
+                child: Text(_statusLabel(cfg.$4, strings),
                     style: GoogleFonts.dmSans(
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -871,7 +971,7 @@ class _RequestCard extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: _greenLight,
                       borderRadius: BorderRadius.circular(4)),
-                  child: Text('Paid',
+                  child: Text(strings.tr('Paye', 'Paid'),
                       style: GoogleFonts.dmSans(
                           fontSize: 9,
                           color: _green,
@@ -890,7 +990,9 @@ class _RequestCard extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                     icon: const Icon(Icons.payment_rounded, size: 16),
-                    label: Text('Pay ${req.feeFcfa} FCFA & download'),
+                    label: Text(strings.tr(
+                        'Payer ${req.feeFcfa} FCFA et telecharger',
+                        'Pay ${req.feeFcfa} FCFA & download')),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: _green,
                         foregroundColor: Colors.white,
@@ -908,7 +1010,8 @@ class _RequestCard extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                     icon: const Icon(Icons.download_rounded, size: 16),
-                    label: const Text('View document in vault'),
+                    label: Text(strings.tr('Voir le document dans le coffre',
+                        'View document in vault')),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: _green,
                         foregroundColor: Colors.white,
@@ -934,6 +1037,25 @@ class _RequestCard extends StatelessWidget {
         return 'Attestation';
       default:
         return t;
+    }
+  }
+
+  String _statusLabel(String statusLabel, AppStrings strings) {
+    switch (statusLabel) {
+      case 'Pending review':
+        return strings.tr('En attente de revue', 'Pending review');
+      case 'Under review':
+        return strings.tr('En cours de revue', 'Under review');
+      case 'Approved':
+        return strings.tr('Approuvee', 'Approved');
+      case 'Rejected':
+        return strings.tr('Rejetee', 'Rejected');
+      case 'Ready to collect':
+        return strings.tr('Pret a recuperer', 'Ready to collect');
+      case 'Collected':
+        return strings.tr('Recupere', 'Collected');
+      default:
+        return statusLabel;
     }
   }
 }
