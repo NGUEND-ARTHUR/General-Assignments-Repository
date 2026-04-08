@@ -12,6 +12,7 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.pool import NullPool
+from sqlalchemy import text
 
 from app.core.config import get_settings
 from app.core.database import set_request_db_session, reset_request_db_session
@@ -47,6 +48,31 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
         # Create all tables when the database is reachable.
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+            # Backward-compatible self-healing for old recruiter table schemas.
+            await conn.execute(text(
+                "ALTER TABLE IF EXISTS recruiters "
+                "ADD COLUMN IF NOT EXISTS phone VARCHAR(20)"
+            ))
+            await conn.execute(text(
+                "ALTER TABLE IF EXISTS recruiters "
+                "ADD COLUMN IF NOT EXISTS subscription_plan VARCHAR(50) DEFAULT 'free'"
+            ))
+            await conn.execute(text(
+                "ALTER TABLE IF EXISTS recruiters "
+                "ADD COLUMN IF NOT EXISTS sub_expires_at TIMESTAMP"
+            ))
+            await conn.execute(text(
+                "ALTER TABLE IF EXISTS recruiters "
+                "ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE"
+            ))
+            await conn.execute(text(
+                "ALTER TABLE IF EXISTS recruiters "
+                "ADD COLUMN IF NOT EXISTS fcm_token TEXT"
+            ))
+            await conn.execute(text(
+                "ALTER TABLE IF EXISTS recruiters "
+                "ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT now()"
+            ))
     except Exception as exc:
         logger.warning("Database initialization skipped during startup: %s", exc)
 
