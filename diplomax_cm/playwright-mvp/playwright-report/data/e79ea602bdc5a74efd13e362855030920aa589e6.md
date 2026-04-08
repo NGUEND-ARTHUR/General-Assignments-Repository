@@ -6,18 +6,18 @@
 
 # Test info
 
-- Name: api.spec.js >> Diplomax Backend MVP >> recruiter registration endpoint responds correctly
-- Location: tests\api.spec.js:60:3
+- Name: api.spec.js >> Diplomax Backend MVP >> university login succeeds with configured credentials
+- Location: tests\api.spec.js:40:3
 
 # Error details
 
 ```
 Error: {"detail":"Internal server error"}
 
-expect(received).toContain(expected) // indexOf
+expect(received).toBe(expected) // Object.is equality
 
-Expected value: 500
-Received array: [200, 409]
+Expected: 200
+Received: 500
 ```
 
 # Test source
@@ -75,7 +75,8 @@ Received array: [200, 409]
   50  |       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   51  |     });
   52  | 
-  53  |     expect(res.status(), await res.text()).toBe(200);
+> 53  |     expect(res.status(), await res.text()).toBe(200);
+      |                                            ^ Error: {"detail":"Internal server error"}
   54  |     const body = await res.json();
   55  |     expect(body.access_token).toBeTruthy();
   56  |     expect(body.refresh_token).toBeTruthy();
@@ -94,8 +95,7 @@ Received array: [200, 409]
   69  |     });
   70  | 
   71  |     // On first run this should be 200. If email already exists, API returns 409.
-> 72  |     expect([200, 409], await res.text()).toContain(res.status());
-      |                                          ^ Error: {"detail":"Internal server error"}
+  72  |     expect([200, 409], await res.text()).toContain(res.status());
   73  | 
   74  |     if (res.status() === 200) {
   75  |       const body = await res.json();
