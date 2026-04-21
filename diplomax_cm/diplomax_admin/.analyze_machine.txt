@@ -1,0 +1,281 @@
+
+warning - 'invariant_booleans' was removed in Dart '3.0.0' - analysis_options.yaml:18:7 - removed_lint
+warning - 'avoid_catches' isn't a recognized lint rule - analysis_options.yaml:34:7 - undefined_lint
+warning - The rule 'avoid_returning_null_for_future' is already enabled and doesn't need to be enabled again - analysis_options.yaml:44:7 - duplicate_rule
+warning - The rule 'avoid_slow_async_io' is already enabled and doesn't need to be enabled again - analysis_options.yaml:48:7 - duplicate_rule
+warning - 'eol_only_nl' isn't a recognized lint rule - analysis_options.yaml:61:7 - undefined_lint
+warning - 'prefer_equal_for_default_values' was removed in Dart '3.0.0' - analysis_options.yaml:89:7 - removed_lint
+warning - 'prefer_getters_setters' isn't a recognized lint rule - analysis_options.yaml:98:7 - undefined_lint
+warning - 'prefer_if_null_to_conditional_expressions' isn't a recognized lint rule - analysis_options.yaml:100:7 - undefined_lint
+warning - 'prefer_if_null_to_equality_check' isn't a recognized lint rule - analysis_options.yaml:101:7 - undefined_lint
+warning - 'prefer_is_null_check_operators' isn't a recognized lint rule - analysis_options.yaml:109:7 - undefined_lint
+warning - 'prefer_null_coalescing_operators' isn't a recognized lint rule - analysis_options.yaml:113:7 - undefined_lint
+warning - 'prefer_reuse_of_private_fields_in_immutables' isn't a recognized lint rule - analysis_options.yaml:114:7 - undefined_lint
+warning - 'unnecessary_null_to_bool_conversions' isn't a recognized lint rule - analysis_options.yaml:141:7 - undefined_lint
+warning - The rule 'unrelated_type_equality_checks' is already enabled and doesn't need to be enabled again - analysis_options.yaml:148:7 - duplicate_rule
+warning - 'use_getters_to_change_properties' isn't a recognized lint rule - analysis_options.yaml:153:7 - undefined_lint
+warning - 'use_if_null_to_convert_nullability' isn't a recognized lint rule - analysis_options.yaml:154:7 - undefined_lint
+warning - 'use_to_json_string_for_rendering_html' isn't a recognized lint rule - analysis_options.yaml:164:7 - undefined_lint
+warning - Invalid option specified for 'enable-experiment': Flag "inference-update-2" is no longer required - analysis_options.yaml:169:7 - invalid_option
+   info - Sort directive sections alphabetically - lib\features\admins\screens\admins_management_screen.dart:4:1 - directives_ordering
+warning - Unused import: 'package:go_router/go_router.dart' - lib\features\admins\screens\admins_management_screen.dart:4:8 - unused_import
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\admins\screens\admins_management_screen.dart:6:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\admins\screens\admins_management_screen.dart:7:7 - constant_identifier_names
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\admins\screens\admins_management_screen.dart:8:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\admins\screens\admins_management_screen.dart:11:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:44:22 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\admins\screens\admins_management_screen.dart:45:27 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:46:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:46:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:47:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:47:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:48:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:48:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:49:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:49:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:53:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:59:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:78:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admins\screens\admins_management_screen.dart:80:13 - prefer_const_constructors
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\analytics\screens\analytics_export_screen.dart:9:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\analytics\screens\analytics_export_screen.dart:10:7 - constant_identifier_names
+warning - The declaration '_GL' isn't referenced - lib\features\analytics\screens\analytics_export_screen.dart:10:7 - unused_element
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\features\analytics\screens\analytics_export_screen.dart:11:7 - constant_identifier_names
+warning - The declaration '_BG' isn't referenced - lib\features\analytics\screens\analytics_export_screen.dart:11:7 - unused_element
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\analytics\screens\analytics_export_screen.dart:12:7 - constant_identifier_names
+   info - The constant name '_BD' isn't a lowerCamelCase identifier - lib\features\analytics\screens\analytics_export_screen.dart:13:7 - constant_identifier_names
+warning - The declaration '_BD' isn't referenced - lib\features\analytics\screens\analytics_export_screen.dart:13:7 - unused_element
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\features\analytics\screens\analytics_export_screen.dart:14:7 - constant_identifier_names
+warning - The declaration '_T1' isn't referenced - lib\features\analytics\screens\analytics_export_screen.dart:14:7 - unused_element
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\features\analytics\screens\analytics_export_screen.dart:15:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\analytics\screens\analytics_export_screen.dart:18:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\analytics\screens\analytics_export_screen.dart:124:41 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\features\analytics\screens\analytics_export_screen.dart:131:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\analytics\screens\analytics_export_screen.dart:137:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\analytics\screens\analytics_export_screen.dart:143:19 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\analytics\screens\analytics_export_screen.dart:185:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\analytics\screens\analytics_export_screen.dart:307:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\analytics\screens\analytics_export_screen.dart:316:26 - deprecated_member_use
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\api_keys\screens\api_keys_management_screen.dart:9:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\api_keys\screens\api_keys_management_screen.dart:10:7 - constant_identifier_names
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\features\api_keys\screens\api_keys_management_screen.dart:11:7 - constant_identifier_names
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\api_keys\screens\api_keys_management_screen.dart:12:7 - constant_identifier_names
+   info - The constant name '_BD' isn't a lowerCamelCase identifier - lib\features\api_keys\screens\api_keys_management_screen.dart:13:7 - constant_identifier_names
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\features\api_keys\screens\api_keys_management_screen.dart:14:7 - constant_identifier_names
+warning - The declaration '_T1' isn't referenced - lib\features\api_keys\screens\api_keys_management_screen.dart:14:7 - unused_element
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\features\api_keys\screens\api_keys_management_screen.dart:15:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\api_keys\screens\api_keys_management_screen.dart:18:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\api_keys\screens\api_keys_management_screen.dart:87:41 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\features\api_keys\screens\api_keys_management_screen.dart:103:28 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\api_keys\screens\api_keys_management_screen.dart:104:33 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\api_keys\screens\api_keys_management_screen.dart:105:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\api_keys\screens\api_keys_management_screen.dart:109:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\api_keys\screens\api_keys_management_screen.dart:113:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\api_keys\screens\api_keys_management_screen.dart:114:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\api_keys\screens\api_keys_management_screen.dart:118:25 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\api_keys\screens\api_keys_management_screen.dart:160:41 - deprecated_member_use
+  error - The named parameter 'fontFamily' isn't defined - lib\features\api_keys\screens\api_keys_management_screen.dart:238:31 - undefined_named_parameter
+  error - The named parameter 'fontFamily' isn't defined - lib\features\api_keys\screens\api_keys_management_screen.dart:318:17 - undefined_named_parameter
+  error - The named parameter 'fontFamily' isn't defined - lib\features\api_keys\screens\api_keys_management_screen.dart:394:54 - undefined_named_parameter
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\audit\screens\audit_logs_screen.dart:5:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\audit\screens\audit_logs_screen.dart:6:7 - constant_identifier_names
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\audit\screens\audit_logs_screen.dart:7:7 - constant_identifier_names
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\features\audit\screens\audit_logs_screen.dart:8:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\audit\screens\audit_logs_screen.dart:11:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:54:26 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\audit\screens\audit_logs_screen.dart:55:31 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:56:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:56:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:57:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:57:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:58:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:58:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:59:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:59:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:60:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:60:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:64:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:72:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\audit\screens\audit_logs_screen.dart:80:17 - prefer_const_constructors
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\auth\screens\login_screen.dart:8:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\auth\screens\login_screen.dart:9:7 - constant_identifier_names
+warning - The declaration '_GL' isn't referenced - lib\features\auth\screens\login_screen.dart:9:7 - unused_element
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\features\auth\screens\login_screen.dart:10:7 - constant_identifier_names
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\auth\screens\login_screen.dart:11:7 - constant_identifier_names
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\features\auth\screens\login_screen.dart:12:7 - constant_identifier_names
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\features\auth\screens\login_screen.dart:13:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\auth\screens\login_screen.dart:16:9 - use_super_parameters
+warning - The value of the local variable 'isMobile' isn't used - lib\features\auth\screens\login_screen.dart:69:11 - unused_local_variable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\auth\screens\login_screen.dart:83:39 - deprecated_member_use
+  error - Invalid constant value - lib\features\auth\screens\login_screen.dart:132:59 - invalid_constant
+  error - Undefined name '_BD' - lib\features\auth\screens\login_screen.dart:132:59 - undefined_identifier
+  error - Invalid constant value - lib\features\auth\screens\login_screen.dart:136:59 - invalid_constant
+  error - Undefined name '_BD' - lib\features\auth\screens\login_screen.dart:136:59 - undefined_identifier
+  error - Invalid constant value - lib\features\auth\screens\login_screen.dart:157:59 - invalid_constant
+  error - Undefined name '_BD' - lib\features\auth\screens\login_screen.dart:157:59 - undefined_identifier
+  error - Invalid constant value - lib\features\auth\screens\login_screen.dart:161:59 - invalid_constant
+  error - Undefined name '_BD' - lib\features\auth\screens\login_screen.dart:161:59 - undefined_identifier
+  error - Undefined name '_BD' - lib\features\auth\screens\login_screen.dart:182:48 - undefined_identifier
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\dashboard\screens\admin_dashboard_screen.dart:8:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\dashboard\screens\admin_dashboard_screen.dart:9:7 - constant_identifier_names
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\features\dashboard\screens\admin_dashboard_screen.dart:10:7 - constant_identifier_names
+warning - The declaration '_BG' isn't referenced - lib\features\dashboard\screens\admin_dashboard_screen.dart:10:7 - unused_element
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\dashboard\screens\admin_dashboard_screen.dart:11:7 - constant_identifier_names
+   info - The constant name '_BD' isn't a lowerCamelCase identifier - lib\features\dashboard\screens\admin_dashboard_screen.dart:12:7 - constant_identifier_names
+warning - The declaration '_BD' isn't referenced - lib\features\dashboard\screens\admin_dashboard_screen.dart:12:7 - unused_element
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\features\dashboard\screens\admin_dashboard_screen.dart:13:7 - constant_identifier_names
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\features\dashboard\screens\admin_dashboard_screen.dart:14:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\dashboard\screens\admin_dashboard_screen.dart:17:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\admin_dashboard_screen.dart:22:14 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\admin_dashboard_screen.dart:185:39 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\admin_dashboard_screen.dart:244:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\admin_dashboard_screen.dart:251:9 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\admin_dashboard_screen.dart:284:39 - deprecated_member_use
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\documents\screens\document_oversight_screen.dart:9:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\documents\screens\document_oversight_screen.dart:10:7 - constant_identifier_names
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\features\documents\screens\document_oversight_screen.dart:11:7 - constant_identifier_names
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\documents\screens\document_oversight_screen.dart:12:7 - constant_identifier_names
+   info - The constant name '_BD' isn't a lowerCamelCase identifier - lib\features\documents\screens\document_oversight_screen.dart:13:7 - constant_identifier_names
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\features\documents\screens\document_oversight_screen.dart:14:7 - constant_identifier_names
+warning - The declaration '_T1' isn't referenced - lib\features\documents\screens\document_oversight_screen.dart:14:7 - unused_element
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\features\documents\screens\document_oversight_screen.dart:15:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\documents\screens\document_oversight_screen.dart:18:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\documents\screens\document_oversight_screen.dart:106:41 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:122:28 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\documents\screens\document_oversight_screen.dart:123:33 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:124:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:128:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:129:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:133:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:134:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:135:25 - prefer_const_constructors
+  error - The named parameter 'fontFamily' isn't defined - lib\features\documents\screens\document_oversight_screen.dart:223:17 - undefined_named_parameter
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:323:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:324:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\documents\screens\document_oversight_screen.dart:325:13 - prefer_const_constructors
+  error - The named parameter 'fontFamily' isn't defined - lib\features\documents\screens\document_oversight_screen.dart:346:19 - undefined_named_parameter
+  error - The named parameter 'fontFamily' isn't defined - lib\features\documents\screens\document_oversight_screen.dart:374:23 - undefined_named_parameter
+   info - Sort directive sections alphabetically - lib\features\institutions\screens\institution_detail_screen.dart:4:1 - directives_ordering
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institution_detail_screen.dart:6:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institution_detail_screen.dart:7:7 - constant_identifier_names
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institution_detail_screen.dart:8:7 - constant_identifier_names
+warning - The declaration '_BG' isn't referenced - lib\features\institutions\screens\institution_detail_screen.dart:8:7 - unused_element
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institution_detail_screen.dart:9:7 - constant_identifier_names
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institution_detail_screen.dart:10:7 - constant_identifier_names
+warning - The declaration '_T1' isn't referenced - lib\features\institutions\screens\institution_detail_screen.dart:10:7 - unused_element
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institution_detail_screen.dart:11:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\institutions\screens\institution_detail_screen.dart:14:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:37:11 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\institutions\screens\institution_detail_screen.dart:39:23 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:40:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:41:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:42:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:43:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:47:11 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\institutions\screens\institution_detail_screen.dart:49:23 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:50:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:51:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:52:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institution_detail_screen.dart:53:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\institutions\screens\institution_detail_screen.dart:86:39 - deprecated_member_use
+   info - Sort directive sections alphabetically - lib\features\institutions\screens\institutions_screen.dart:4:1 - directives_ordering
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institutions_screen.dart:8:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institutions_screen.dart:9:7 - constant_identifier_names
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institutions_screen.dart:10:7 - constant_identifier_names
+warning - The declaration '_BG' isn't referenced - lib\features\institutions\screens\institutions_screen.dart:10:7 - unused_element
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institutions_screen.dart:11:7 - constant_identifier_names
+   info - The constant name '_BD' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institutions_screen.dart:12:7 - constant_identifier_names
+warning - The declaration '_BD' isn't referenced - lib\features\institutions\screens\institutions_screen.dart:12:7 - unused_element
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institutions_screen.dart:13:7 - constant_identifier_names
+warning - The declaration '_T1' isn't referenced - lib\features\institutions\screens\institutions_screen.dart:13:7 - unused_element
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\features\institutions\screens\institutions_screen.dart:14:7 - constant_identifier_names
+warning - The declaration '_T2' isn't referenced - lib\features\institutions\screens\institutions_screen.dart:14:7 - unused_element
+   info - Parameter 'key' could be a super parameter - lib\features\institutions\screens\institutions_screen.dart:17:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:22:14 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:91:26 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\institutions\screens\institutions_screen.dart:92:31 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:93:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:93:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:94:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:94:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:95:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:95:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:96:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:96:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:97:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:97:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:101:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\institutions\screens\institutions_screen.dart:108:17 - prefer_const_constructors
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\security\screens\security_dashboard_screen.dart:9:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\security\screens\security_dashboard_screen.dart:10:7 - constant_identifier_names
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\features\security\screens\security_dashboard_screen.dart:11:7 - constant_identifier_names
+warning - The declaration '_BG' isn't referenced - lib\features\security\screens\security_dashboard_screen.dart:11:7 - unused_element
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\security\screens\security_dashboard_screen.dart:12:7 - constant_identifier_names
+   info - The constant name '_BD' isn't a lowerCamelCase identifier - lib\features\security\screens\security_dashboard_screen.dart:13:7 - constant_identifier_names
+warning - The declaration '_BD' isn't referenced - lib\features\security\screens\security_dashboard_screen.dart:13:7 - unused_element
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\features\security\screens\security_dashboard_screen.dart:14:7 - constant_identifier_names
+warning - The declaration '_T1' isn't referenced - lib\features\security\screens\security_dashboard_screen.dart:14:7 - unused_element
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\features\security\screens\security_dashboard_screen.dart:15:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\security\screens\security_dashboard_screen.dart:18:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\security\screens\security_dashboard_screen.dart:97:41 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:113:28 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\security\screens\security_dashboard_screen.dart:114:33 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:115:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:116:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:120:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:121:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:122:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:126:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:135:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:144:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\security\screens\security_dashboard_screen.dart:153:19 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\security\screens\security_dashboard_screen.dart:179:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\security\screens\security_dashboard_screen.dart:270:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\security\screens\security_dashboard_screen.dart:349:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\security\screens\security_dashboard_screen.dart:417:44 - deprecated_member_use
+  error - The named parameter 'fontFamily' isn't defined - lib\features\security\screens\security_dashboard_screen.dart:467:52 - undefined_named_parameter
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\features\settings\screens\platform_settings_screen.dart:5:7 - constant_identifier_names
+warning - The declaration '_G' isn't referenced - lib\features\settings\screens\platform_settings_screen.dart:5:7 - unused_element
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\features\settings\screens\platform_settings_screen.dart:6:7 - constant_identifier_names
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\features\settings\screens\platform_settings_screen.dart:7:7 - constant_identifier_names
+   info - Parameter 'key' could be a super parameter - lib\features\settings\screens\platform_settings_screen.dart:10:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\settings\screens\platform_settings_screen.dart:127:39 - deprecated_member_use
+   info - Dangling library doc comment - lib\l10n\app_strings.dart:1:1 - dangling_library_doc_comments
+   info - Sort directive sections alphabetically - lib\main.dart:5:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\main.dart:6:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\main.dart:11:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\main.dart:12:1 - directives_ordering
+warning - Unused import: 'l10n/app_strings.dart' - lib\main.dart:15:8 - unused_import
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\main.dart:17:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\main.dart:18:7 - constant_identifier_names
+warning - The declaration '_GL' isn't referenced - lib\main.dart:18:7 - unused_element
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\main.dart:19:7 - constant_identifier_names
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\main.dart:20:7 - constant_identifier_names
+   info - The constant name '_BD' isn't a lowerCamelCase identifier - lib\main.dart:21:7 - constant_identifier_names
+warning - The declaration '_BD' isn't referenced - lib\main.dart:21:7 - unused_element
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\main.dart:22:7 - constant_identifier_names
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\main.dart:23:7 - constant_identifier_names
+  error - The argument type 'String?' can't be assigned to the parameter type 'String'.  - lib\main.dart:48:55 - argument_type_not_assignable
+   info - Unnecessary use of a block function body - lib\main.dart:64:30 - prefer_expression_function_bodies
+   info - Parameter 'key' could be a super parameter - lib\main.dart:71:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\main.dart:114:20 - prefer_const_constructors
+   info - Unnecessary use of a block function body - lib\models\admin_user.dart:73:29 - prefer_expression_function_bodies
+   info - Unnecessary use of a block function body - lib\models\admin_user.dart:78:29 - prefer_expression_function_bodies
+warning - Unused import: '../../models/admin_user.dart' - lib\widgets\app_sidebar.dart:7:8 - unused_import
+   info - The constant name '_G' isn't a lowerCamelCase identifier - lib\widgets\app_sidebar.dart:10:7 - constant_identifier_names
+   info - The constant name '_GL' isn't a lowerCamelCase identifier - lib\widgets\app_sidebar.dart:11:7 - constant_identifier_names
+   info - The constant name '_BG' isn't a lowerCamelCase identifier - lib\widgets\app_sidebar.dart:12:7 - constant_identifier_names
+warning - The declaration '_BG' isn't referenced - lib\widgets\app_sidebar.dart:12:7 - unused_element
+   info - The constant name '_SUR' isn't a lowerCamelCase identifier - lib\widgets\app_sidebar.dart:13:7 - constant_identifier_names
+warning - The declaration '_SUR' isn't referenced - lib\widgets\app_sidebar.dart:13:7 - unused_element
+   info - The constant name '_T1' isn't a lowerCamelCase identifier - lib\widgets\app_sidebar.dart:14:7 - constant_identifier_names
+   info - The constant name '_T2' isn't a lowerCamelCase identifier - lib\widgets\app_sidebar.dart:15:7 - constant_identifier_names
+warning - The declaration '_T2' isn't referenced - lib\widgets\app_sidebar.dart:15:7 - unused_element
+   info - Parameter 'key' could be a super parameter - lib\widgets\app_sidebar.dart:19:9 - use_super_parameters
+   info - Dependencies not sorted alphabetically - pubspec.yaml:14:3 - sort_pub_dependencies
+   info - Dependencies not sorted alphabetically - pubspec.yaml:31:3 - sort_pub_dependencies
+warning - The asset directory 'assets/' doesn't exist - pubspec.yaml:39:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/logos/' doesn't exist - pubspec.yaml:40:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/flags/' doesn't exist - pubspec.yaml:41:7 - asset_directory_does_not_exist
+warning - The 'web' field is no longer used and can be removed - pubspec.yaml:55:1 - deprecated_field
+

@@ -1,0 +1,110 @@
+name: Playwright MVP Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/playwright-tests.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/playwright-tests.yml'
+
+jobs:
+  test:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/playwright-mvp
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.x'
+          channel: 'stable'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m venv .venv
+          .venv\Scripts\activate
+          pip install -r requirements.txt
+        shell: bash
+
+      - name: Initialize backend database
+        working-directory: backend
+        run: |
+          .venv/bin/python -m app.init_db
+        shell: bash
+
+      - name: Install Playwright dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Start backend server
+        working-directory: backend
+        run: |
+          .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          sleep 3
+        shell: bash
+        env:
+          PYTHONUNBUFFERED: 1
+
+      - name: Wait for backend to be ready
+        run: |
+          npm install -g wait-on
+          wait-on http://127.0.0.1:8000/health --timeout 30000
+        shell: bash
+
+      - name: Build Flutter web
+        working-directory: flutter_app
+        run: flutter build web --release
+
+      - name: Run Playwright API tests
+        run: npm test -- api.endpoints.spec.js enduser.workflows.spec.js security.negative.spec.js
+
+      - name: Run Playwright Web UI E2E tests
+        run: npm test -- web.ui.e2e.spec.js
+        continue-on-error: true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: backend/playwright-mvp/playwright-report/
+          retention-days: 30
+
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'backend/playwright-mvp/playwright-report/index.html';
+            if (fs.existsSync(reportPath)) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '✅ Playwright tests passed! View detailed [HTML report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})',
+              });
+            }

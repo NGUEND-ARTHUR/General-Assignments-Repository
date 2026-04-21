@@ -1,0 +1,90 @@
+name: Diplomax APK Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "diplomax_cm/diplomax_student/**"
+      - "diplomax_cm/diplomax_university/**"
+      - "diplomax_cm/diplomax_recruiter/**"
+      - ".github/workflows/diplomax-apk-build.yml"
+  workflow_dispatch:
+    inputs:
+      api_base_url:
+        description: "Optional API URL override for this build"
+        required: false
+        type: string
+
+env:
+  DEFAULT_STAGING_API_BASE_URL: https://staging-api.diplomax.cm/v1
+
+jobs:
+  build-apk:
+    name: Build APK (${{ matrix.app_name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app_name: student
+            app_path: diplomax_cm/diplomax_student
+          - app_name: university
+            app_path: diplomax_cm/diplomax_university
+          - app_name: recruiter
+            app_path: diplomax_cm/diplomax_recruiter
+    defaults:
+      run:
+        working-directory: ${{ matrix.app_path }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.3"
+          channel: stable
+          cache: true
+
+      - name: Resolve API base URL
+        id: api
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.api_base_url }}" ]; then
+            echo "value=${{ github.event.inputs.api_base_url }}" >> "$GITHUB_OUTPUT"
+          elif [ -n "${{ vars.STAGING_API_BASE_URL }}" ]; then
+            echo "value=${{ vars.STAGING_API_BASE_URL }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${{ env.DEFAULT_STAGING_API_BASE_URL }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build release APK
+        run: |
+          flutter build apk --release --dart-define=API_BASE_URL=${{ steps.api.outputs.value }}
+
+      - name: Prepare artifact name
+        id: meta
+        shell: bash
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          SAFE_VERSION=${VERSION//+/-}
+          ARTIFACT_NAME="diplomax-${{ matrix.app_name }}-${SAFE_VERSION}-${GITHUB_SHA::7}.apk"
+          mkdir -p "$GITHUB_WORKSPACE/dist"
+          cp build/app/outputs/flutter-apk/app-release.apk "$GITHUB_WORKSPACE/dist/$ARTIFACT_NAME"
+          echo "artifact_name=$ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}
+          path: dist/${{ steps.meta.outputs.artifact_name }}
+          if-no-files-found: error

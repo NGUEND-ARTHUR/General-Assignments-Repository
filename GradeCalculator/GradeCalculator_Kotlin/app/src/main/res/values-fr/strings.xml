@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Calculateur de Notes</string>
+    <string name="title_stats">Statistiques</string>
+    <string name="title_entry">Saisie Manuelle</string>
+    <string name="title_results">Résultats</string>
+    <string name="title_settings">Paramètres</string>
+    <string name="average_score">Note Moyenne</string>
+    <string name="highest_score">Note la Plus Haute</string>
+    <string name="lowest_score">Note la Plus Basse</string>
+    <string name="student_name">Nom de l\'étudiant</string>
+    <string name="score_hint">Note (0-100)</string>
+    <string name="calculate_grade">Calculer la Note</string>
+    <string name="clear_data">Effacer Tous les Enregistrements</string>
+    <string name="language_settings">Paramètres de Langue</string>
+    <string name="data_management">Gestion des Données</string>
+    <string name="clear_data_title">Effacer Toutes les Données ?</string>
+    <string name="clear_data_message">Cette action est irréversible.</string>
+    <string name="clear">Effacer</string>
+    <string name="cancel">Annuler</string>
+    <string name="records_cleared">Tous les enregistrements ont été effacés</string>
+    <string name="import_excel">Importer Excel</string>
+    <string name="create_test_file">Créer un Fichier Test</string>
+    <string name="export_results">Exporter les Résultats</string>
+    <string name="no_students_to_export">Aucun étudiant à exporter</string>
+    <string name="results_exported">Résultats exportés avec succès !</string>
+</resources>

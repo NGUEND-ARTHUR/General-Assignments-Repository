@@ -1,0 +1,92 @@
+name: Diplomax CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "diplomax_cm/**"
+      - ".github/workflows/diplomax-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "diplomax_cm/**"
+      - ".github/workflows/diplomax-ci.yml"
+
+concurrency:
+  group: diplomax-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-tests:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: diplomax_cm/backend
+    env:
+      DATABASE_URL: postgresql+asyncpg://ci:ci@localhost:5432/diplomax
+      REDIS_URL: redis://localhost:6379/0
+      JWT_SECRET_KEY: ci-jwt-secret
+      MASTER_AES_KEY_HEX: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      DEFAULT_ICT_ADMIN_PASSWORD: ci-admin-password
+      DEFAULT_STUDENT_PASSWORD: ci-student-password
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: diplomax_cm/backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pytest
+        run: pytest -q
+
+  flutter-checks:
+    name: Flutter checks (${{ matrix.app_name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app_name: student
+            app_path: diplomax_cm/diplomax_student
+          - app_name: university
+            app_path: diplomax_cm/diplomax_university
+          - app_name: recruiter
+            app_path: diplomax_cm/diplomax_recruiter
+    defaults:
+      run:
+        working-directory: ${{ matrix.app_path }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.3"
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test --no-pub

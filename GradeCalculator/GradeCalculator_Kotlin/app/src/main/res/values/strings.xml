@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Grade Calculator</string>
+    <string name="title_stats">Statistics</string>
+    <string name="title_entry">Manual Entry</string>
+    <string name="title_results">Results</string>
+    <string name="title_settings">Settings</string>
+    <string name="average_score">Average Score</string>
+    <string name="highest_score">Highest Score</string>
+    <string name="lowest_score">Lowest Score</string>
+    <string name="student_name">Student Name</string>
+    <string name="score_hint">Score (0-100)</string>
+    <string name="calculate_grade">Calculate Grade</string>
+    <string name="clear_data">Clear All Records</string>
+    <string name="language_settings">Language Settings</string>
+    <string name="data_management">Data Management</string>
+    <string name="clear_data_title">Clear All Data?</string>
+    <string name="clear_data_message">This action cannot be undone.</string>
+    <string name="clear">Clear</string>
+    <string name="cancel">Cancel</string>
+    <string name="records_cleared">All records cleared</string>
+    <string name="import_excel">Import Excel</string>
+    <string name="create_test_file">Create Test File</string>
+    <string name="export_results">Export Results</string>
+    <string name="no_students_to_export">No students to export</string>
+    <string name="results_exported">Results exported successfully!</string>
+</resources>
