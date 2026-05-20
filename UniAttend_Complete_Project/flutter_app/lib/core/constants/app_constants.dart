@@ -1,9 +1,9 @@
 class AppConstants {
   // Backend API base URL.
-  // For Android emulator use 10.0.2.2, for physical device use your PC LAN IP via --dart-define.
+  // Updated to use the Cloudflare tunnel URL.
   static const String apiBaseUrl = String.fromEnvironment(
     'UNIATTEND_API_BASE_URL',
-    defaultValue: 'https://uniattend-backend.yourdomain.com',
+    defaultValue: 'https://default-sector-thumbzilla-papers.trycloudflare.com',
   );
 
   // Geofencing

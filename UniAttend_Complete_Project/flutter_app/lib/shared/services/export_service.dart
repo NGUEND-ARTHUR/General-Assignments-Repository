@@ -1,4 +1,8 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
+import 'web_download_helper_mobile.dart'
+    if (dart.library.html) 'web_download_helper.dart';
 import 'dart:convert';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart' as pdf;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter/foundation.dart';
 import '../models/models.dart';
 
 class ExportService {
@@ -15,7 +20,7 @@ class ExportService {
 
   /// Exports attendance records to an Excel (.xlsx) file matching
   /// the ICT Cameroon physical attendance sheet format.
-  Future<File?> exportToExcel({
+  Future<dynamic> exportToExcel({
     required AttendanceSession session,
     required List<AttendanceRecord> records,
     required String lecturerName,
@@ -164,17 +169,23 @@ class ExportService {
     }
 
     // ── Save file ─────────────────────────────────────────────────────
-    final dir = await getApplicationDocumentsDirectory();
     final fileName =
         'attendance_${session.courseCode}_${_dateFormat.format(session.scheduledDate).replaceAll('/', '-')}.xlsx';
-    final file = File('${dir.path}/$fileName');
     final bytes = excel.save();
     if (bytes == null) return null;
-    await file.writeAsBytes(bytes);
-    return file;
+    if (kIsWeb) {
+      triggerWebDownload(bytes as Uint8List, fileName,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      return null;
+    } else {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsBytes(bytes);
+      return file;
+    }
   }
 
-  Future<File?> exportToCsv({
+  Future<dynamic> exportToCsv({
     required AttendanceSession session,
     required List<AttendanceRecord> records,
   }) async {
@@ -196,15 +207,21 @@ class ExportService {
       );
     }
 
-    final dir = await getApplicationDocumentsDirectory();
     final fileName =
         'attendance_${session.courseCode}_${_dateFormat.format(session.scheduledDate).replaceAll('/', '-')}.csv';
-    final file = File('${dir.path}/$fileName');
-    await file.writeAsString(buffer.toString(), encoding: utf8);
-    return file;
+    final csvBytes = utf8.encode(buffer.toString());
+    if (kIsWeb) {
+      triggerWebDownload(csvBytes as Uint8List, fileName, 'text/csv');
+      return null;
+    } else {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsString(buffer.toString(), encoding: utf8);
+      return file;
+    }
   }
 
-  Future<File?> exportToPdf({
+  Future<dynamic> exportToPdf({
     required AttendanceSession session,
     required List<AttendanceRecord> records,
     required String lecturerName,
@@ -316,12 +333,18 @@ class ExportService {
       ),
     );
 
-    final dir = await getApplicationDocumentsDirectory();
     final fileName =
         'attendance_${session.courseCode}_${_dateFormat.format(session.scheduledDate).replaceAll('/', '-')}.pdf';
-    final file = File('${dir.path}/$fileName');
-    await file.writeAsBytes(await doc.save());
-    return file;
+    final pdfBytes = await doc.save();
+    if (kIsWeb) {
+      triggerWebDownload(pdfBytes as Uint8List, fileName, 'application/pdf');
+      return null;
+    } else {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsBytes(pdfBytes);
+      return file;
+    }
   }
 
   void _addMetaRow(Sheet sheet, int row, String label, String value,
@@ -379,7 +402,8 @@ class ExportService {
     cell.cellStyle = style;
   }
 
-  Future<void> shareFile(File file) async {
+  Future<void> shareFile(dynamic file) async {
+    if (kIsWeb || file == null) return;
     await Share.shareXFiles([XFile(file.path)], text: 'Attendance Sheet');
   }
 
