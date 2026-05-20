@@ -37,3 +37,4 @@ google-services.json
 .flutter-plugins-dependencies
 diplomax_cm/*.apk
 release-notes-v2.0.0.md
+*.env
