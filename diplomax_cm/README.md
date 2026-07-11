@@ -1,36 +1,75 @@
-# Diplomax CM Monorepo
+# Diplomax CM
 
-Diplomax CM is a multi-app platform for secure academic credential issuance, storage, and verification.
+Full-stack academic credential platform with FastAPI backend and multiple Flutter clients.
 
-## Folder Structure
+## One-Sentence Value Proposition
+Diplomax CM provides issuance, verification, and management workflows for academic credentials across students, universities, recruiters, and administrators.
 
-- `backend/`: FastAPI backend, Redis, PostgreSQL, Celery worker
-- `diplomax_student/`: student Flutter app (Android)
-- `diplomax_university/`: university/admin staff Flutter app (Android)
-- `diplomax_recruiter/`: recruiter Flutter app (Android)
-- `diplomax_admin/`: **NEW** system administration portal Flutter Web app (web/browser)
-- `playwright-mvp/`: Playwright test suite for backend API validation
-- `scripts/`: PowerShell test runners for backend and apps
-- `RUNNING.md`: local run instructions
-- `CI-CD.md`: CI/CD and release workflow guidance
+## Problem Statement
+Credential validation workflows are often slow, fragmented, and difficult to trust across institutions and recruiters.
 
-## Current Deployment/Build Direction
+## Proposed Solution
+Diplomax CM combines a role-based backend, mobile/web clients, and verification-support services to streamline academic document management and verification.
 
-- Source control and automation are centered on GitHub.
-- APK build and release automation is handled by workflows in `.github/workflows`.
-- Student, university, and recruiter APKs are built in CI and published on tag releases.
+## Implemented Architecture
+- **Backend:** FastAPI + SQLAlchemy async + PostgreSQL
+- **Cache/queues:** Redis + Celery worker queues
+- **Edge/proxy:** Nginx
+- **Clients:** Flutter apps for student, university, recruiter, and admin roles
+- **Ops:** Docker Compose local stack and GitHub Actions CI/CD workflows
 
-## API Base URL Strategy
+## Repository Structure
+- `backend/` — FastAPI API, data models, services, tests
+- `diplomax_student/` — Flutter student app
+- `diplomax_university/` — Flutter university/staff app
+- `diplomax_recruiter/` — Flutter recruiter app
+- `diplomax_admin/` — Flutter web administration portal
+- `playwright-mvp/` — Playwright test scaffolding
+- `RUNNING.md` — local run instructions
+- `CI-CD.md` — CI/CD workflow documentation
 
-- App default: `https://api.diplomax.cm/v1`
-- Local/staging override supported via:
+## Technology Stack
+- Python, FastAPI, SQLAlchemy, Celery
+- PostgreSQL, Redis
+- Flutter / Dart
+- Docker Compose, Nginx
+- GitHub Actions
 
-```bash
---dart-define=API_BASE_URL=http://10.0.2.2:8000/v1
-```
+## Security and Configuration
+- `.env.example` is provided for local configuration.
+- Sensitive values are environment-driven (JWT keys, DB credentials, payment keys, cloud keys).
+- Do not commit real credentials to source control.
 
-## Quick Start
+## Setup and Running
+Use [`RUNNING.md`](./RUNNING.md) for full setup.
 
-1. Start backend by following `RUNNING.md`.
-2. Run one app (`diplomax_student`, `diplomax_university`, or `diplomax_recruiter`) with `flutter run` and optional API override.
-3. Use `scripts/test_all.ps1` for a full local validation pass.
+Quick overview:
+1. Configure backend `.env` from `.env.example`
+2. Start services via Docker Compose
+3. Run required Flutter client with API base URL override when needed
+
+## Testing
+- Backend smoke tests: `backend/tests/test_smoke_endpoints.py`
+- CI workflow includes backend pytest and Flutter analyze/test checks
+
+## Deployment Status
+- CI workflows exist for backend checks, APK builds, release assets, and backend image publishing.
+- Production deployment details depend on external environment configuration.
+
+## Project Status
+Actively implemented multi-module project with production-oriented structure and remaining enhancement areas.
+
+## Limitations
+- Full local execution requires Docker, Flutter SDK, and configured credentials.
+- Some integrations depend on external service credentials/environments.
+
+## Future Improvements
+- Expand backend unit/integration coverage
+- Add consolidated architecture diagrams in markdown
+- Add reproducible local developer bootstrap scripts per platform
+
+## Contribution Context
+This repository is a major academic engineering project with substantial implementation by **Nguend Arthur Johann** across backend and client modules.
+
+## Contact
+- GitHub: [NGUEND-ARTHUR](https://github.com/NGUEND-ARTHUR)
