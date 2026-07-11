@@ -1,129 +1,85 @@
 # FocusFlow
 
-> Digital Wellbeing & Productivity Application for Students  
-> **Course:** Android Application Development - ICT University  
-> **Lead Developer:** NGUEND ARTHUR JOHANN (ICTU20223180)  
-> **Quality Test Developer:** MADONGUE JEANNE LESLINE (ICTU20222931)  
-> **Milestone:** 1 - Core Data Model  
-> **Date:** February 27, 2026
+Android productivity and digital-wellbeing project built as an academic software-engineering application.
 
----
+## One-Sentence Value Proposition
+FocusFlow helps students manage focus sessions and task prioritization while integrating sensor-aware wellbeing indicators.
 
-## 1. Project Overview
+## Problem Statement
+Students often combine long study periods, weak task prioritization, and unhealthy device usage habits.
 
-FocusFlow is a digital wellbeing and productivity application tailored for students. The app monitors users' physical environment and study habits in real time to reduce health risks such as digital eye strain, postural disorders, cognitive fatigue, and sedentary behavior. By leveraging sensors available in smartphones, FocusFlow acts as a proactive health coach, transforming a potential source of distraction into a positive productivity tool.
+## Proposed Solution
+FocusFlow combines timer-based focus sessions, task management, and wellbeing-oriented signals in one Android experience.
 
----
+## Real-World Context
+The app is designed for student daily study workflows where productivity and healthy digital behavior need to be balanced.
 
-## 2. Problem Statement
+## Implemented Features
+- Focus session timer workflow (`FocusScreen`, `FocusViewModel`)
+- Task management with Eisenhower-style quadrants (`TasksScreen`, `TaskDao`, `TaskEntity`)
+- Local persistence with Room (`AppDatabase`, entities for tasks/logs/plants)
+- Jetpack Compose navigation (`Dashboard`, `Focus`, `Tasks`, `Social`)
+- Sensor integration foundations:
+  - ambient light sensor
+  - accelerometer-based sedentary indicator
+- Dependency injection with Hilt
 
-Students frequently face physical and cognitive challenges during lengthy study sessions, including:
+## Planned / Partially Implemented Features
+- Camera-based face distance monitoring (currently stubbed)
+- Microphone-based noise detection (currently stubbed)
+- Deeper analytics and recommendation workflows
 
-- **Digital Eye Strain**: Poor lighting and improper screen distance lead to eye discomfort.
-- **Postural Disorders**: The "text-neck" posture contributes to chronic neck and back pain.
-- **Cognitive Overload**: Environmental noise disrupts concentration and the "flow" state.
-- **Sedentary Behavior**: Extended periods of inactivity affect brain oxygenation and overall focus.
+## Architecture Overview
+- **UI:** Jetpack Compose screens and reusable components
+- **State and Logic:** ViewModels with Kotlin Flow
+- **Data:** Room entities and DAO layer
+- **DI:** Hilt modules
+- **Pattern:** MVVM
 
-FocusFlow addresses these issues by monitoring and recording environmental and behavioral data, providing actionable feedback to promote healthier study sessions.
+## Technology Stack
+- Kotlin
+- Android SDK (min 26)
+- Jetpack Compose
+- Room
+- Hilt
+- Coroutines / StateFlow
 
----
+## Repository Structure
+- `app/src/main/java/com/nguendarthurjohann/focusflow/` — app source code
+- `app/src/main/java/.../ui/` — screens, theme, navigation, viewmodels
+- `app/src/main/java/.../data/local/` — database, DAO, entities
 
-## 3. Technical Requirements
+## Installation and Running
+1. Open `FocusFlow/` in Android Studio.
+2. Sync Gradle dependencies.
+3. Run the `app` module on emulator or device.
 
-### 3.1 Hardware Requirements
+## Testing
+Use Android/Gradle standard tasks in a configured Android environment:
+- unit tests: `test`
+- instrumentation tests: `connectedAndroidTest`
 
-- **Ambient Light Sensor**: Monitors environmental brightness.
-- **Front Camera**: Used for face detection and screen distance estimation.
-- **Microphone**: Measures real-time noise levels (dB).
-- **3-Axis Accelerometer**: Tracks physical inactivity.
+## Deployment Status
+Academic project; no production deployment pipeline is currently documented.
 
-### 3.2 Software Stack
+## Project Status
+Prototype-to-implementation hybrid: core workflows implemented, advanced sensor intelligence still in progress.
 
-- **Language:** Kotlin 1.9+
-- **Min SDK:** Android 8.0 (API Level 26)
-- **Architecture:** MVVM (Model-View-ViewModel)
-- **Key Libraries:**  
-    - Google ML Kit (Face Detection)  
-    - Room Persistence  
-    - Kotlin Coroutines
+## Limitations
+- Some sensor features are placeholder implementations.
+- Behavior depends on device sensor availability and calibration.
 
----
+## Future Improvements
+- Complete camera and microphone sensor pipelines
+- Add integration tests and broader persistence tests
+- Expand data insights and recommendation engine
 
-## 4. Milestone 1: Core Data Model
+## Contributions
+- **Lead Developer:** Nguend Arthur Johann
+- **Quality Test Developer (as documented):** Madongue Jeanne Lesline
 
-```kotlin
-/**
- * PROJECT: FocusFlow
- * MILESTONE: 1 - Data Modeling
- */
+## Licence
+Educational project context (no standalone license file currently provided in this folder).
 
-data class FocusState(
-    val lightLevelLux: Double?, 
-    val faceDistanceCm: Double?, 
-    val noiseDb: Double, 
-    val isSedentary: Boolean,
-    val sessionID: String
-)
-
-fun main() {
-    // Instance 1: Optimal Conditions
-    val optimalState = FocusState(
-        lightLevelLux = 450.0, 
-        faceDistanceCm = 55.0, 
-        noiseDb = 25.0, 
-        isSedentary = false,
-        sessionID = "SESSION_001"
-    )
-
-    // Instance 2: Health Warning
-    val warningState = FocusState(
-        lightLevelLux = 80.0, 
-        faceDistanceCm = 15.0, 
-        noiseDb = 35.0, 
-        isSedentary = true,
-        sessionID = "SESSION_001"
-    )
-
-    // Instance 3: Sensor Error Case
-    val errorState = FocusState(
-        lightLevelLux = null, 
-        faceDistanceCm = null, 
-        noiseDb = 15.0, 
-        isSedentary = false,
-        sessionID = "SESSION_002"
-    )
-
-    println("State 1: $optimalState")
-    println("State 2: $warningState")
-    println("State 3: $errorState")
-}
-```
-
----
-
-## 5. Technical Justification
-
-- **Kotlin Data Classes** facilitate efficient and robust data management.
-- **Nullability** for `lightLevelLux` and `faceDistanceCm` ensures graceful handling if hardware sensors are unavailable.
-- **Immutable Values (val)** preserve the integrity of sensor snapshots, preventing accidental alteration and supporting accurate session logging for future analytics and feedback (Milestone 2).
-
----
-
-## 6. Development Milestones
-
-- **Milestone 1:** Core Data Model (completed)
-- **Milestone 2:** Advanced session logging and analytics (upcoming)
-- **Milestone 3:** Real-time feedback and health alerts (upcoming)
-
----
-
-## 7. License
-
-This project is intended for educational purposes under the ICT University Android Application Development course.
-
----
-
-## 8. Contact
-
-- NGUEND ARTHUR JOHANN (ICTU20223180)
-- MADONGUE JEANNE LESLINE (ICTU20222931)
+## Contact
+- GitHub: [NGUEND-ARTHUR](https://github.com/NGUEND-ARTHUR)
